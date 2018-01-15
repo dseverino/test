@@ -1,0 +1,29 @@
+.parentContainer{
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+}
+
+.childContainer{   
+    width: 50%;
+    margin: 0 10px;
+    max-height: 100%;
+}
+
+.parentform {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    background: #57B3F1;
+    padding: 30px;
+}
+
+input{
+    margin: 5px
+}
+
+.color-dark {
+    background: #2885C4;
+    padding: 30px;
+    margin: 0px;
+}

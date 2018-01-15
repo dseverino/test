@@ -1,0 +1,24 @@
+<div class="parentContainer">
+  <div class="childContainer">
+    <p-dataTable [value]="products" #dt selectionMode="single" dataKey="_id" (onRowSelect)="handleRowSelect($event)" [(selection)]="selectedProduct">      
+      <p-column field="name" header="Name"> </p-column>
+      <p-column field="price" header="Price"> </p-column>
+      <p-footer>
+        <div style="text-align: left">
+          Selected Product: {{selectedProduct ? selectedProduct.name + ' - ' + selectedProduct.price : "none"}}
+        </div>
+      </p-footer>
+    </p-dataTable>
+  </div>  
+
+  <div class="childContainer">    
+    <h3 class="color-dark">Add a Product</h3>
+    <form class="parentform">
+      <input type="text" pInputText placeholder="Name" name="name" #newName>
+      <input type="text" placeholder= "Price" pInputText name="price" #newPrice>
+
+      <button type="button" pButton (click)="addProduct(newName, newPrice)" style="display:block; margin-top: 20px;" label="Save"></button>  
+    </form>    
+  </div>
+  
+</div>

@@ -1,0 +1,11 @@
+.parentContainer{
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+}
+
+.childContainer{   
+    width: 50%;
+    margin: 0 10px;
+}
+
