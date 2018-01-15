@@ -24,6 +24,7 @@ import {InputTextModule} from 'primeng/primeng';
 import { CarParentComponent } from './components/carsparent.component';
 import { ProductComponent } from './components/product/product.component';
 import { OrderComponent } from './components/order/order.component';
+import { SpinnerModule } from 'primeng/primeng';
 
 
 @NgModule({
@@ -48,7 +49,8 @@ import { OrderComponent } from './components/order/order.component';
     SharedModule,
     PanelModule,
     BrowserAnimationsModule,
-    InputTextModule
+    InputTextModule,
+    SpinnerModule
   ],
   providers: [DataService, CarService, ProductService, OrderService],
   bootstrap: [AppComponent]

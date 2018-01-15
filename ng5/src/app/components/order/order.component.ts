@@ -10,6 +10,7 @@ import { ProductService } from '../../services/product.service';
 export class OrderComponent implements OnInit {
 
   private products: Product[] = []
+  qty: Number = 1;
 
   constructor(private _productService: ProductService) { }
 
@@ -17,6 +18,10 @@ export class OrderComponent implements OnInit {
     this._productService.getProducts().subscribe(data => {      
       this.products = data['products'];
     });
+  }
+
+  handleRowSelect(event){
+    console.log(event.data)
   }
 
 }

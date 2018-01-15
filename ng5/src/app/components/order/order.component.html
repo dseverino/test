@@ -2,10 +2,11 @@
   <div class="childContainer">    
     <h3 class="color-dark">Add an Order</h3>
     <form class="parentform">
-      <input type="text" pInputText placeholder="Name" name="name" #newName>
-      <input type="text" placeholder= "Price" pInputText name="price" #newPrice>
+      <input type="text" pInputText placeholder="Product" name="product" #newOrder>
+      <input type="text" placeholder= "Quantity" pInputText name="quantity" #newQuantity>
+      <p-spinner [min]="1" [(ngModel)]="qty" name="qty"></p-spinner>
 
-      <button type="button" pButton (click)="addProduct(newName, newPrice)" style="display:block; margin-top: 20px;" label="Save"></button>  
+      <button type="button" pButton (click)="addOrder(newOrder, newQuantity)" style="display:block; margin-top: 20px;" label="Save"></button>  
     </form>    
   </div>
 
