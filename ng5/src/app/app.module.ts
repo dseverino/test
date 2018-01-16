@@ -25,6 +25,7 @@ import { CarParentComponent } from './components/carsparent.component';
 import { ProductComponent } from './components/product/product.component';
 import { OrderComponent } from './components/order/order.component';
 import { SpinnerModule } from 'primeng/primeng';
+import { DropdownModule } from 'primeng/primeng';
 
 
 @NgModule({
@@ -50,7 +51,8 @@ import { SpinnerModule } from 'primeng/primeng';
     PanelModule,
     BrowserAnimationsModule,
     InputTextModule,
-    SpinnerModule
+    SpinnerModule,
+    DropdownModule
   ],
   providers: [DataService, CarService, ProductService, OrderService],
   bootstrap: [AppComponent]

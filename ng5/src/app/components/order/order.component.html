@@ -1,17 +1,19 @@
 <div class="parentContainer">
+
   <div class="childContainer">    
     <h3 class="color-dark">Add an Order</h3>
     <form class="parentform">
-      <input type="text" pInputText placeholder="Product" name="product" #newOrder>
-      <input type="text" placeholder= "Quantity" pInputText name="quantity" #newQuantity>
-      <p-spinner [min]="1" [(ngModel)]="qty" name="qty"></p-spinner>
-
+      <input type="text" [(ngModel)]="productName" pInputText placeholder="Product" name="product" #newOrder>
+      <div style="display: flex; margin: 5px;">
+        <h3 style="margin: 5px;">Quantity:</h3>
+        <p-spinner [min]="1" #newQuantity name="qty" style="margin: 5px;"></p-spinner>
+      </div>
       <button type="button" pButton (click)="addOrder(newOrder, newQuantity)" style="display:block; margin-top: 20px;" label="Save"></button>  
     </form>    
   </div>
 
   <div class="childContainer">
-    <p-dataTable [value]="products" #dt selectionMode="single" dataKey="_id" (onRowSelect)="handleRowSelect($event)" [(selection)]="selectedProduct">      
+    <p-dataTable [value]="products" #dt selectionMode="single" dataKey="_id" (onRowSelect)="handleRowSelect($event)" [(selection)]="selectedProduct">
       <p-column field="name" header="Name"> </p-column>
       <p-column field="price" header="Price"> </p-column>
       <p-footer>
@@ -19,6 +21,7 @@
           Selected Product: {{selectedProduct ? selectedProduct.name + ' - ' + selectedProduct.price : "none"}}
         </div>
       </p-footer>
-    </p-dataTable>
-  </div>  
+    </p-dataTable>    
+  </div>
+
 </div>

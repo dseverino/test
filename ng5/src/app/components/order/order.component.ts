@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Product } from '../../models/product';
 import { ProductService } from '../../services/product.service';
 
@@ -11,6 +11,7 @@ export class OrderComponent implements OnInit {
 
   private products: Product[] = []
   qty: Number = 1;
+  productName: string;
 
   constructor(private _productService: ProductService) { }
 
@@ -21,7 +22,9 @@ export class OrderComponent implements OnInit {
   }
 
   handleRowSelect(event){
-    console.log(event.data)
+    
+    this.productName = event.data.name
+    console.log(this.productName)
   }
 
 }
