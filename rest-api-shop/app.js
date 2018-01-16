@@ -5,21 +5,17 @@ const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
-var mongo = require('mongodb');
-
 const productRoute = require('./api/routes/products');
 const orderRoute = require('./api/routes/orders');
 const carRoute = require('./api/routes/cars');
 const goalRoute = require('./api/routes/goals');
 
-//var MongoClient = require('mongodb').MongoClient;
-var url = "mongodb://localhost:27017/mydb";
-
-/*MongoClient.connect(url, function(err, db) {
-  if (err) throw err;
-  console.log("Database created!");
-  db.close();
-});*/
+//const url = "mongodb://localhost:27017/mydb";
+const url = "mongodb://dseverino:Technology01@" +
+    "node-rest-shop-shard-00-00-cqreh.mongodb.net:27017,"+
+    "node-rest-shop-shard-00-01-cqreh.mongodb.net:27017,"+
+    "node-rest-shop-shard-00-02-cqreh.mongodb.net:27017/"+
+    "test?ssl=true&replicaSet=node-rest-shop-shard-0&authSource=admin";
 
 mongoose.connect(url, {useMongoClient: true});
 

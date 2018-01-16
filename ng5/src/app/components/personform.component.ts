@@ -32,12 +32,11 @@ export class PersonformComponent implements OnInit {
   constructor(private carService: CarService) { }
 
   ngOnInit() {
-
-    //this.carService.getCarsSmall().then(cars => this.cars = cars);
+    // this.carService.getCarsSmall().then(cars => this.cars = cars);
   }
 
-  toggleDisabled(){
-    
+  toggleDisabled() {
+
   }
 
 }

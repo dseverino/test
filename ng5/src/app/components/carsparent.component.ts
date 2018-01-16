@@ -4,6 +4,7 @@ import { CarService } from '../services/car.service';
 import { Car } from '../models/car';
 
 @Component({
+  // tslint:disable-next-line:component-selector
   selector: 'carsparent',
   template: `
     <div class="parentContainer">
@@ -27,8 +28,8 @@ export class CarParentComponent implements OnInit {
     this.carService.getCarsSmall().subscribe(data => this.cars = data);
   }
 
-  onclick(){
-    console.log('you clicked me')
+  onclick() {
+    console.log('you clicked me');
   }
 
   carWasSelected(car: Car){
