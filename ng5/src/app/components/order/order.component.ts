@@ -13,6 +13,7 @@ export class OrderComponent implements OnInit {
   qty: Number = 1;
   productName: string;
 
+
   constructor(private _productService: ProductService) { }
 
   ngOnInit() {
@@ -21,10 +22,8 @@ export class OrderComponent implements OnInit {
     });
   }
 
-  handleRowSelect(event){
-    
+  handleRowSelect(event){    
     this.productName = event.data.name
-    console.log(this.productName)
   }
 
 }

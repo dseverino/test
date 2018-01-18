@@ -3,13 +3,18 @@
   <div class="childContainer">    
     <h3 class="color-dark">Add an Order</h3>
     <form class="parentform">
-      <input type="text" [(ngModel)]="productName" pInputText placeholder="Product" name="product" #newOrder>
-      <div style="display: flex; margin: 5px;">
+      <input type="text" [(ngModel)]="productName" pInputText placeholder="Product" name="productName" readonly>
+      <input type="text" [(ngModel)]="productPrice" pInputText placeholder="Price" name="productPrice" readonly>
+      <div style="display: flex; margin-top: 15px; margin-right: 5px; justify-content: flex-end;">
         <h3 style="margin: 5px;">Quantity:</h3>
-        <p-spinner [min]="1" #newQuantity name="qty" style="margin: 5px;"></p-spinner>
+        <p-spinner style="align-self: flex-end;" [min]="1" #newQuantity name="qty" [(ngModel)]="qty"></p-spinner>
       </div>
-      <button type="button" pButton (click)="addOrder(newOrder, newQuantity)" style="display:block; margin-top: 20px;" label="Save"></button>  
-    </form>    
+      <div style="display: flex; margin-top: 15px; justify-content: flex-end;">
+        <h3 style="margin: 5px;">Total Price: </h3>
+        <input type="text" pInputText readonly value="{{1 + 1}}">
+      </div>
+      <button type="button" pButton (click)="addOrder(newOrder, newQuantity)" class="btn" label="Save"></button>  
+    </form>
   </div>
 
   <div class="childContainer">

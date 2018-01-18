@@ -1,7 +1,6 @@
 .parentContainer{
     width: 100%;
     display: flex;
-    justify-content: space-around;
 }
 
 .childContainer{   
@@ -26,4 +25,8 @@ input{
     background: #2885C4;
     padding: 30px;
     margin: 0px;
+}
+
+.btn {     
+    margin-top: 25px;
 }
