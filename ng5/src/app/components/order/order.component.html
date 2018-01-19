@@ -26,7 +26,28 @@
           Selected Product: {{selectedProduct ? selectedProduct.name + ' - ' + selectedProduct.price : "none"}}
         </div>
       </p-footer>
-    </p-dataTable>    
+    </p-dataTable>
+    Selected Products: <span *ngFor="let product of selectedProducts" style="margin-right:10px">{{product}}</span>
   </div>
 
+  
+
 </div>
+
+<p-dialog [(visible)]="display" modal=true>
+  <p-header>
+    Filter By
+    <div style="display:flex;">
+      <button pButton type="button" *ngFor="let letter of letters" label="{{letter}}" class="test">
+      </button>
+    </div>
+  </p-header>
+
+  <p-checkbox *ngFor="let item of products" label="{{item.name + ' ' + item.price}}" value="{{item.name}}" [(ngModel)]="selectedProducts">
+  </p-checkbox>
+
+  <p-footer>
+    <button pButton label="cancel" (click)="onCancel()"></button>
+    <button pButton label="save"></button>
+  </p-footer>
+</p-dialog>

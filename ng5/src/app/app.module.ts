@@ -16,17 +16,13 @@ import { HomeComponent } from './components/home/home.component';
 import { AboutComponent } from './components/about/about.component';
 import { PersongridComponent } from './components/persongrid.component';
 import { PersonformComponent } from './components/personform.component';
-
-import {ButtonModule} from 'primeng/primeng';
-import {DataTableModule,SharedModule} from 'primeng/primeng';
-import {PanelModule} from 'primeng/primeng';
-import {InputTextModule} from 'primeng/primeng';
 import { CarParentComponent } from './components/carsparent.component';
 import { ProductComponent } from './components/product/product.component';
 import { OrderComponent } from './components/order/order.component';
-import { SpinnerModule } from 'primeng/primeng';
-import { DropdownModule } from 'primeng/primeng';
 
+//Primeng
+import { ButtonModule, DataTableModule, SharedModule, PanelModule, InputTextModule,
+  SpinnerModule, DropdownModule, DialogModule, CheckboxModule } from 'primeng/primeng';
 
 @NgModule({
   declarations: [
@@ -52,7 +48,9 @@ import { DropdownModule } from 'primeng/primeng';
     BrowserAnimationsModule,
     InputTextModule,
     SpinnerModule,
-    DropdownModule
+    DropdownModule,
+    DialogModule,
+    CheckboxModule
   ],
   providers: [DataService, CarService, ProductService, OrderService],
   bootstrap: [AppComponent]
