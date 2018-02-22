@@ -12,8 +12,6 @@ export class OrderComponent implements OnInit {
   private products: Product[] = [];
   qty: Number = 1;
   productName: string;
-  display = false;
-  letters =  ['#', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 
   constructor(private _productService: ProductService) { }
 
@@ -28,12 +26,11 @@ export class OrderComponent implements OnInit {
   }
 
   addOrder() {
-    this.display = true;
+    
   }
 
   onCancel() {
-    console.log(this);
-    this.display = false;
+    
   }
 
   clicked() {
