@@ -24,6 +24,8 @@ import { OrderComponent } from './components/order/order.component';
 import { ButtonModule, DataTableModule, SharedModule, PanelModule, InputTextModule,
   SpinnerModule, DropdownModule, DialogModule, CheckboxModule } from 'primeng/primeng';
 
+import {TableModule} from 'primeng/table';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -50,7 +52,8 @@ import { ButtonModule, DataTableModule, SharedModule, PanelModule, InputTextModu
     SpinnerModule,
     DropdownModule,
     DialogModule,
-    CheckboxModule
+    CheckboxModule,
+    TableModule
   ],
   providers: [DataService, CarService, ProductService, OrderService],
   bootstrap: [AppComponent]

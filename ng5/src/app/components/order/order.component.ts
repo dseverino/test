@@ -12,6 +12,7 @@ export class OrderComponent implements OnInit {
   private products: Product[] = [];
   qty: Number = 1;
   productName: string;
+  selectedProduct: Product;
 
   constructor(private _productService: ProductService) { }
 
@@ -26,15 +27,19 @@ export class OrderComponent implements OnInit {
   }
 
   addOrder() {
-    
+    console.log(this.selectedProduct);
   }
 
   onCancel() {
-    
+
   }
 
   clicked() {
     console.log('clicked');
+  }
+
+  onRefreshClick(event){
+    console.log(event)
   }
 
 }

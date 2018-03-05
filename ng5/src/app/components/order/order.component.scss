@@ -3,11 +3,24 @@
     display: flex;
 }
 
-.childContainer{   
+.test-input{
+    :hover{
+        border-color: red;
+    }
+}
+
+.childContainer{
+    width: 50%;
+    margin: 0 10px;
+    max-height: 100%;  
+}
+
+.table-container{
     width: 50%;
     margin: 0 10px;
     max-height: 100%;
 }
+
 
 .parentform {
     display: flex;
@@ -15,6 +28,19 @@
     flex-direction: column;
     background: #57B3F1;
     padding: 30px;
+
+    .refresh-button:hover{
+        border-color: white;
+        color: white;
+        background: black;
+    }
+    .refresh-button{
+        color: black;
+        background: transparent;
+        border: 1px solid black;
+        //border:3px solid yellow;
+        //background: white;
+    }
 }
 
 input{
@@ -38,3 +64,4 @@ input{
     margin: -5px;
     font-size: 14px;
 }
+

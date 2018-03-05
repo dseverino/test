@@ -1,9 +1,9 @@
 <div class="parentContainer">
 
-  <div class="childContainer">    
+  <div class="childContainer">
     <h3 class="color-dark">Add an Order</h3>
     <form class="parentform">
-      <input type="text" [(ngModel)]="productName" pInputText placeholder="Product" name="productName" readonly>
+      <input class="test-input" type="text" [(ngModel)]="productName" pInputText placeholder="Product" name="productName" readonly>
       <input type="text" [(ngModel)]="productPrice" pInputText placeholder="Price" name="productPrice" readonly>
       <div style="display: flex; margin-top: 15px; margin-right: 5px; justify-content: flex-end;">
         <h3 style="margin: 5px;">Quantity:</h3>
@@ -13,41 +13,36 @@
         <h3 style="margin: 5px;">Total Price: </h3>
         <input type="text" pInputText readonly value="{{1 + 1}}">
       </div>
-      <button type="button" pButton (click)="addOrder(newOrder, newQuantity)" class="btn" label="Save"></button>  
+      <button type="button" pButton (click)="addOrder(newOrder, newQuantity)" class="btn" label="Save"></button>
+      <button class="refresh-button" icon="fa fa-refresh fa-2x" type="button" pButton (click)="onRefreshClick($event)">
+      </button>
     </form>
   </div>
 
-  <div class="childContainer">
-    <p-dataTable [value]="products" #dt selectionMode="single" dataKey="_id" (onRowSelect)="handleRowSelect($event)" [(selection)]="selectedProduct">
-      <p-column field="name" header="Name"> </p-column>
-      <p-column field="price" header="Price"> </p-column>
-      <p-footer>
+  <div class="table-container">
+
+    <p-table [value]="products" selectionMode="single" [(selection)]="selectedProduct" dataKey="_id">
+      <ng-template pTemplate='header'>
+        <tr>
+          <th>Name</th>
+          <th>Price</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-product>
+        <tr [pSelectableRow]="product">
+          <td>{{product.name}}</td>
+          <td>{{product.price}}</td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="summary">
         <div style="text-align: left">
           Selected Product: {{selectedProduct ? selectedProduct.name + ' - ' + selectedProduct.price : "none"}}
         </div>
-      </p-footer>
-    </p-dataTable>
-    Selected Products: <span *ngFor="let product of selectedProducts" style="margin-right:10px">{{product}}</span>
-  </div> 
+      </ng-template>
+    </p-table>
+
+  </div>
+
+
 
 </div>
-
-
-
-<p-dialog [(visible)]="display" modal=true>
-  <p-header>
-    Filter By
-    <div style="display:flex;">
-      <button pButton type="button" *ngFor="let letter of letters" label="{{letter}}" class="test">
-      </button>
-    </div>
-  </p-header>
-
-  <p-checkbox *ngFor="let item of products" label="{{item.name + ' ' + item.price}}" value="{{item.name}}" [(ngModel)]="selectedProducts">
-  </p-checkbox>
-
-  <p-footer>
-    <button pButton label="cancel" (click)="onCancel()"></button>
-    <button pButton label="save"></button>
-  </p-footer>
-</p-dialog>
