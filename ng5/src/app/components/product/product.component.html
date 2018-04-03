@@ -1,24 +1,37 @@
 <div class="parentContainer">
   <div class="childContainer">
-    <p-dataTable [value]="products" #dt selectionMode="single" dataKey="_id" (onRowSelect)="handleRowSelect($event)" [(selection)]="selectedProduct">      
-      <p-column field="name" header="Name"> </p-column>
-      <p-column field="price" header="Price"> </p-column>
-      <p-footer>
-        <div style="text-align: left">
-          Selected Product: {{selectedProduct ? selectedProduct.name + ' - ' + selectedProduct.price : "none"}}
-        </div>
-      </p-footer>
-    </p-dataTable>
-  </div>  
 
-  <div class="childContainer">    
-    <h3 class="color-dark">Add a Product</h3>
-    <form class="parentform">
-      <input type="text" pInputText placeholder="Name" name="name" #newName>
-      <input type="text" placeholder= "Price" pInputText name="price" #newPrice>
-
-      <button type="button" pButton (click)="addProduct(newName, newPrice)" style="display:block; margin-top: 20px;" label="Save"></button>  
-    </form>    
+    <p-table [value]="products" #dt dataKey="_id" (onRowSelect)="handleRowSelect($event)" [(selection)]="selectedProduct">
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 2.25em">
+            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+          </th>
+          <th>Name</th>
+          <th>Price</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-product>
+        <tr [pSelectableRow]="product">
+          <td>
+            <p-tableCheckbox [value]="product"></p-tableCheckbox>
+          </td>
+          <td>{{product.name}}</td>
+          <td>{{product.price}}</td>
+        </tr>
+      </ng-template>
+    </p-table>
   </div>
-  
+
+  <div class="childContainer">
+    <h3 class="color-dark">Add a Product</h3>
+    <form class="parent-form">
+      <input type="text" pInputText placeholder="Name" name="name" #newName>
+      <input type="text" placeholder="Price" pInputText name="price" #newPrice>
+
+      <button type="button" pButton (click)="addProduct(newName, newPrice)" style="display:block; margin-top: 20px;" label="Save"></button>
+    </form>
+  </div>
+
 </div>
+

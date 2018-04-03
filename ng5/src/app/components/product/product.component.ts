@@ -1,9 +1,7 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ProductService } from '../../services/product.service';
 import { Product } from '../../models/product';
-import { DataTable } from "primeng/components/datatable/datatable";
-import { BehaviorSubject } from "rxjs/BehaviorSubject";
-import { Observable } from "rxjs/Observable";
+import { DataTable } from 'primeng/components/datatable/datatable';
 
 
 @Component({
@@ -11,33 +9,33 @@ import { Observable } from "rxjs/Observable";
   templateUrl: './product.component.html',
   styleUrls: ['./product.component.scss']
 })
-export class ProductComponent {
+export class ProductComponent implements OnInit {
   @ViewChild('dt') input: DataTable;
 
-  private products: Product[] = []
+  private products: Product[] = [];
 
   constructor(private _productService: ProductService) { }
 
   ngOnInit() {
-    this._productService.getProducts().subscribe(data => {      
+    this._productService.getProducts().subscribe(data => {
       this.products = data['products'];
-    });    
+    });
   }
 
-  addProduct(name: HTMLInputElement, price: HTMLInputElement) {    
+
+  addProduct(name: HTMLInputElement, price: HTMLInputElement) {
     const product = new Product(name.value, price.value);
     this._productService.saveProduct(product).subscribe(resp => {
-      name.value = "";
-      price.value = "";      
-      this.products.push(resp["createdProduct"])      
+      name.value = '';
+      price.value = '';
+      this.products.push(resp['createdProduct'])
       this.input.updateDataToRender(this.products)
     });
 
-    
   }
 
-  handleRowSelect(product){
-    
+  handleRowSelect(event) {
+    console.log(event)
   }
 
 }

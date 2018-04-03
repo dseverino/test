@@ -4,13 +4,13 @@
     justify-content: space-around;
 }
 
-.childContainer{   
+.childContainer{
     width: 50%;
     margin: 0 10px;
     max-height: 100%;
 }
 
-.parentform {
+.parent-form {
     display: flex;
     justify-content: center;
     flex-direction: column;
@@ -26,4 +26,8 @@ input{
     background: #2885C4;
     padding: 30px;
     margin: 0px;
+}
+
+.bordered {
+  border: 1px solid red;
 }
