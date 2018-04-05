@@ -14,7 +14,7 @@ export class CarService {
   private subject: BehaviorSubject<Car[]> = new BehaviorSubject<Car[]>([]);
 
   constructor(private http: Http) {
-    this.http.get('http://localhost:3000/cars')
+    this.http.get('api/cars')
                     .toPromise()
                     .then(res => <Car[]> res.json())
                     .then(data => this.subject.next(data));

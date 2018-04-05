@@ -1,7 +1,8 @@
 <div class="parentContainer">
   <div class="childContainer">
 
-    <p-table [value]="products" #dt dataKey="_id" (onRowSelect)="handleRowSelect($event)" [(selection)]="selectedProduct">
+    <p-table [value]="products" [lazy]='true' (onLazyLoad)="loadProducts($event)" [paginator]='true' [loading]='loading' [totalRecords]='totalRecords'
+      [rows]='rows' dataKey="_id" (onRowSelect)="handleRowSelect($event)" [(selection)]="selectedProduct" [rowsPerPageOptions]="[5,10,20]">
       <ng-template pTemplate="header">
         <tr>
           <th style="width: 2.25em">
@@ -9,6 +10,7 @@
           </th>
           <th>Name</th>
           <th>Price</th>
+          <th>Actions</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-product>
@@ -18,6 +20,16 @@
           </td>
           <td>{{product.name}}</td>
           <td>{{product.price}}</td>
+          <td>
+            <div style="text-align: center">
+              <button (click)="onEditRow(product)">
+                <i class="fa fa-pencil-square-o"></i>
+              </button>
+              <button (click)="onDeleteRow(product)">
+                <i class="fa fa-trash-o"></i>
+              </button>
+            </div>
+          </td>
         </tr>
       </ng-template>
     </p-table>
@@ -34,4 +46,3 @@
   </div>
 
 </div>
-

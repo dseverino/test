@@ -3,11 +3,14 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http'
 
+//Services
 import { DataService } from './services/data.service';
 import { CarService } from './services/car.service';
 import { ProductService } from './services/product.service';
 import { OrderService } from './services/order.service';
+import { RestDataSource } from './utility/rest.datasource.service';
 
 import { AppRoutingModule } from './app-routing.module';
 
@@ -25,6 +28,7 @@ import { ButtonModule, DataTableModule, SharedModule, PanelModule, InputTextModu
   SpinnerModule, DropdownModule, DialogModule, CheckboxModule } from 'primeng/primeng';
 
 import {TableModule} from 'primeng/table';
+
 
 @NgModule({
   declarations: [
@@ -53,9 +57,10 @@ import {TableModule} from 'primeng/table';
     DropdownModule,
     DialogModule,
     CheckboxModule,
-    TableModule
+    TableModule,
+    HttpClientModule
   ],
-  providers: [DataService, CarService, ProductService, OrderService],
+  providers: [DataService, CarService, ProductService, OrderService, RestDataSource],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

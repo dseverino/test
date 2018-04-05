@@ -12,7 +12,7 @@ export class DataService {
   private goals = new BehaviorSubject<Goal[]>([])
 
   constructor(private http : Http) {
-    this.http.get('http://localhost:3000/goals')
+    this.http.get('api/goals')
       .toPromise()
       .then(data => <Goal[]> data.json())
       .then(data => this.goals.next(data));
@@ -24,11 +24,11 @@ export class DataService {
 
   saveGoal(goal: string): Observable<Goal>{
     let newGoal = new Goal(goal);
-    return this.http.post('http://localhost:3000/goals', newGoal).map(res => res.json());
+    return this.http.post('api/goals', newGoal).map(res => res.json());
   }
 
   removeGoal(index: number){
     const id = this.goals.getValue()[index]._id
-    return this.http.delete('http://localhost:3000/goals/' + id ).map(res => res.json());
+    return this.http.delete('api/goals/' + id ).map(res => res.json());
   }
 }

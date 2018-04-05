@@ -60,7 +60,7 @@ route.get('/:productId', (req, res, next) => {
     })
 });
 
-route.post('/', (req, res, next) => {
+route.post('/', (req, res, next) => {  
   const product = new Product({
     _id: new mongoose.Types.ObjectId(),
     name: req.body.name,

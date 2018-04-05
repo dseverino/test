@@ -10,15 +10,17 @@ import { DataTable } from 'primeng/components/datatable/datatable';
   styleUrls: ['./product.component.scss']
 })
 export class ProductComponent implements OnInit {
-  @ViewChild('dt') input: DataTable;
 
   private products: Product[] = [];
+  rows = 10;
+  totalRecords: number;
 
   constructor(private _productService: ProductService) { }
 
   ngOnInit() {
     this._productService.getProducts().subscribe(data => {
       this.products = data['products'];
+      this.totalRecords = data['count']
     });
   }
 
@@ -28,14 +30,25 @@ export class ProductComponent implements OnInit {
     this._productService.saveProduct(product).subscribe(resp => {
       name.value = '';
       price.value = '';
-      this.products.push(resp['createdProduct'])
-      this.input.updateDataToRender(this.products)
+      this.products.push(resp['createdProduct'])      
     });
 
   }
 
   handleRowSelect(event) {
     console.log(event)
+  }
+
+  loadProducts(event){
+    console.log(event)
+  }
+
+  onDeleteRow(product){
+    console.log(product)
+  }
+
+  onEditRow(product){
+    console.log(product)
   }
 
 }

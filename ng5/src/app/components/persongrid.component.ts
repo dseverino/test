@@ -6,10 +6,10 @@ import { Car } from '../models/car';
 @Component({
   selector: 'app-persongrid',
   template: `
-    <p-dataTable [value]="cars" selectionMode="single" [(selection)]="selectedCar1" dataKey="vin" (onRowSelect)="handleRowSelect($event)">      
+    <p-dataTable [value]="cars" selectionMode="single" [(selection)]="selectedCar" dataKey="vin" (onRowSelect)="handleRowSelect($event)">      
       <p-footer>
         <div style="text-align: left">
-          Selected Car: {{selectedCar1 ? selectedCar1.vin + ' - ' + selectedCar1.brand + ' - ' + selectedCar1.year + ' - ' + selectedCar1.color: 'none'}}
+          Selected Car: {{selectedCar ? selectedCar.vin + ' - ' + selectedCar.brand + ' - ' + selectedCar.year + ' - ' + selectedCar.color: 'none'}}
         </div>
       </p-footer>
       <p-column field="vin" header="Vin"> </p-column>

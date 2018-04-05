@@ -38,10 +38,10 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use('/products', productRoute);
-app.use('/orders', orderRoute);
-app.use('/cars', carRoute);
-app.use('/goals', goalRoute);
+app.use('/api/products', productRoute);
+app.use('/api/orders', orderRoute);
+app.use('/api/cars', carRoute);
+app.use('/api/goals', goalRoute);
 
 app.use((req, resp, next) => {
     const error = new Error('Not found');

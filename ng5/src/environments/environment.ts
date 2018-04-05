@@ -4,5 +4,10 @@
 // The list of which env maps to which file can be found in `.angular-cli.json`.
 
 export const environment = {
-  production: false
+  production: false,
+
+  urls: {
+    GET_PRODUCTS: '/api/products',
+    POST_SAVE_PRODUCT: '/api/products'
+  }
 };
