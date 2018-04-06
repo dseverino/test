@@ -8,6 +8,8 @@ export const environment = {
 
   urls: {
     GET_PRODUCTS: '/api/products',
-    POST_SAVE_PRODUCT: '/api/products'
+    POST_SAVE_PRODUCT: '/api/products',
+
+    GET_CARS: 'api/cars'
   }
 };

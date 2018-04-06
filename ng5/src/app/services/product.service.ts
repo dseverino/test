@@ -4,7 +4,7 @@ import { Product } from '../models/product';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
-import { RestDataSource } from '../utility/rest.datasource.service';
+import { MainService } from '../utility/main.service';
 import { environment } from '../../environments/environment';
 
 @Injectable()
@@ -12,7 +12,7 @@ export class ProductService {
 
   private products = new BehaviorSubject<Product[]>([])
 
-  constructor(private restDataSource: RestDataSource) {
+  constructor(private restDataSource: MainService) {
     this.restDataSource.sendRequest('get', environment.urls.GET_PRODUCTS).subscribe(resp => {
       this.products.next(resp)
     })
