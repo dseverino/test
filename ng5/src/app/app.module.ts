@@ -28,6 +28,8 @@ import { ButtonModule, DataTableModule, SharedModule, PanelModule, InputTextModu
   SpinnerModule, DropdownModule, DialogModule, CheckboxModule } from 'primeng/primeng';
 
 import {TableModule} from 'primeng/table';
+import {ConfirmDialogModule} from 'primeng/confirmdialog';
+import {ConfirmationService} from 'primeng/api';
 
 
 @NgModule({
@@ -58,9 +60,11 @@ import {TableModule} from 'primeng/table';
     DialogModule,
     CheckboxModule,
     TableModule,
-    HttpClientModule
+    HttpClientModule,
+    ConfirmDialogModule,
+    
   ],
-  providers: [DataService, CarService, ProductService, OrderService, MainService],
+  providers: [DataService, CarService, ProductService, OrderService, MainService, ConfirmationService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
