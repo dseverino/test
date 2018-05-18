@@ -9,25 +9,16 @@ import { environment } from '../../environments/environment';
 import { HttpParams } from '@angular/common/http';
 
 @Injectable()
-export class ProductService {
+export class ProductService {  
 
-  private products = new BehaviorSubject<Product[]>([])
-
-  constructor(private mainService: MainService) {
-    this.mainService.sendRequest('get', environment.urls.GET_PRODUCTS).subscribe(resp => {
-      this.products.next(resp)
-    })
-      //.toPromise()
-      //.then(data => <Product[]> data.json())
-      //.then(data => this.products.next(data));
-  }
+  constructor(private mainService: MainService) { }
 
   saveProduct(newProduct: Product){
     return this.mainService.sendRequest('post', environment.urls.POST_SAVE_PRODUCT, newProduct)
   }
 
-  getProducts(): BehaviorSubject<Product[]>{
-    return this.products
+  getProducts(): Observable<any>{
+    return this.mainService.sendRequest('get', environment.urls.GET_PRODUCTS)
   }
 
   deleteProduct(product: Product): Observable<any> {

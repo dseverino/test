@@ -39,6 +39,7 @@ route.get('/:productId', (req, res, next) => {
     .exec()
     .then(doc => {
       console.log('From database', doc);
+      
       if (doc) {
         res.status(200).json({
           product: doc,

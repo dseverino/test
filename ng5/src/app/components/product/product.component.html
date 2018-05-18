@@ -1,8 +1,8 @@
 <div class="parentContainer">
   <div class="childContainer">
 
-    <p-table [value]="products" [lazy]='true' (onLazyLoad)="loadProducts($event)" [paginator]='true' [loading]='loading' [totalRecords]='totalRecords'
-      [rows]='rows' dataKey="_id" (onRowSelect)="handleRowSelect($event)" [(selection)]="selectedProduct" [rowsPerPageOptions]="[5,10,20]">
+    <p-table [value]="products" [paginator]='true' [loading]='loading' [totalRecords]='totalRecords'
+        [rows]='rows' dataKey="_id" (onRowSelect)="handleRowSelect($event)" [(selection)]="selectedProduct">
       <ng-template pTemplate="header">
         <tr>
           <th style="width: 2.25em">
@@ -40,6 +40,7 @@
     <form class="parent-form">
       <input type="text" pInputText placeholder="Name" name="name" #newName>
       <input type="text" placeholder="Price" pInputText name="price" #newPrice>
+      
 
       <button type="button" pButton (click)="addProduct(newName, newPrice)" style="display:block; margin-top: 20px;" label="Save"></button>
     </form>
