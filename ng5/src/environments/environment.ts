@@ -7,7 +7,11 @@ export const environment = {
   production: false,
 
   urls: {
-    GET_PRODUCTS: '/api/products',
-    POST_SAVE_PRODUCT: '/api/products'
+    //Products
+    GET_PRODUCTS: '/api/products/get',
+    POST_SAVE_PRODUCT: '/api/products/save',
+    DELETE_PRODUCT: '/api/products/delete',
+
+    GET_CARS: 'api/cars'
   }
 };

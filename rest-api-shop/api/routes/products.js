@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 
 const Product = require('../models/product');
 
-route.get('/', (req, res, next) => {
+route.get('/get', (req, res, next) => {
   Product.find()
     .select('name price')
     .exec()
@@ -39,6 +39,7 @@ route.get('/:productId', (req, res, next) => {
     .exec()
     .then(doc => {
       console.log('From database', doc);
+      
       if (doc) {
         res.status(200).json({
           product: doc,
@@ -60,7 +61,7 @@ route.get('/:productId', (req, res, next) => {
     })
 });
 
-route.post('/', (req, res, next) => {  
+route.post('/save', (req, res, next) => {  
   const product = new Product({
     _id: new mongoose.Types.ObjectId(),
     name: req.body.name,
@@ -92,12 +93,16 @@ route.post('/', (req, res, next) => {
     })
 });
 
-route.delete('/:productId', (req, res, next) => {
-  const id = req.params.productId;
-  Product.remove({ _id: id })
+route.post('/delete', (req, res, next) => {  
+  
+  Product.remove({ _id: req.body._id })
     .exec()
     .then(result => {
-      res.status(200).json(result)
+      res.status(200).json({
+        code: '000',
+        text: 'Success',
+        result: result
+      })
     })
     .catch(err => {
       console.log(err)

@@ -4,29 +4,25 @@ import { Product } from '../models/product';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
-import { RestDataSource } from '../utility/rest.datasource.service';
+import { MainService } from '../utility/main.service';
 import { environment } from '../../environments/environment';
+import { HttpParams } from '@angular/common/http';
 
 @Injectable()
-export class ProductService {
+export class ProductService {  
 
-  private products = new BehaviorSubject<Product[]>([])
-
-  constructor(private restDataSource: RestDataSource) {
-    this.restDataSource.sendRequest('get', environment.urls.GET_PRODUCTS).subscribe(resp => {
-      this.products.next(resp)
-    })
-      //.toPromise()
-      //.then(data => <Product[]> data.json())
-      //.then(data => this.products.next(data));
-  }
+  constructor(private mainService: MainService) { }
 
   saveProduct(newProduct: Product){
-    return this.restDataSource.sendRequest('post', environment.urls.POST_SAVE_PRODUCT, newProduct)
+    return this.mainService.sendRequest('post', environment.urls.POST_SAVE_PRODUCT, newProduct)
   }
 
-  getProducts(): BehaviorSubject<Product[]>{
-    return this.products
+  getProducts(): Observable<any>{
+    return this.mainService.sendRequest('get', environment.urls.GET_PRODUCTS)
+  }
+
+  deleteProduct(product: Product): Observable<any> {
+    return this.mainService.sendRequest('post', environment.urls.DELETE_PRODUCT, product)
   }
 
 }

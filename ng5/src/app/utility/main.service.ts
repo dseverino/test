@@ -3,19 +3,17 @@ import { HttpClient } from "@angular/common/http";
 import { Observable } from 'rxjs/Observable';
 
 @Injectable()
-export class RestDataSource {
+export class MainService {
 
   constructor(private http: HttpClient) { }
 
   public sendRequest(method: string, url: string, body?: any, httpHeaders?: any) : Observable<any> {
-    if (method == "POST".toLowerCase()) {
+    if (method == "post") {
       return this.http[method](url, body, httpHeaders);
     }
     else {
       return this.http[method](url, body);
     }
-
-
 
   }
 

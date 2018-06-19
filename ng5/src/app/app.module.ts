@@ -10,7 +10,7 @@ import { DataService } from './services/data.service';
 import { CarService } from './services/car.service';
 import { ProductService } from './services/product.service';
 import { OrderService } from './services/order.service';
-import { RestDataSource } from './utility/rest.datasource.service';
+import { MainService } from './utility/main.service';
 
 import { AppRoutingModule } from './app-routing.module';
 
@@ -28,6 +28,8 @@ import { ButtonModule, DataTableModule, SharedModule, PanelModule, InputTextModu
   SpinnerModule, DropdownModule, DialogModule, CheckboxModule } from 'primeng/primeng';
 
 import {TableModule} from 'primeng/table';
+import {ConfirmDialogModule} from 'primeng/confirmdialog';
+import {ConfirmationService} from 'primeng/api';
 
 
 @NgModule({
@@ -58,9 +60,11 @@ import {TableModule} from 'primeng/table';
     DialogModule,
     CheckboxModule,
     TableModule,
-    HttpClientModule
+    HttpClientModule,
+    ConfirmDialogModule,
+    
   ],
-  providers: [DataService, CarService, ProductService, OrderService, RestDataSource],
+  providers: [DataService, CarService, ProductService, OrderService, MainService, ConfirmationService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
