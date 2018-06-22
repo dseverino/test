@@ -67,13 +67,11 @@ router.post('/', (req, resp, next) => {
             resp.status(404).json({
                 error: err
             })
-        })
+      })
 })
 
 router.get('/:orderId', (req, res, next) => {
     const id = req.params.orderId;
-
-
     Order.findById(id)
         .populate('product')
         .exec()
@@ -108,7 +106,7 @@ router.delete('/:orderId', (req, res, next) => {
                 request: {
                     type: "POST",
                     url: "http://localhost:3000/orders",
-                    body: { productId: "ID", quantity: "NUMBER"}
+                    body: {productId: "ID", quantity: "NUMBER"}
                 }
             })
         })

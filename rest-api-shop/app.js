@@ -9,6 +9,7 @@ const productRoute = require('./api/routes/products');
 const orderRoute = require('./api/routes/orders');
 const carRoute = require('./api/routes/cars');
 const goalRoute = require('./api/routes/goals');
+const userRoute = require('./api/routes/users');
 
 const url = "mongodb://localhost:27017/mydb";
 /*const url = "mongodb://dseverino:Technology01@" +
@@ -27,35 +28,37 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*')
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization')
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization')
 
-    if (req.method === 'OPTIONS') {
-        res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE')
-        return res.status(200).json({})
-    }
+  if (req.method === 'OPTIONS') {
+    0
+    res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE')
+    return res.status(200).json({})
+  }
 
-    next();
+  next();
 });
 
 app.use('/api/products', productRoute);
 app.use('/api/orders', orderRoute);
 app.use('/api/cars', carRoute);
 app.use('/api/goals', goalRoute);
+app.use('/api/users', userRoute);
 
 app.use((req, resp, next) => {
-    const error = new Error('Not found');
-    error.status = 404;
-    next(error);
+  const error = new Error('Not found');
+  error.status = 404;
+  next(error);
 })
 
 app.use((error, req, res, next) => {
-    res.status(error.status || 500);
-    res.json({
-        error: {
-            message: error.message
-        }
-    })
+  res.status(error.status || 500);
+  res.json({
+    error: {
+      message: error.message
+    }
+  })
 });
 
 module.exports = app;
