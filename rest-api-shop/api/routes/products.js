@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 
 const Product = require('../models/product');
 
-router.get('/get', (req, res, next) => {
+router.get('/', (req, res, next) => {
   Product.find()
     .select('name price')
     .exec()
@@ -61,7 +61,7 @@ router.get('/:productId', (req, res, next) => {
     })
 });
 
-router.post('/save', (req, res, next) => {
+router.post('/', (req, res, next) => {
   const product = new Product({
     _id: new mongoose.Types.ObjectId(),
     name: req.body.name,
@@ -93,9 +93,9 @@ router.post('/save', (req, res, next) => {
     })
 });
 
-router.post('/delete', (req, res, next) => {
+router.delete('/:productId', (req, res, next) => {
   
-  Product.remove({ _id: req.body._id })
+  Product.remove({ _id: req.params.productId })
     .exec()
     .then(result => {
       res.status(200).json({
