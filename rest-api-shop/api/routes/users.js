@@ -73,7 +73,7 @@ router.post('/login', (req, res, next) => {
             const token = jwt.sign({
                 email: user[0].email,
                 userId: user[0]._id
-              }, "test",
+              }, process.env.JWT_KEY,
               {
                 expiresIn: "1h"
               })
@@ -126,7 +126,7 @@ router.get('/', (req, res, next) => {
             _id: user._id,
             request: {
               type: 'GET',
-              url: 'http://localhost:3000/api/users/' + user._id
+              url: 'http://localhost:3000/users/' + user._id
             }
           }
         })
@@ -145,7 +145,7 @@ router.get('/:userId', (req, res, next) => {
           user: result,
           request: {
             type: 'GET',
-            url: 'http://localhost:3000/api/users/' + result._id
+            url: 'http://localhost:3000/users/' + result._id
           }
         })
       }
