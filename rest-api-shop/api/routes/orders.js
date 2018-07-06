@@ -4,31 +4,10 @@ const Order = require('../models/order');
 const mongoose = require('mongoose');
 const Product = require('../models/product');
 
-router.get('/', (req, resp, next) => {
-    Order.find()
-        .select("product quantity _id")
-        .populate('product', "name")
-        .exec()
-        .then(result => {
-            resp.status(200).json({
-                count: result.length,
-                orders: result.map(doc => {
-                    return {
-                        _id: doc._id,
-                        product: doc.product,
-                        quantity: doc.quantity,
-                        request: {
-                            type: "GET",
-                            url: "http://localhost:3000/api/orders/" + doc._id
-                        }
-                    }
-                })
-            })
-        })
-        .catch(err => {
-            resp.status(500).json({error: err})
-        })
-});
+const checkAuth = require('../middleware/check-auth');
+const ordersController = require('../controllers/orders');
+
+router.get('/', checkAuth, ordersController.orders_get_all);
 
 router.post('/', (req, resp, next) => {
     Product.findById(req.body.productId)

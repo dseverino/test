@@ -32,7 +32,6 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization')
 
   if (req.method === 'OPTIONS') {
-    0
     res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE')
     return res.status(200).json({})
   }
@@ -40,6 +39,7 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use('/uploads', express.static('uploads'))
 app.use('/products', productRoute);
 app.use('/orders', orderRoute);
 app.use('/cars', carRoute);
