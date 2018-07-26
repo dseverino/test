@@ -14,8 +14,5 @@ export class MainService {
     else {
       return this.http[method](url, body);
     }
-
   }
-
-
 }
