@@ -1,5 +1,7 @@
 {
   "env": {
-    
+    "MONGO_USER": "jseverino",
+    "MONGO_PASSWORD": "RBDQ1AoahAusjADd",
+    "MONGO_DB": "react-mongo-graphql"
   }
 }
