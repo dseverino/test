@@ -1,7 +1,5 @@
 const Booking = require("../../models/booking");
-const { event } = require("../resolvers/merge")
-const { user } = require("../resolvers/merge")
-const { transformEvent } = require("../resolvers/merge")
+const { transformEvent, transformBooking } = require("../resolvers/merge")
 
 module.exports = {
   bookings: async () => {
@@ -10,14 +8,7 @@ module.exports = {
       const bookings = await Booking.find();
 
       return bookings.map(booking => {
-        return {
-          ...booking,
-          _id: booking.id,
-          user: user.bind(this, booking.user),
-          event: event.bind(this, booking.event),
-          createdAt: booking.createdAt.toISOString(),
-          updatedAt: booking.updatedAt.toISOString()
-        }
+        return transformBooking(booking)
       })
     }
     catch (err) {
@@ -27,17 +18,11 @@ module.exports = {
   bookEvent: async (args) => {
     const bookEvent = new Booking({
       event: args.eventId,
-      user: "5c3e7ec3b7fc1323404663f2"
+      user: "5c478a8e0d01e62768b3b874"
     })
     try {
       const result = await bookEvent.save();
-      return {
-        _id: result.id,
-        user: user.bind(this, "5c3e7ec3b7fc1323404663f2"),
-        createdAt: result.createdAt.toISOString(),
-        updatedAt: result.updatedAt.toISOString(),
-        event: event.bind(this, result.event)
-      }
+      return transformBooking(result)
     }
     catch (err) {
       throw err

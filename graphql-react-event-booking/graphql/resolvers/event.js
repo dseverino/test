@@ -22,12 +22,12 @@ module.exports = {
         description: args.eventInput.description,
         price: args.eventInput.price,
         date: new Date(args.eventInput.date).toISOString(),
-        creator: "5c3e7ec3b7fc1323404663f2"
+        creator: "5c478a8e0d01e62768b3b874"
       })
 
       const result = await event.save()
       let createdEvent = transformEvent(result)
-      const userSaved = await User.findById("5c3e7ec3b7fc1323404663f2")
+      const userSaved = await User.findById("5c478a8e0d01e62768b3b874")
       
       if (!userSaved) {
         throw new Error("User does not exists")
@@ -35,7 +35,7 @@ module.exports = {
 
       userSaved.createdEvents.push(createdEvent._id)
       //await userSaved.save();
-      await User.findByIdAndUpdate("5c3e7ec3b7fc1323404663f2", { $set: { createdEvents: userSaved.createdEvents } }, function (err, user) {
+      await User.findByIdAndUpdate("5c478a8e0d01e62768b3b874", { $set: { createdEvents: userSaved.createdEvents } }, function (err, user) {
         if (err) return handleError(err);
       });
       return createdEvent
