@@ -62,7 +62,6 @@ const events = async eventIds => {
   }
 }
 
-exports.events = events
 exports.transformBooking = transformBooking
 exports.transformEvent = transformEvent
 exports.transformUser = transformUser

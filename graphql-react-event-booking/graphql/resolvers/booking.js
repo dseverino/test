@@ -15,10 +15,13 @@ module.exports = {
       throw err
     }
   },
-  bookEvent: async (args) => {
+  bookEvent: async (args, req) => {
+    if (!req.loggedIn) {
+      throw new Error("User not authenticated!")
+    }
     const bookEvent = new Booking({
       event: args.eventId,
-      user: "5c478a8e0d01e62768b3b874"
+      user: req.userId
     })
     try {
       const result = await bookEvent.save();
@@ -28,7 +31,10 @@ module.exports = {
       throw err
     }
   },
-  cancelBooking: async args => {
+  cancelBooking: async (args, req) => {
+    if (!req.loggedIn) {
+      throw new Error("User not authenticated!")
+    }
     try {
       const booking = await Booking.findByIdAndRemove({ _id: args.bookingId }).populate("event");
       return transformEvent(booking.event)

@@ -3,7 +3,7 @@ const { transformEvent } = require("../resolvers/merge");
 const User = require("../../models/user")
 
 module.exports = {
-  events: async () => {
+  events: async () => {      
     try {
       //Event.deleteMany().then()      
       const events = await Event.find().populate("creator")
@@ -15,19 +15,22 @@ module.exports = {
       throw err
     }
   },
-  createEvent: async args => {
+  createEvent: async (args, req) => {
+    if(!req.loggedIn){
+      throw new Error("User not authenticated!")
+    }
     try {
       const event = new Event({
         title: args.eventInput.title,
         description: args.eventInput.description,
         price: args.eventInput.price,
         date: new Date(args.eventInput.date).toISOString(),
-        creator: "5c478a8e0d01e62768b3b874"
+        creator: req.userId
       })
 
       const result = await event.save()
       let createdEvent = transformEvent(result)
-      const userSaved = await User.findById("5c478a8e0d01e62768b3b874")
+      const userSaved = await User.findById(req.userId)
       
       if (!userSaved) {
         throw new Error("User does not exists")
@@ -35,7 +38,7 @@ module.exports = {
 
       userSaved.createdEvents.push(createdEvent._id)
       //await userSaved.save();
-      await User.findByIdAndUpdate("5c478a8e0d01e62768b3b874", { $set: { createdEvents: userSaved.createdEvents } }, function (err, user) {
+      await User.findByIdAndUpdate(req.userId, { $set: { createdEvents: userSaved.createdEvents } }, function (err, user) {
         if (err) return handleError(err);
       });
       return createdEvent
