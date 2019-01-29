@@ -5,6 +5,7 @@ import AuthPage from "./pages/Auth"
 import BookingsPage from "./pages/Bookings"
 import EventsPage from "./pages/Events"
 import MainNavigation from "./components/Navigation/MainNavigation"
+
 import AuthContext from "./context/auth-context";
 
 import './App.css';
@@ -15,7 +16,7 @@ class App extends Component {
     token: null
   }
 
-  login = (userId, token, tokenExpiration) => {
+  login = (token, userId, tokenExpiration) => {
     this.setState({ userId: userId, token: token })
   }
   logout = () => {
@@ -30,10 +31,16 @@ class App extends Component {
             <MainNavigation />
             <main className="main-content">
               <Switch>
-                <Redirect from="/" to="/auth" exact />
-                <Route path="/auth" component={AuthPage} />
+                {!this.state.token && <Redirect from="/" to="/auth" exact />}
+                {this.state.token && <Redirect from="/" to="/events" exact />}
+
+                {!this.state.token && <Route path="/auth" component={AuthPage} />}
+                {this.state.token && <Redirect from="/auth" to="/events" exact />}
+
                 <Route path="/events" component={EventsPage} />
-                <Route path="/bookings" component={BookingsPage} />
+                
+                {this.state.token && <Route path="/bookings" component={BookingsPage} />}
+                {!this.state.token && <Redirect from="/bookings" to="/auth" exact />}
               </Switch>
             </main>
           </AuthContext.Provider>
