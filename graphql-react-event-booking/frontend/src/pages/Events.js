@@ -2,6 +2,8 @@ import React, { Component } from "react";
 
 import Modal from "../components/Modal/Modal";
 import Backdrop from "../components/Backdrop/Backdrop";
+import EventList from "../components/Events/EventList/EventList"
+import Spinner from "../components/Spinner/Spinner";
 
 import AuthContext from "../context/auth-context";
 
@@ -18,8 +20,14 @@ class EventsPage extends Component {
     this.descriptionElRef = React.createRef()
   }
 
+  componentDidMount = () => {
+    this.fetchEvents()
+  }
+
   state = {
-    creating: false
+    creating: false,
+    events: [],
+    isLoading: false
   }
 
   startCreateEvent = () => {
@@ -30,8 +38,48 @@ class EventsPage extends Component {
     this.setState({ creating: false })
   }
 
+  fetchEvents() {
+    this.setState({ isLoading: true })
+    const requestBody = {
+      query: `
+        query { 
+          events {
+            _id
+            title
+            description
+            price
+            date
+            creator {
+              _id
+            }
+          }
+        }
+      `
+    }
+
+    fetch("http://localhost:3000/graphql", {
+      method: 'POST',
+      body: JSON.stringify(requestBody),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+      .then(result => {
+        if (result.status !== 200 && result.status !== 201) {
+          throw new Error("Failed")
+        }
+        return result.json()
+      })
+      .then(resData => {
+        this.setState({ events: resData.data.events, isLoading: false });
+      })
+      .catch(error => {
+        console.log(error)
+        this.setState({ isLoading: false });
+      })
+  }
+
   modalConfirmHandler = () => {
-    console.log("submitted!!")
     const title = this.titleElRef.current.value;
     const price = this.priceElRef.current.value;
     const date = this.dateElRef.current.value;
@@ -41,22 +89,17 @@ class EventsPage extends Component {
       return;
     }
 
-    const event = { title, price, date, description }
-    console.log(event)
+    //const event = { title, price, date, description }
 
     const requestBody = {
       query: `
-        mutation { 
+        mutation {
           createEvent(eventInput: {title: "${title}", price: ${price}, date: "${date}", description: "${description}"}) {
             _id
             title
             description
             price
-            date
-            creator {
-              _id
-              email
-            }
+            date            
           }
         }
       `
@@ -79,10 +122,13 @@ class EventsPage extends Component {
         return result.json()
       })
       .then(resData => {
-        console.log(resData)
+        this.setState((prevState) => {
+          return { events: [...prevState.events, resData.data.createEvent] }
+        })
+        this.modalCancelHandler();
       })
       .catch(error => {
-        console.log(error)
+        console.log(error);
       })
   }
 
@@ -118,10 +164,11 @@ class EventsPage extends Component {
             <button onClick={this.startCreateEvent} className="btn">Create Event</button>
           </div>
         )}
-        <ul className="events__list">
-          <li className="events__list-item">Test</li>
-          <li className="events__list-item">Test</li>
-        </ul>
+        {this.state.isLoading ? (
+          <Spinner />
+        ) : (
+            <EventList events={this.state.events} userId={this.context.userId}></EventList>
+          )}
       </React.Fragment>
     );
   }
