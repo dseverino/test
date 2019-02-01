@@ -5,7 +5,7 @@ const User = require("../../models/user")
 module.exports = {
   events: async () => {      
     try {
-      //Event.deleteMany().then()      
+      //Event.findByIdAndRemove("5c51b71b9b4e950f6c367b2f").then()      
       const events = await Event.find().populate("creator")
       return events.map(event => {
         return transformEvent(event)

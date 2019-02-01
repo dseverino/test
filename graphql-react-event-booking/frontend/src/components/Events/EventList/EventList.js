@@ -12,7 +12,9 @@ const eventList = props => {
       date={event.date}
       userId={props.userId} 
       creatorId={event.creator._id}
-      eventId={event._id} title={event.title} />
+      eventId={event._id} 
+      title={event.title}
+      onDetails={props.openViewDetails} />
   })
 
   return (

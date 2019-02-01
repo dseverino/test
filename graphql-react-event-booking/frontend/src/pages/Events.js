@@ -24,18 +24,71 @@ class EventsPage extends Component {
     this.fetchEvents()
   }
 
+  componentWillUnmount() {
+    this.isActive = false;
+  }
+  
+
   state = {
     creating: false,
     events: [],
-    isLoading: false
+    isLoading: false,
+    selectedEvent: null
   }
+  isActive = true;
 
   startCreateEvent = () => {
     this.setState({ creating: true })
   }
 
   modalCancelHandler = () => {
-    this.setState({ creating: false })
+    this.setState({ creating: false, selectedEvent: null })
+  }
+
+  onDetailsHandler = (eventId) => {    
+    this.setState(prevState => {
+      const selectedEvent = prevState.events.find(event => event._id === eventId)
+      return { selectedEvent: selectedEvent }
+    })
+  }
+
+  bookEventHandler = () => {
+    if(!this.context.token) {
+      this.setState({selectedEvent: null})
+      return;
+    }
+    const requestBody = {
+      query: `
+        mutation {
+          bookEvent(eventId: "${this.state.selectedEvent._id}") {
+            _id
+            createdAt
+            updatedAt
+          }
+        }
+      `
+    }    
+
+    fetch("http://localhost:3000/graphql", {
+      method: 'POST',
+      body: JSON.stringify(requestBody),
+      headers: {
+        "Authorization": `Bearer ${this.context.token}`,
+        "Content-Type": "application/json"
+      }
+    })
+      .then(result => {
+        if (result.status !== 200 && result.status !== 201) {
+          throw new Error("Failed")
+        }
+        return result.json()
+      })
+      .then(resData => {        
+        this.setState({selectedEvent: null})   
+      })
+      .catch(error => {
+        console.log(error);
+      })
   }
 
   fetchEvents() {
@@ -71,7 +124,9 @@ class EventsPage extends Component {
         return result.json()
       })
       .then(resData => {
-        this.setState({ events: resData.data.events, isLoading: false });
+        if(this.isActive){
+          this.setState({ events: resData.data.events, isLoading: false });
+        }        
       })
       .catch(error => {
         console.log(error)
@@ -135,9 +190,9 @@ class EventsPage extends Component {
   render() {
     return (
       <React.Fragment>
-        {this.state.creating && <Backdrop></Backdrop>}
+        {(this.state.creating || this.state.selectedEvent) && <Backdrop></Backdrop>}
         {this.state.creating && (
-          <Modal title="Add Event" canCancel canConfirm onCancel={this.modalCancelHandler} onConfirm={this.modalConfirmHandler}>
+          <Modal title="Add Event" confirmTitle="Confirm" canCancel canConfirm onCancel={this.modalCancelHandler} onConfirm={this.modalConfirmHandler}>
             <form>
               <div className="form-control">
                 <label htmlFor="title">Title</label>
@@ -158,6 +213,20 @@ class EventsPage extends Component {
             </form>
           </Modal>
         )}
+        {this.state.selectedEvent && (
+          <Modal
+            title={this.state.selectedEvent.title}
+            canCancel
+            canConfirm
+            confirmTitle={this.context.token ? "Book" : "Confirm"}
+            onCancel={this.modalCancelHandler}
+            onConfirm={this.bookEventHandler}
+          >
+            <h1>{this.state.selectedEvent.title}</h1>
+            <h2>${Intl.NumberFormat().format(this.state.selectedEvent.price)} - {new Date(this.state.selectedEvent.date).toLocaleDateString()}</h2>
+            <p>{this.state.selectedEvent.description}</p>
+          </Modal>
+        )}
         {this.context.token && (
           <div className="events-control">
             <p>Share your own Events!</p>
@@ -167,7 +236,7 @@ class EventsPage extends Component {
         {this.state.isLoading ? (
           <Spinner />
         ) : (
-            <EventList events={this.state.events} userId={this.context.userId}></EventList>
+            <EventList openViewDetails={this.onDetailsHandler} events={this.state.events} userId={this.context.userId}></EventList>
           )}
       </React.Fragment>
     );
