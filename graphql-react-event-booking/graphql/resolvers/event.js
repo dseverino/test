@@ -3,9 +3,9 @@ const { transformEvent } = require("../resolvers/merge");
 const User = require("../../models/user")
 
 module.exports = {
-  events: async () => {      
+  events: async () => {
     try {
-      //Event.findByIdAndRemove("5c51b71b9b4e950f6c367b2f").then()      
+      //Event.remove().then()
       const events = await Event.find().populate("creator")
       return events.map(event => {
         return transformEvent(event)
@@ -16,34 +16,36 @@ module.exports = {
     }
   },
   createEvent: async (args, req) => {
-    if(!req.loggedIn){
+    if (!req.loggedIn) {
       throw new Error("User not authenticated!")
     }
-    try {
-      const event = new Event({
-        title: args.eventInput.title,
-        description: args.eventInput.description,
-        price: args.eventInput.price,
-        date: new Date(args.eventInput.date).toISOString(),
-        creator: req.userId
-      })
+    const event = new Event({
+      title: args.eventInput.title,
+      description: args.eventInput.description,
+      price: args.eventInput.price,
+      date: new Date(args.eventInput.date).toISOString(),
+      creator: req.userId
+    })
 
+    try {
       const result = await event.save()
       let createdEvent = transformEvent(result)
-      const userSaved = await User.findById(req.userId)
-      
-      if (!userSaved) {
+      const creator = await User.findById(req.userId)
+
+      if (!creator) {
         throw new Error("User does not exists")
       }
 
-      userSaved.createdEvents.push(createdEvent._id)
+      creator.createdEvents.push(event)
+      await creator.save();
       //await userSaved.save();
-      await User.findByIdAndUpdate(req.userId, { $set: { createdEvents: userSaved.createdEvents } }, function (err, user) {
+      /*await User.findByIdAndUpdate(req.userId, { $set: { createdEvents: userSaved.createdEvents } }, function (err, user) {
         if (err) return handleError(err);
-      });
+      });*/
       return createdEvent
     }
     catch (err) {
+      console.log(err)
       throw err
     }
   }

@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import AuthContext from "../context/auth-context";
 
 import BookingList from "../components/Bookings/BookingList/BookingList"
+import BookingsChart from "../components/Bookings/BookingsChart/BookingsChart"
 import Spinner from "../components/Spinner/Spinner"
 
 class BookingsPage extends Component {
@@ -10,7 +11,8 @@ class BookingsPage extends Component {
 
   state = {
     isLoading: false,
-    bookings: []
+    bookings: [],
+    outputType: 'list'
   }
 
   componentDidMount = () => {
@@ -21,14 +23,17 @@ class BookingsPage extends Component {
     this.setState({ isLoading: true })
     const requestBody = {
       query: `
-        mutation { 
-          cancelBooking(bookingId: "${bookingId}") {
+        mutation CancelBooking ($id: ID!){ 
+          cancelBooking(bookingId: $id) {
             _id
             title
             description
           }
         }
-      `
+      `,
+      variables: {
+        id: bookingId
+      }
     }
 
     fetch("http://localhost:3000/graphql", {
@@ -45,9 +50,9 @@ class BookingsPage extends Component {
         }
         return result.json()
       })
-      .then(resData => {        
+      .then(resData => {
         this.setState(prevState => {
-          return {bookings: this.state.bookings.filter(b => b._id !== bookingId), isLoading: false}
+          return { bookings: this.state.bookings.filter(b => b._id !== bookingId), isLoading: false }
         })
       })
       .catch(error => {
@@ -92,7 +97,7 @@ class BookingsPage extends Component {
         }
         return result.json()
       })
-      .then(resData => {        
+      .then(resData => {
         this.setState({ bookings: resData.data.bookings, isLoading: false });
       })
       .catch(error => {
@@ -101,14 +106,33 @@ class BookingsPage extends Component {
       })
   }
 
+  changeOutputHandler = outputType => {
+    if(outputType === 'list'){
+      this.setState({outputType: 'list'})
+    }
+    else {
+      this.setState({outputType: 'chart'})
+    }
+  }
+
   render() {
+    let content = <Spinner />;
+    if (!this.state.isLoading) {
+      content = (
+        <React.Fragment>
+          <div>
+            <button onClick={this.changeOutputHandler.bind(this, 'list')}>List</button>
+            <button onClick={this.changeOutputHandler.bind(this, 'chart')}>Chart</button>
+          </div>
+          <div>
+            {this.state.outputType === 'list' ? <BookingList bookings={this.state.bookings} onCancelBooking={this.onCancelBookingHandler} userId={this.context.userId} /> : <BookingsChart bookings={this.state.bookings} />}
+          </div>
+        </React.Fragment>
+      )
+    }
     return (
       <React.Fragment>
-        {this.state.isLoading ? (
-          <Spinner />
-        ) : (
-            <BookingList bookings={this.state.bookings} onCancelBooking={this.onCancelBookingHandler} userId={this.context.userId}></BookingList>
-          )}
+        {content}
       </React.Fragment>
     );
   }

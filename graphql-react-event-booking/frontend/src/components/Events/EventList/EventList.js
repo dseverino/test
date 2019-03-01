@@ -4,7 +4,7 @@ import EventItem from "./EventItem/EventItem";
 
 import "./EventList.css";
 
-const eventList = props => {
+const eventList = props => {  
   const events = props.events.map(event => {
     return <EventItem
       key={event._id} 

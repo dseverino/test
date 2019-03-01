@@ -1,52 +1,47 @@
+const DataLoader = require("dataloader");
+
 const Event = require("../../models/event")
 const User = require("../../models/user")
 
-const singleUser = async userId => {
-  try {
-    const user = await User.findById(userId)
-    return transformUser(user)
-  }
-  catch (err) {
-    throw err
-  }
-}
+const eventLoader = new DataLoader(eventIds => {  
+  return events(eventIds)
+})
 
-const transformUser = user => {
+const userLoader = new DataLoader(userIds => {
+  return User.find({ _id: { $in: userIds } })
+})
+
+const transformUser = (user) => {
   return {
     ...user._doc,
     _id: user.id,
     password: null,
-    createdEvents: events.bind(this, user.createdEvents)
+    createdEvents: () => eventLoader.loadMany(user._doc.createdEvents)
+  }
+}
+
+const user = async userId => {  
+  try {
+    const user = await userLoader.load(userId)
+    return {
+      ...user._doc,
+      _id: user.id,
+      password: null,
+      createdEvents: () => eventLoader.loadMany(user._doc.createdEvents)
+    }
+  }
+  catch (err) {
+    throw err
   }
 }
 
 const singleEvent = async eventId => {
   try {
-    const event = await Event.findById(eventId)
-    return transformEvent(event)
+    const event = await eventLoader.load(eventId.toString())
+    return event
   }
   catch (err) {
     throw err
-  }
-}
-
-const transformEvent = event => {
-  return {
-    ...event._doc,
-    _id: event.id,
-    date: new Date(event._doc.date).toISOString(),
-    creator: singleUser.bind(this, event.creator)
-  }
-}
-
-const transformBooking = booking => {
-  return {
-    ...booking,
-    _id: booking.id,
-    user: singleUser.bind(this, booking.user),
-    event: singleEvent.bind(this, booking.event),
-    createdAt: booking.createdAt.toISOString(),
-    updatedAt: booking.updatedAt.toISOString()
   }
 }
 
@@ -59,6 +54,26 @@ const events = async eventIds => {
   }
   catch (err) {
     throw err
+  }
+}
+
+const transformEvent = event => {  
+  return {
+    ...event._doc,
+    _id: event.id,
+    date: new Date(event._doc.date).toISOString(),
+    creator: user.bind(this, event.creator)
+  }
+}
+
+const transformBooking = booking => {  
+  return {
+    ...booking,
+    _id: booking.id,
+    user: user.bind(this, booking.user.toString()),
+    event: singleEvent.bind(this, booking.event),
+    createdAt: booking.createdAt.toISOString(),
+    updatedAt: booking.updatedAt.toISOString()
   }
 }
 

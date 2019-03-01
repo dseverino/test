@@ -8,8 +8,8 @@ const { events, transformUser } = require("../resolvers/merge");
 module.exports = {
   users: async () => {
     try {
-      //User.findByIdAndRemove("5c40d7b5cc5ed923183b0f56").then()
-      const users = await User.find()
+      //User.remove().then()
+      const users = await User.find()      
       return users.map(user => {
         return transformUser(user)
       })

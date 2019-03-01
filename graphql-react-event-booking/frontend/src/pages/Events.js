@@ -59,14 +59,17 @@ class EventsPage extends Component {
     }
     const requestBody = {
       query: `
-        mutation {
-          bookEvent(eventId: "${this.state.selectedEvent._id}") {
+        mutation BookEvent ($id: ID!) {
+          bookEvent(eventId: $id) {
             _id
             createdAt
             updatedAt
           }
         }
-      `
+      `,
+      variables: {
+        id: this.state.selectedEvent._id
+      }
     }    
 
     fetch("http://localhost:3000/graphql", {
@@ -136,11 +139,11 @@ class EventsPage extends Component {
 
   modalConfirmHandler = () => {
     const title = this.titleElRef.current.value;
-    const price = this.priceElRef.current.value;
+    const price = +this.priceElRef.current.value;
     const date = this.dateElRef.current.value;
-    const description = this.descriptionElRef.current.value;
+    const description = this.descriptionElRef.current.value;    
 
-    if (title.trim().length === 0 || price.trim().length === 0 || date.trim().length === 0 || description.trim().length === 0) {
+    if (title.trim().length === 0 || price === 0 || date.trim().length === 0 || description.trim().length === 0) {
       return;
     }
 
@@ -148,16 +151,25 @@ class EventsPage extends Component {
 
     const requestBody = {
       query: `
-        mutation {
-          createEvent(eventInput: {title: "${title}", price: ${price}, date: "${date}", description: "${description}"}) {
+        mutation CreateEvent($title: String!, $price: Float!, $date: String!, $desc: String!) {
+          createEvent(eventInput: {title: $title, price: $price, date: $date, description: $desc}) {
             _id
             title
             description
             price
-            date            
+            date       
+            creator {
+              _id
+            }     
           }
         }
-      `
+      `,
+      variables: {
+        title: title,
+        price: price,
+        date: date,
+        desc: description
+      }
     }
 
     const token = this.context.token
@@ -170,14 +182,14 @@ class EventsPage extends Component {
         "Content-Type": "application/json"
       }
     })
-      .then(result => {
+      .then(result => {        
         if (result.status !== 200 && result.status !== 201) {
           throw new Error("Failed")
         }
         return result.json()
       })
-      .then(resData => {
-        this.setState((prevState) => {
+      .then(resData => {        
+        this.setState((prevState) => {          
           return { events: [...prevState.events, resData.data.createEvent] }
         })
         this.modalCancelHandler();

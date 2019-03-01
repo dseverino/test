@@ -9,7 +9,7 @@ module.exports = {
       }
       //Booking.deleteMany().then()
       const bookings = await Booking.find({user: req.userId});
-
+      
       return bookings.map(booking => {
         return transformBooking(booking)
       })
