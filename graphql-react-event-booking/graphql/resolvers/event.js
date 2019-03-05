@@ -3,10 +3,10 @@ const { transformEvent } = require("../resolvers/merge");
 const User = require("../../models/user")
 
 module.exports = {
-  events: async () => {
+  events: async () => {    
     try {
       //Event.remove().then()
-      const events = await Event.find().populate("creator")
+      const events = await Event.find();
       return events.map(event => {
         return transformEvent(event)
       })

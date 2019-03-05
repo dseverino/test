@@ -5,6 +5,7 @@ import AuthContext from "../context/auth-context";
 import BookingList from "../components/Bookings/BookingList/BookingList"
 import BookingsChart from "../components/Bookings/BookingsChart/BookingsChart"
 import Spinner from "../components/Spinner/Spinner"
+import BookingsControls from "../components/Bookings/BookingsControls/BookingsControls"
 
 class BookingsPage extends Component {
   static contextType = AuthContext
@@ -74,6 +75,7 @@ class BookingsPage extends Component {
               _id
               title
               date
+              price
             }
             user {
               _id
@@ -120,10 +122,7 @@ class BookingsPage extends Component {
     if (!this.state.isLoading) {
       content = (
         <React.Fragment>
-          <div>
-            <button onClick={this.changeOutputHandler.bind(this, 'list')}>List</button>
-            <button onClick={this.changeOutputHandler.bind(this, 'chart')}>Chart</button>
-          </div>
+          <BookingsControls changeOutput={this.changeOutputHandler} activeOutputType={this.state.outputType}/>
           <div>
             {this.state.outputType === 'list' ? <BookingList bookings={this.state.bookings} onCancelBooking={this.onCancelBookingHandler} userId={this.context.userId} /> : <BookingsChart bookings={this.state.bookings} />}
           </div>
