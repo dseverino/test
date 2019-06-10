@@ -8,13 +8,14 @@ const horseList = props => {
   const horses = props.horses.map(horse => {
     return <HorseItem
       key={horse._id} 
+      horseId={horse._id}
       name={horse.name} 
       weight={horse.weight}
-      birth={props.userId} 
-      color={horse.creator._id}
-      sex={horse._id} 
-      sire={horse.title}
-      damn={horse.damn}
+      birth={horse.birth} 
+      color={horse.color}
+      sex={horse.sex} 
+      sire={horse.sire}
+      dam={horse.dam}
       stable={horse.stable}
       onDetails={props.openViewDetails} />
   })

@@ -26,7 +26,7 @@ class HorsesPage extends Component {
     isLoading: false,
     selectedHorse: null,
     horse: {
-      name: 'Beli',
+      name: '',
       weight: "",
       birth: "",
       color: "",
@@ -101,6 +101,7 @@ class HorsesPage extends Component {
       query: `
         query { 
           horses {
+            _id
             name
             weight
             birth
@@ -128,7 +129,7 @@ class HorsesPage extends Component {
         return result.json()
       })
       .then(resData => {
-        if (this.isActive) {
+        if (this.isActive) {          
           this.setState({ horses: resData.data.horses, isLoading: false });
         }
       })
@@ -185,6 +186,8 @@ class HorsesPage extends Component {
       })
       .then(resData => {
         this.setState((prevState) => {
+          console.log(resData)
+          console.log(prevState)
           return { horses: [...prevState.horses, resData.data.createHorse] }
         })
         this.modalCancelHandler();
@@ -211,7 +214,7 @@ class HorsesPage extends Component {
               </div>
               <div className="form-control">
                 <label htmlFor="birth">Birth</label>
-                <input type="datetime-local" onChange={this.onHandleChange} id="birth" value={this.state.horse.birth} />
+                <input type="date" onChange={this.onHandleChange} id="birth" value={this.state.horse.birth} />
               </div>              
               <div className="form-control">
                 <label htmlFor="color">Color</label>
