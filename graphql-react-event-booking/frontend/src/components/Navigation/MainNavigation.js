@@ -10,7 +10,7 @@ const mainNavigation = props => (
     {({ token, logout }) => (
       <header className="main-navigation">
         <div className="main-navigation__logo">
-          <h1>Easy Event</h1>
+          <h1>Easy Horse</h1>
         </div>
         <nav className="main-navigation__items">
           <ul>
@@ -18,12 +18,12 @@ const mainNavigation = props => (
               <NavLink to="/auth">Authenticate</NavLink>
             </li>}
             <li>
-              <NavLink to="/events">Events</NavLink>
+              <NavLink to="/events">Horses</NavLink>
             </li>
             {token && (
               <React.Fragment>
                 <li>
-                  <NavLink to="/bookings">Bookings</NavLink>
+                  <NavLink to="/bookings">Races</NavLink>
                 </li>
                 <li>
                   <button onClick={logout}>Logout</button>

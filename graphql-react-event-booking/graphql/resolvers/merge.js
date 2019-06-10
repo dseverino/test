@@ -1,10 +1,10 @@
 const DataLoader = require("dataloader");
 
-const Event = require("../../models/event")
+const Horse = require("../../models/horse")
 const User = require("../../models/user")
 
-const eventLoader = new DataLoader(eventIds => {
-  return events(eventIds)
+const horseLoader = new DataLoader(horseIds => {
+  return horses(horseIds)
 })
 
 const userLoader = new DataLoader(userIds => {
@@ -16,7 +16,7 @@ const transformUser = (user) => {
     ...user._doc,
     _id: user.id,
     password: null,
-    createdEvents: () => eventLoader.loadMany(user._doc.createdEvents)
+    createdHorses: () => horseLoader.loadMany(user._doc.createdHorses)
   }
 }
 
@@ -27,7 +27,7 @@ const user = async userId => {
       ...user._doc,
       _id: user.id,
       password: null,
-      createdEvents: () => eventLoader.loadMany(user._doc.createdEvents)
+      createdHorses: () => horseLoader.loadMany(user._doc.createdHorses)
     }
   }
   catch (err) {
@@ -35,26 +35,26 @@ const user = async userId => {
   }
 }
 
-const singleEvent = async eventId => {
+const singleHorse = async horseId => {
   try {
-    const event = await eventLoader.load(eventId.toString())
-    return event
+    const horse = await horseLoader.load(horseId.toString())
+    return horse
   }
   catch (err) {
     throw err
   }
 }
 
-const events = async eventIds => {  
+const horses = async horseIds => {  
   try {
-    const events = await Event.find({ _id: { $in: eventIds } })
-    events.sort((a, b) => {
+    const horses = await Horse.find({ _id: { $in: horseIds } })
+    horses.sort((a, b) => {
       return (
-        eventIds.indexOf(a._id.toString()) - eventIds.indexOf(b._id.toString())
+        horseIds.indexOf(a._id.toString()) - horseIds.indexOf(b._id.toString())
       );
     });    
-    return events.map(event => {
-      return transformEvent(event)
+    return horses.map(horse => {
+      return transformHorse(horse)
     })
   }
   catch (err) {
@@ -62,12 +62,19 @@ const events = async eventIds => {
   }
 }
 
-const transformEvent = event => {  
+const transformHorse = horse => {  
   return {
-    ...event._doc,
-    _id: event.id,
-    date: new Date(event._doc.date).toISOString(),
-    creator: user.bind(this, event.creator)
+    ...horse._doc,
+    _id: horse.id,
+    //date: new Date(horse._doc.date).toISOString(),
+    name: horse.name,
+    weight: horse.weight,
+    birth: horse.birth,
+    color: horse.color,
+    sex: horse.sex,
+    sire: horse.sire,
+    dam: horse.dam,
+    stable: horse.stable
   }
 }
 
@@ -76,12 +83,12 @@ const transformBooking = booking => {
     ...booking,
     _id: booking.id,
     user: user.bind(this, booking.user.toString()),
-    event: singleEvent.bind(this, booking.event),
+    horse: singleHorse.bind(this, booking.horse),
     createdAt: booking.createdAt.toISOString(),
     updatedAt: booking.updatedAt.toISOString()
   }
 }
 
 exports.transformBooking = transformBooking
-exports.transformEvent = transformEvent
+exports.transformHorse = transformHorse
 exports.transformUser = transformUser

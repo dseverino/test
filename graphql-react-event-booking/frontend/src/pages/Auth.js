@@ -19,9 +19,9 @@ class AuthPage extends Component {
 
   changeTitle = () => {
     this.setState((prevState) => {
-      return {isLogin: !prevState.isLogin}
+      return { isLogin: !prevState.isLogin }
     })
-  }  
+  }
 
   submitHandler = (event) => {
     event.preventDefault()

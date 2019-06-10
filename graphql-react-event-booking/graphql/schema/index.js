@@ -3,26 +3,29 @@ const { buildSchema } = require("graphql");
 module.exports = buildSchema(`
   type Booking {
     _id: ID!
-    event: Event!
+    horse: Horse!
     user: User!
     createdAt: String!
     updatedAt: String!
   }
 
-  type Event {
+  type Horse {
     _id: ID!
-    title: String!
-    description: String!
-    price: Float!
-    date: String!
-    creator: User!
+    name: String!
+    weight: String!
+    birth: String!
+    color: String!
+    sex: String!
+    sire: String!
+    dam: String!
+    stable: String!
   }
 
   type User {
     _id: ID!
     email: String!
     password: String
-    createdEvents: [Event!]
+    createdHorses: [Horse!]
   }
 
   type AuthData {
@@ -31,11 +34,15 @@ module.exports = buildSchema(`
     tokenExpiration: Int!
   }
 
-  input EventInput {
-    title: String!
-    description: String!
-    price: Float!
-    date: String!
+  input HorseInput {
+    name: String!
+    weight: String!
+    birth: String!
+    color: String!
+    sex: String!
+    sire: String!
+    dam: String!
+    stable: String!
   }
 
   input UserInput {
@@ -44,17 +51,17 @@ module.exports = buildSchema(`
   }
 
   type RootQuery {
-    events: [Event!]!
+    horses: [Horse!]!
     users: [User!]!
     bookings: [Booking!]!
     login(email: String!, password: String!): AuthData!
   }
 
   type RootMutation {
-    createEvent(eventInput: EventInput): Event
+    createHorse(horseInput: HorseInput): Horse
     createUser(userInput: UserInput) : User
-    bookEvent(eventId: ID!): Booking!
-    cancelBooking(bookingId: ID!): Event!
+    bookHorse(horseId: ID!): Booking!
+    cancelBooking(bookingId: ID!): Horse!
   }
 
   schema {

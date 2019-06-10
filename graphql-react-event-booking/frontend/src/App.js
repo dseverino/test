@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Redirect, Switch } from "react-router-dom"
 
 import AuthPage from "./pages/Auth"
 import BookingsPage from "./pages/Bookings"
-import EventsPage from "./pages/Events"
+import HorsesPage from "./pages/Horses"
 import MainNavigation from "./components/Navigation/MainNavigation"
 
 import AuthContext from "./context/auth-context";
@@ -32,12 +32,12 @@ class App extends Component {
             <main className="main-content">
               <Switch>
                 {!this.state.token && <Redirect from="/" to="/auth" exact />}
-                {this.state.token && <Redirect from="/" to="/events" exact />}
+                {this.state.token && <Redirect from="/" to="/horses" exact />}
 
                 {!this.state.token && <Route path="/auth" component={AuthPage} />}
-                {this.state.token && <Redirect from="/auth" to="/events" exact />}
+                {this.state.token && <Redirect from="/auth" to="/horses" exact />}
 
-                <Route path="/events" component={EventsPage} />
+                <Route path="/horses" component={HorsesPage} />
                 
                 {this.state.token && <Route path="/bookings" component={BookingsPage} />}
                 {!this.state.token && <Redirect from="/bookings" to="/auth" exact />}
