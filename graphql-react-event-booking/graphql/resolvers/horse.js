@@ -22,7 +22,7 @@ module.exports = {
     const horse = new Horse({
       name: args.horseInput.name,
       weight: args.horseInput.weight,
-      birth: args.horseInput.birth,
+      age: args.horseInput.age,
       color: args.horseInput.color,
       sex: args.horseInput.sex,
       sire: args.horseInput.sire,

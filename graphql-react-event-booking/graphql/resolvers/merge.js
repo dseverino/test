@@ -69,7 +69,7 @@ const transformHorse = horse => {
     //date: new Date(horse._doc.date).toISOString(),
     name: horse.name,
     weight: horse.weight,
-    birth: horse.birth,
+    age: horse.age,
     color: horse.color,
     sex: horse.sex,
     sire: horse.sire,
@@ -78,14 +78,13 @@ const transformHorse = horse => {
   }
 }
 
-const transformBooking = booking => {
+const transformProgram = program => {
   return {
-    ...booking,
-    _id: booking.id,
-    user: user.bind(this, booking.user.toString()),
-    horse: singleHorse.bind(this, booking.horse),
-    createdAt: booking.createdAt.toISOString(),
-    updatedAt: booking.updatedAt.toISOString()
+    ...program,
+    _id: program.id,
+    number: program.number,
+    race: [],
+    date: program.date
   }
 }
 

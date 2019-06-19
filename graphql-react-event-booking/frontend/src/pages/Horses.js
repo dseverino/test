@@ -28,7 +28,7 @@ class HorsesPage extends Component {
     horse: {
       name: '',
       weight: "",
-      birth: "",
+      age: "",
       color: "",
       sex: "",
       sire: "",
@@ -96,15 +96,16 @@ class HorsesPage extends Component {
   }
 
   fetchHorses() {
+    //include age
     this.setState({ isLoading: true })
     const requestBody = {
       query: `
-        query { 
+        query {
           horses {
             _id
             name
             weight
-            birth
+            
             color
             sex
             sire
@@ -154,7 +155,7 @@ class HorsesPage extends Component {
           createHorse(horseInput: $horse) {
             name
             weight
-            birth
+            age
             color
             sex
             sire
@@ -213,8 +214,8 @@ class HorsesPage extends Component {
                 <input type="text" onChange={this.onHandleChange} id="weight" value={this.state.horse.weight} />
               </div>
               <div className="form-control">
-                <label htmlFor="birth">Birth</label>
-                <input type="date" onChange={this.onHandleChange} id="birth" value={this.state.horse.birth} />
+                <label htmlFor="age">Age</label>
+                <input type="text" onChange={this.onHandleChange} id="age" value={this.state.horse.age} />
               </div>              
               <div className="form-control">
                 <label htmlFor="color">Color</label>
@@ -248,9 +249,9 @@ class HorsesPage extends Component {
             onCancel={this.modalCancelHandler}
             onConfirm={this.bookHorseHandler}
           >
-            <h1>{this.state.selectedHorse.title}</h1>
-            <h2>${Intl.NumberFormat().format(this.state.selectedHorse.price)} - {new Date(this.state.selectedHorse.date).toLocaleDateString()}</h2>
-            <p>{this.state.selectedHorse.description}</p>
+            <h1>{this.state.selectedHorse.name}</h1>
+            
+            <p>{this.state.selectedHorse.age}</p>
           </Modal>
         )}
         {this.context.token && (

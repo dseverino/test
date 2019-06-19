@@ -11,7 +11,7 @@ const horseSchema = new Schema({
         type: String,
         required: true
     },
-    birth: {
+    age: {
         type: String,
         required: true
     },

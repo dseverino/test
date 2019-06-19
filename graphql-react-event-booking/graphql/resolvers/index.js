@@ -1,9 +1,9 @@
 const userResolver = require("../resolvers/auth");
-const bookingResolver = require("../resolvers/booking");
+const programResolver = require("../resolvers/program");
 const horseResolver = require("../resolvers/horse");
 
 module.exports = {
   ...userResolver,
   ...horseResolver,
-  ...bookingResolver
+  ...programResolver
 }

@@ -1,19 +1,28 @@
 const { buildSchema } = require("graphql");
 
 module.exports = buildSchema(`
-  type Booking {
+  type Program {
     _id: ID!
-    horse: Horse!
-    user: User!
-    createdAt: String!
-    updatedAt: String!
+    number: String!
+    race: [Race!]
+    date: String!
+  }
+
+  type Race {
+    _id: ID!
+    programId: ID!
+    number: String!
+    distance: String!
+    claim: [String!]!
+    type: [String!]!
+    spec: String
   }
 
   type Horse {
     _id: ID!
     name: String!
     weight: String!
-    birth: String!
+    age: String!
     color: String!
     sex: String!
     sire: String!
@@ -37,12 +46,26 @@ module.exports = buildSchema(`
   input HorseInput {
     name: String!
     weight: String!
-    birth: String!
+    age: String!
     color: String!
     sex: String!
     sire: String!
     dam: String!
     stable: String!
+  }
+
+  input ProgramInput {
+    number: String!
+    date: String!
+  }
+
+  input RaceInput {
+    number: String!
+    distance: String!
+    claim: [String!]!
+    type: [String!]!
+    spec: String
+    programId: String!
   }
 
   input UserInput {
@@ -53,15 +76,16 @@ module.exports = buildSchema(`
   type RootQuery {
     horses: [Horse!]!
     users: [User!]!
-    bookings: [Booking!]!
+    programs: [Program!]!
+    races: [Race!]!
     login(email: String!, password: String!): AuthData!
   }
 
   type RootMutation {
     createHorse(horseInput: HorseInput): Horse
     createUser(userInput: UserInput) : User
-    bookHorse(horseId: ID!): Booking!
-    cancelBooking(bookingId: ID!): Horse!
+    createProgram(programInput: ProgramInput): Program!
+    createRace(raceInput: RaceInput): Race!
   }
 
   schema {

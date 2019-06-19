@@ -11,7 +11,7 @@ const horseList = props => {
       horseId={horse._id}
       name={horse.name} 
       weight={horse.weight}
-      birth={horse.birth} 
+      age={horse.age} 
       color={horse.color}
       sex={horse.sex} 
       sire={horse.sire}
