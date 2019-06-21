@@ -18,11 +18,7 @@ const horseSchema = new Schema({
     color: {
         type: String,
         required: true
-    },/*
-    creator: {
-        type: Schema.Types.ObjectId,
-        ref: "User"
-    }*/
+    },
     sex: {
         type: String,
         required: true
@@ -36,6 +32,11 @@ const horseSchema = new Schema({
         required: true
     },
     stable: {
+        type: String,
+        required: true
+    },
+    //shoul create Trainer model
+    trainer: {
         type: String,
         required: true
     }

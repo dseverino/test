@@ -4,18 +4,21 @@ module.exports = buildSchema(`
   type Program {
     _id: ID!
     number: String!
-    race: [Race!]
     date: String!
+    races: [Race!]    
   }
 
   type Race {
     _id: ID!
-    programId: ID!
-    number: String!
+    programId: String
+    event: String!
     distance: String!
-    claim: [String!]!
-    type: [String!]!
+    claimingPrice: [String!]!
+    claimingType: [String!]!
+    procedence: [String!]!
+    horseAge: String!
     spec: String
+    prize: String
   }
 
   type Horse {
@@ -60,12 +63,15 @@ module.exports = buildSchema(`
   }
 
   input RaceInput {
-    number: String!
+    programId: String
+    event: String!
     distance: String!
-    claim: [String!]!
-    type: [String!]!
+    claimingPrice: [String!]!
+    claimingType: [String!]!
+    procedence: [String!]!
+    horseAge: String!
     spec: String
-    programId: String!
+    prize: String!
   }
 
   input UserInput {
@@ -86,6 +92,9 @@ module.exports = buildSchema(`
     createUser(userInput: UserInput) : User
     createProgram(programInput: ProgramInput): Program!
     createRace(raceInput: RaceInput): Race!
+    deleteRace(raceId: String): Race!
+    addRace(programId: String, raceId: String): Program!
+    addHorse(raceId: ID, horseId: ID): Race!
   }
 
   schema {

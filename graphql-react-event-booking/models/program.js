@@ -1,6 +1,6 @@
-import { Schema, model } from "mongoose";
+const mongoose = require("mongoose");
 
-const programSchema = new Schema(
+const programSchema = new mongoose.Schema(
   {
     number: {
       type: String,
@@ -8,7 +8,7 @@ const programSchema = new Schema(
     },
     races: [
       {
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "Race"
       }
     ],
@@ -16,10 +16,7 @@ const programSchema = new Schema(
       type: String,
       required: true
     }
-  },
-  {
-    timestamps: true
   }
 )
 
-export default model("Program", programSchema);
+module.exports = mongoose.model("Program", programSchema);
