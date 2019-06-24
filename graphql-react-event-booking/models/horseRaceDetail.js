@@ -16,7 +16,7 @@ const horseRaceDetailSchema = new Schema({
         required: true,
     }, 
     jockeyWeight: {
-        type: String,
+        type: Number,
         required: true,
     }, 
     trainerId: {
@@ -28,44 +28,44 @@ const horseRaceDetailSchema = new Schema({
         required: true,
     }, 
     startingPosition: {
-        type: String,
+        type: Number,
         required: true,
     }, 
     positions: [
         {
-            type: Position
+            type: Object
         }
     ], 
     lengths: [
         {
-            type: Length
+            type: Object
         }
     ], 
     times: [
         {
-            type: Time
+            type: Object
         }
     ], 
     trainingTimes: [
         {
-            type: TrainingTime
+            type: Object
         }
     ], 
     horseWeight: {
-        type: String,
+        type: Number,
         required: true,
     }, 
     claimed: {
-        type: String,
+        type: Boolean,
         required: true,
     }, 
     retired: {
-        type: String,
+        type: Boolean,
         required: true,
     }, 
     retiredDetails: String, 
     bet: String, 
     horseTools: [String], 
-    totalHorses: String    
+    totalHorses: Number    
 })
 module.exports = mongoose.model("HorseRaceDetail", horseRaceDetailSchema);

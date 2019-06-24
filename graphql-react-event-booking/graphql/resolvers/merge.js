@@ -1,8 +1,10 @@
 const DataLoader = require("dataloader");
 
 const Horse = require("../../models/horse");
+const HorseRaceDetail = require("../../models/horseRaceDetail")
 const User = require("../../models/user");
 const Race = require("../../models/race");
+const Jockey = require("../../models/jockey");
 
 const horseLoader = new DataLoader(horseIds => {
   return horses(horseIds)
@@ -16,6 +18,14 @@ const racesLoader = new DataLoader(raceIds => {
   return races(raceIds)
 });
 
+const raceDetailLoader = new DataLoader(raceDetailIds => {  
+  return raceDetails(raceDetailIds)
+})
+
+const jockeyLoader = new DataLoader(jockeyId => {  
+  return Jockey.find({_id: {$in: jockeyId}})
+})
+
 const user = async userId => {
   try {
     const user = await userLoader.load(userId.toString())
@@ -28,6 +38,15 @@ const user = async userId => {
   }
   catch (err) {
     throw err
+  }
+}
+
+const jockey = async jockeyId => {
+  try {
+    const jockey = await jockeyLoader.load(jockeyId.toString())    
+    return transformJockey(jockey)
+  } catch (error) {
+    throw error
   }
 }
 
@@ -55,6 +74,18 @@ const races = async raceIds => {
   }
   catch (err) {
     throw err
+  }
+}
+
+const raceDetails = async raceDetailIds => {
+  
+  try {
+    const raceDetails = await HorseRaceDetail.find({ _id: { $in: raceDetailIds } })    
+    return raceDetails.map(raceDetail => {
+      return transformRaceDetail(raceDetail)
+    })
+  } catch (error) {
+    throw error
   }
 }
 
@@ -94,7 +125,33 @@ const transformHorse = horse => {
     color: horse.color,
     sex: horse.sex,
     sire: horse.sire,
-    dam: horse.dam
+    dam: horse.dam,
+    raceDetails: () => raceDetailLoader.loadMany(horse.raceDetails)
+  }
+}
+
+const transformRaceDetail = raceDetail => {    
+  return {
+    ...raceDetail,
+    _id: raceDetail.id,
+    raceId: raceDetail.raceId.toString(),
+    HorseId: raceDetail.HorseId.toString(), 
+    jockey: () => jockey(raceDetail.jockeyId),
+    jockeyWeight: raceDetail.jockeyWeight,
+    trainerId: raceDetail.trainerId,
+    stableId: raceDetail.stableId,
+    startingPosition: raceDetail.startingPosition,
+    positions: raceDetail.positions,
+    lengths: raceDetail.lengths,
+    times: raceDetail.times,
+    trainingTimes: raceDetail.trainingTimes,
+    horseWeight: raceDetail.horseWeight,
+    claimed: raceDetail.claimed,
+    retired: raceDetail.retired,
+    retiredDetails: raceDetail.retiredDetails,
+    bet: raceDetail.bet,
+    horseTools: raceDetail.horseTools,
+    totalHorses: raceDetail.totalHorses,
   }
 }
 
@@ -116,7 +173,7 @@ const transformRace = race => {
     distance: race.distance,
     claimingPrice: race.claimingPrice,
     claimingType: race.claimingType,
-    procedence: race.procedence, 
+    procedence: race.procedence,
     spec: race.spec,
     horseAge: race.horseAge,
     programId: race.programId,
@@ -128,6 +185,7 @@ const transformRace = race => {
 const transformJockey = jockey => {
   return {
     ...jockey,
+    _id: jockey.id,
     name: jockey.name
   }
 }
@@ -137,3 +195,4 @@ exports.transformHorse = transformHorse
 exports.transformUser = transformUser
 exports.transformRace = transformRace
 exports.transformJockey = transformJockey
+exports.transformRaceDetail = transformRaceDetail

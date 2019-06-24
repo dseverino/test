@@ -14,5 +14,15 @@ module.exports = {
     } catch (error) {
       throw error
     }
+  },
+  jockeys: async (args) => {
+    try {
+      const jockeys = await Jockey.find()      
+      return jockeys.map(jockey => {
+        return transformJockey(jockey)
+      })
+    } catch (error) {
+      throw error
+    }   
   }
 }

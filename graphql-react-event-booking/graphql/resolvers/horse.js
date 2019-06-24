@@ -7,7 +7,7 @@ module.exports = {
   horses: async () => {    
     try {
       //Horse.remove().then()
-      const horses = await Horse.find();
+      const horses = await Horse.find();      
       return horses.map(horse => {
         return transformHorse(horse)
       })
@@ -39,6 +39,19 @@ module.exports = {
     catch (err) {
       console.log(err)
       throw err
+    }
+  },
+
+  addRaceDetail: async (args) => {
+    try {
+      const horse = await Horse.findById(args.horseId)      
+      if(horse){
+        horse.raceDetails = [...horse.raceDetails, args.raceDetailId]
+        const result = await horse.save()
+        return transformHorse(result)
+      }
+    } catch (error) {
+      throw error
     }
   }
 }
