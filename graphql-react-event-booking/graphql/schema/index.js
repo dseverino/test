@@ -18,7 +18,8 @@ module.exports = buildSchema(`
     procedence: [String!]!
     horseAge: String!
     spec: String
-    prize: String
+    purse: String
+    horses: [Horse]
   }
 
   type Horse {
@@ -30,7 +31,6 @@ module.exports = buildSchema(`
     sex: String!
     sire: String!
     dam: String!
-    stable: String!
   }
 
   type User {
@@ -45,6 +45,38 @@ module.exports = buildSchema(`
     token: String!
     tokenExpiration: Int!
   }
+  type Jockey {
+    name: String!
+  }
+
+  input Position {
+    start: String 
+    quarterMile: String
+    halfMile: String
+    thirdQuarter: String
+    mile: String
+    finish: String
+  }
+  input Length {
+    quarterMile: String
+    halfMile: String
+    thirdQuarter: String
+    mile: String
+    finish: String
+  }
+  input Time {
+    quarterMile: String
+    halfMile: String
+    thirdQuarter: String
+    mile: String
+    finish: String
+  }
+  input TrainingTime {
+    date: String
+    time: String
+    jockey: String 
+    effort: String
+  }
 
   input HorseInput {
     name: String!
@@ -54,7 +86,27 @@ module.exports = buildSchema(`
     sex: String!
     sire: String!
     dam: String!
-    stable: String!
+  }
+
+  input HorseRaceDetailInput {
+    raceId: ID 
+    HorseId: ID 
+    jockeyId: ID 
+    jockeyWeight: String 
+    trainerId: String 
+    stableId: String 
+    startingPosition: String 
+    positions: Position 
+    lengths: Length 
+    times: Time 
+    trainingTimes: [TrainingTime] 
+    horseWeight: String 
+    claimed: String 
+    retired: String 
+    retiredDetails: String 
+    bet: String 
+    horseTools: [String] 
+    totalHorses: String 
   }
 
   input ProgramInput {
@@ -71,12 +123,15 @@ module.exports = buildSchema(`
     procedence: [String!]!
     horseAge: String!
     spec: String
-    prize: String!
+    purse: String!
   }
 
   input UserInput {
     email: String
     password: String
+  }
+  input JockeyInput {
+    name: String!
   }
 
   type RootQuery {
@@ -85,6 +140,7 @@ module.exports = buildSchema(`
     programs: [Program!]!
     races: [Race!]!
     login(email: String!, password: String!): AuthData!
+    singleProgram(programId: String): Program
   }
 
   type RootMutation {
@@ -95,6 +151,8 @@ module.exports = buildSchema(`
     deleteRace(raceId: String): Race!
     addRace(programId: String, raceId: String): Program!
     addHorse(raceId: ID, horseId: ID): Race!
+    createHorseRaceDetail(horseRaceDetail: HorseRaceDetailInput): Horse
+    createJockey(jockeyInput: JockeyInput): Jockey
   }
 
   schema {

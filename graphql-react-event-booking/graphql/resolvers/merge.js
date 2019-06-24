@@ -94,8 +94,7 @@ const transformHorse = horse => {
     color: horse.color,
     sex: horse.sex,
     sire: horse.sire,
-    dam: horse.dam,
-    stable: horse.stable
+    dam: horse.dam
   }
 }
 
@@ -121,8 +120,15 @@ const transformRace = race => {
     spec: race.spec,
     horseAge: race.horseAge,
     programId: race.programId,
-    prize: race.prize,
-    horse: () => horseLoader.loadMany(race.horseIds)
+    purse: race.purse,
+    horses: () => horseLoader.loadMany(race.horses)
+  }
+}
+
+const transformJockey = jockey => {
+  return {
+    ...jockey,
+    name: jockey.name
   }
 }
 
@@ -130,3 +136,4 @@ exports.transformProgram = transformProgram
 exports.transformHorse = transformHorse
 exports.transformUser = transformUser
 exports.transformRace = transformRace
+exports.transformJockey = transformJockey

@@ -55,5 +55,19 @@ module.exports = {
     } catch (error) {
       throw error
     }
+  },
+
+  singleProgram: async (args) => {
+    try {
+      const program = await Program.findOne({number: args.programId});
+      if(program){
+        return transformProgram(program)
+      }
+      else {
+        throw new Error("Program does not exist.")
+      }
+    } catch (error) {
+      throw error
+    }
   }
 }

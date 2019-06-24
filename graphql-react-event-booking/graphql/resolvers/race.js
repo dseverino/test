@@ -34,7 +34,7 @@ module.exports = {
       procedence: args.raceInput.procedence,
       horseAge: args.raceInput.horseAge,
       spec: args.raceInput.spec,
-      prize: args.raceInput.prize
+      purse: args.raceInput.purse
     })
     try {
       const result = await race.save();

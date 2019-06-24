@@ -39,7 +39,7 @@ const raceSchema = new Schema(
       type: String,
       required: true
     },
-    prize: {
+    purse: {
       type: String,
       required: true
     },

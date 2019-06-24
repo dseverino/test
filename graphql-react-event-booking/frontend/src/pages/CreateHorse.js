@@ -121,10 +121,6 @@ class CreateHorsePage extends Component {
             <label htmlFor="dam">Dam</label>
             <input type="text" onChange={this.onHandleChange} id="dam" value={this.state.horse.dam} />
           </div>
-          <div className="form-control">
-            <label htmlFor="stable">Stable</label>
-            <input type="text" onChange={this.onHandleChange} id="stable" value={this.state.horse.stable} />
-          </div>
         </form>
       </React.Fragment >
     );

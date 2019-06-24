@@ -30,15 +30,6 @@ const horseSchema = new Schema({
     dam: {
         type: String,
         required: true
-    },
-    stable: {
-        type: String,
-        required: true
-    },
-    //shoul create Trainer model
-    trainer: {
-        type: String,
-        required: true
     }
 })
 module.exports = mongoose.model("Horse", horseSchema);
