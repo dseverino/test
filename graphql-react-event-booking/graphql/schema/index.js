@@ -16,7 +16,7 @@ module.exports = buildSchema(`
     claimingPrice: [String!]!
     claimingType: [String!]!
     procedence: [String!]!
-    horseAge: String!
+    horseAge: Int!
     spec: String
     purse: String
     horses: [Horse]
@@ -25,8 +25,8 @@ module.exports = buildSchema(`
   type Horse {
     _id: ID!
     name: String!
-    weight: String!
-    age: String!
+    weight: String
+    age: Int!
     color: String!
     sex: String!
     sire: String!
@@ -35,13 +35,11 @@ module.exports = buildSchema(`
   }
 
   type HorseRaceDetail {
-    _id: ID!
-    raceId: ID 
-    HorseId: ID 
-    jockey: Jockey 
+    _id: ID!    
+    jockey: Jockey
     jockeyWeight: Int 
-    trainerId: String 
-    stableId: String 
+    trainer: Trainer
+    stable: Stable
     startingPosition: Int 
     positions: Position
     lengths: Length 
@@ -102,6 +100,14 @@ module.exports = buildSchema(`
     _id: ID!
     name: String!
   }
+  type Stable {
+    _id: ID!
+    name: String!
+  }
+  type Trainer {
+    _id: ID!
+    name: String!
+  }
 
   input PositionInput {
     start: String 
@@ -134,21 +140,19 @@ module.exports = buildSchema(`
 
   input HorseInput {
     name: String!
-    weight: String!
-    age: String!
+    weight: String
+    age: Int!
     color: String!
     sex: String!
     sire: String!
     dam: String!
   }
 
-  input HorseRaceDetailInput {
-    raceId: ID 
-    HorseId: ID 
-    jockeyId: ID 
+  input HorseRaceDetailInput {    
+    jockey: ID 
     jockeyWeight: Int 
-    trainerId: String 
-    stableId: String 
+    trainer: ID
+    stable: ID 
     startingPosition: Int 
     positions: PositionInput 
     lengths: LengthInput
@@ -175,7 +179,7 @@ module.exports = buildSchema(`
     claimingPrice: [String!]!
     claimingType: [String!]!
     procedence: [String!]!
-    horseAge: String!
+    horseAge: Int!
     spec: String
     purse: String!
   }
@@ -185,6 +189,12 @@ module.exports = buildSchema(`
     password: String
   }
   input JockeyInput {
+    name: String!
+  }
+  input TrainerInput {
+    name: String!
+  }
+  input StableInput {
     name: String!
   }
 
@@ -210,6 +220,8 @@ module.exports = buildSchema(`
     createHorseRaceDetail(horseRaceDetail: HorseRaceDetailInput): Horse
     createJockey(jockeyInput: JockeyInput): Jockey
     addRaceDetail(raceDetailId: ID, horseId: ID): Horse
+    createTrainer(trainerInput: TrainerInput): Trainer
+    createStable(stableInput: StableInput): Stable
   }
 
   schema {

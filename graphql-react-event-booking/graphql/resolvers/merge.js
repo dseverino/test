@@ -5,6 +5,8 @@ const HorseRaceDetail = require("../../models/horseRaceDetail")
 const User = require("../../models/user");
 const Race = require("../../models/race");
 const Jockey = require("../../models/jockey");
+const Stable = require("../../models/stable");
+const Trainer = require("../../models/trainer");
 
 const horseLoader = new DataLoader(horseIds => {
   return horses(horseIds)
@@ -25,6 +27,12 @@ const raceDetailLoader = new DataLoader(raceDetailIds => {
 const jockeyLoader = new DataLoader(jockeyId => {  
   return Jockey.find({_id: {$in: jockeyId}})
 })
+const stableLoader = new DataLoader(stableId => {
+  return Stable.find({_id: {$in: stableId}})
+})
+const trainerLoader = new DataLoader(trainerId => {
+  return Trainer.find({_id: {$in: trainerId}})
+})
 
 const user = async userId => {
   try {
@@ -43,8 +51,24 @@ const user = async userId => {
 
 const jockey = async jockeyId => {
   try {
-    const jockey = await jockeyLoader.load(jockeyId.toString())    
+    const jockey = await jockeyLoader.load(jockeyId)    
     return transformJockey(jockey)
+  } catch (error) {
+    throw error
+  }
+}
+const stable = async stableId => {
+  try {
+    const stable = await stableLoader.load(stableId)
+    return transformStable(stable)
+  } catch (error) {
+    throw error
+  }
+}
+const trainer = async trainerId => {
+  try {
+    const trainer = await trainerLoader.load(trainerId)
+    return transformTrainer(trainer)
   } catch (error) {
     throw error
   }
@@ -131,15 +155,14 @@ const transformHorse = horse => {
 }
 
 const transformRaceDetail = raceDetail => {    
+  console.log(raceDetail)
   return {
     ...raceDetail,
-    _id: raceDetail.id,
-    raceId: raceDetail.raceId.toString(),
-    HorseId: raceDetail.HorseId.toString(), 
-    jockey: () => jockey(raceDetail.jockeyId),
+    _id: raceDetail.id,    
+    jockey: () => jockey(raceDetail.jockey.toString()),
     jockeyWeight: raceDetail.jockeyWeight,
-    trainerId: raceDetail.trainerId,
-    stableId: raceDetail.stableId,
+    trainer: () => trainer(raceDetail.trainer),
+    stable: () => stable(raceDetail.stable),
     startingPosition: raceDetail.startingPosition,
     positions: raceDetail.positions,
     lengths: raceDetail.lengths,
@@ -189,6 +212,20 @@ const transformJockey = jockey => {
     name: jockey.name
   }
 }
+const transformTrainer = trainer => {
+  return {
+    ...trainer,
+    _id: trainer.id,
+    name: trainer.name
+  }
+}
+const transformStable = stable => {
+  return {
+    ...stable,
+    _id: stable.id,
+    name: stable.name
+  }
+}
 
 exports.transformProgram = transformProgram
 exports.transformHorse = transformHorse
@@ -196,3 +233,5 @@ exports.transformUser = transformUser
 exports.transformRace = transformRace
 exports.transformJockey = transformJockey
 exports.transformRaceDetail = transformRaceDetail
+exports.transformStable = transformStable
+exports.transformTrainer = transformTrainer

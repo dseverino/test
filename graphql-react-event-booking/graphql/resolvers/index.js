@@ -4,6 +4,8 @@ const raceResolver = require("../resolvers/race")
 const horseResolver = require("../resolvers/horse");
 const jockeyResolver = require("../resolvers/jockey")
 const horseRaceDetail = require("../resolvers/horseRaceDetail")
+const stableResolver = require("../resolvers/stable");
+const trainerResolver = require("../resolvers/trainer")
 
 module.exports = {
   ...userResolver,
@@ -11,5 +13,7 @@ module.exports = {
   ...programResolver,
   ...raceResolver,
   ...jockeyResolver,
-  ...horseRaceDetail
+  ...horseRaceDetail,
+  ...stableResolver,
+  ...trainerResolver
 }

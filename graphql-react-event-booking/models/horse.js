@@ -7,14 +7,8 @@ const horseSchema = new Schema({
         type: String,
         required: true
     },
-    weight: {
-        type: String,
-        required: true
-    },
-    age: {
-        type: String,
-        required: true
-    },
+    weight: Number,
+    age: Number,
     color: {
         type: String,
         required: true

@@ -21,7 +21,7 @@ module.exports = {
     /*if (!req.loggedIn) {
       throw new Error("User not authenticated!")
     }*/
-    const horse = new Horse({
+    const horse = new Horse(args.horseInput/*{
       name: args.horseInput.name,
       weight: args.horseInput.weight,
       age: args.horseInput.age,
@@ -29,7 +29,7 @@ module.exports = {
       sex: args.horseInput.sex,
       sire: args.horseInput.sire,
       dam: args.horseInput.dam
-    })
+    }*/)
 
     try {
       const result = await horse.save()

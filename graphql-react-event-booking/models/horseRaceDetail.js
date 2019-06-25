@@ -3,15 +3,8 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const horseRaceDetailSchema = new Schema({
-    raceId: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-    }, 
-    HorseId: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-    }, 
-    jockeyId: {
+    
+    jockey: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
     }, 
@@ -19,50 +12,29 @@ const horseRaceDetailSchema = new Schema({
         type: Number,
         required: true,
     }, 
-    trainerId: {
-        type: String,
+    trainer: {
+        type: mongoose.Schema.Types.ObjectId,
         required: true,
     }, 
-    stableId: {
-        type: String,
+    stable: {
+        type: mongoose.Schema.Types.ObjectId,
         required: true,
     }, 
     startingPosition: {
         type: Number,
         required: true,
     }, 
-    positions: [
-        {
-            type: Object
-        }
-    ], 
-    lengths: [
-        {
-            type: Object
-        }
-    ], 
-    times: [
-        {
-            type: Object
-        }
-    ], 
+    positions: Object, 
+    lengths: Object, 
+    times: Object, 
     trainingTimes: [
         {
             type: Object
         }
     ], 
-    horseWeight: {
-        type: Number,
-        required: true,
-    }, 
-    claimed: {
-        type: Boolean,
-        required: true,
-    }, 
-    retired: {
-        type: Boolean,
-        required: true,
-    }, 
+    horseWeight: Number,
+    claimed: Boolean,
+    retired: Boolean,
     retiredDetails: String, 
     bet: String, 
     horseTools: [String], 
