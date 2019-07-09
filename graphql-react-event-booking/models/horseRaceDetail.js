@@ -38,6 +38,8 @@ const horseRaceDetailSchema = new Schema({
     retiredDetails: String, 
     bet: String, 
     horseTools: [String], 
-    totalHorses: Number    
+    totalHorses: Number,
+    horseAge: Number,
+    claimingPrice: Number
 })
 module.exports = mongoose.model("HorseRaceDetail", horseRaceDetailSchema);

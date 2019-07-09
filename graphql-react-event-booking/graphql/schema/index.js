@@ -46,12 +46,14 @@ module.exports = buildSchema(`
     times: Time 
     trainingTimes: [TrainingTime] 
     horseWeight: Int 
-    claimed: Boolean 
+    claimed: Boolean
+    claimingPrice: Int
     retired: Boolean 
     retiredDetails: String 
     bet: String 
     horseTools: [String] 
-    totalHorses: Int 
+    totalHorses: Int
+    horseAge: Int
   }
 
   type Position {
@@ -160,11 +162,13 @@ module.exports = buildSchema(`
     trainingTimes: [TrainingTimeInput] 
     horseWeight: Int 
     claimed: Boolean 
+    claimingPrice: Int
     retired: Boolean 
     retiredDetails: String 
     bet: String 
     horseTools: [String] 
     totalHorses: Int 
+    horseAge: Int
   }
 
   input ProgramInput {

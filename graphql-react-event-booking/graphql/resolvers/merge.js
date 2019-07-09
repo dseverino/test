@@ -154,8 +154,7 @@ const transformHorse = horse => {
   }
 }
 
-const transformRaceDetail = raceDetail => {    
-  console.log(raceDetail)
+const transformRaceDetail = raceDetail => {
   return {
     ...raceDetail,
     _id: raceDetail.id,    
@@ -170,11 +169,13 @@ const transformRaceDetail = raceDetail => {
     trainingTimes: raceDetail.trainingTimes,
     horseWeight: raceDetail.horseWeight,
     claimed: raceDetail.claimed,
+    claimingPrice: raceDetail.claimingPrice,
     retired: raceDetail.retired,
     retiredDetails: raceDetail.retiredDetails,
     bet: raceDetail.bet,
     horseTools: raceDetail.horseTools,
     totalHorses: raceDetail.totalHorses,
+    horseAge: raceDetail.horseAge
   }
 }
 
