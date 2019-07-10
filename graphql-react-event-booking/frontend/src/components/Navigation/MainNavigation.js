@@ -8,31 +8,50 @@ import "./MainNavigation.css"
 const mainNavigation = props => (
   <AuthContext.Consumer>
     {({ token, logout }) => (
-      <header className="main-navigation">
-        <div className="main-navigation__logo">
-          <h1>Easy Horse</h1>
+      <div className="cdm-header" style={{ padding: "0px" }}>
+
+        <div style={{ display: "inline", minWidth: "680px" }}>
+          <h6 className="cdm-header-title">Easy Horse</h6>
+
+          <nav className="navbar navbar-default" style={{ border: "none", backgroundColor: "transparent", margin: "-7px 0px 0px 5px" }}>
+
+            <ul className="nav" style={{ marginLeft: "47px" }}>
+              {
+                !token && <li style={{ marginRight: "30px" }}>
+                  <NavLink to="/auth">Authenticate</NavLink>
+                </li>
+              }
+
+              <li className="dropdown">
+                <a className="dropbtn">
+                  Horses
+                </a>
+                <div className="dropdown-content">
+                  <NavLink to="/createhorse">Create Horse</NavLink>
+                </div>
+              </li>
+
+              {
+                token &&
+                <React.Fragment>
+                  <li className="dropdown">
+                    <a className="dropbtn">
+                      Races
+                    </a>
+                    <NavLink to="/races">Create Race</NavLink>
+                  </li>
+                  <li className="dropdown">
+                    <button onClick={logout}>Logout</button>
+                  </li>
+                </React.Fragment>
+              }
+
+            </ul>
+          </nav>
+
         </div>
-        <nav className="main-navigation__items">
-          <ul>
-            {!token && <li>
-              <NavLink to="/auth">Authenticate</NavLink>
-            </li>}
-            <li>
-              <NavLink to="/horses">Horses</NavLink>
-            </li>
-            {token && (
-              <React.Fragment>
-                <li>
-                  <NavLink to="/races">Races</NavLink>
-                </li>
-                <li>
-                  <button onClick={logout}>Logout</button>
-                </li>
-              </React.Fragment>
-            )}
-          </ul>
-        </nav>
-      </header>
+
+      </div>
     )}
   </AuthContext.Consumer>
 )
