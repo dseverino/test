@@ -1,6 +1,12 @@
 import React, { Component } from "react";
 
 import AuthContext from "../context/auth-context";
+import Backdrop from "../components/Backdrop/Backdrop";
+import TestModal from "../components/Modal/Modal";
+import Modal from "react-bootstrap-modal";
+import { Dialog } from 'primereact/dialog';
+import Spinner from "../components/Spinner/Spinner";
+//import ModalHeader from "react-bootstrap/ModalHeader";
 
 import "../pages/Horses.css";
 import { InputText } from 'primereact/inputtext';
@@ -13,41 +19,62 @@ class CreateHorsePage extends Component {
     creating: false,
     horses: [],
     isLoading: false,
-    selectedHorse: null,
+    exist: false,
+    visible: false,
+    created: false,
     horse: {
-      name: '',
+      name: "",
       weight: "",
-      age: "",
-      color: "",
-      sex: "",
+      age: 2,
+      color: "Z",
+      sex: "M",
       sire: "",
-      dam: "",
-      stable: ""
+      dam: ""
     }
   }
   isActive = true;
 
   startCreateHorse = () => {
-    this.setState({ creating: true })
+    this.setState({ exist: true })
   }
 
-  modalCancelHandler = () => {
-    this.setState({ creating: false, selectedHorse: null })
+  modalCancelHandler = (event) => {
+    this.setState({ creating: false, exist: false, created: false })
+    this.setState({
+      horse: {
+        name: "",
+        weight: "",
+        age: 2,
+        color: "Z",
+        sex: "M",
+        sire: "",
+        dam: ""
+      }
+    })
   }
 
-  onHandleChange = (e) => {    
+  onHandleChange = (e) => {
 
     let newHorse = Object.assign({}, this.state.horse)
     newHorse[e.target.id] = e.target.value
     this.setState({ horse: newHorse })
   }
 
+  onAgeChangeHandler = (e) => {
+    let newHorse = Object.assign({}, this.state.horse)
+    newHorse[e.target.id] = parseInt(e.target.value)
+    this.setState({ horse: newHorse })
+  }
 
-  saveHandler = () => {
+  validateHorse = () => {
+    if (!this.state.horse.name) {
+      return false;
+    }
+    this.setState({ isLoading: true })
     const requestBody = {
       query: `
-        mutation CreateHorse($horse: HorseInput) {
-          createHorse(horseInput: $horse) {
+        query SingleHorse($name: String!) {
+          singleHorse(name: $name) {
             name
             weight
             age
@@ -55,7 +82,56 @@ class CreateHorsePage extends Component {
             sex
             sire
             dam
-            stable
+          }
+        }
+      `,
+      variables: {
+        name: this.state.horse.name
+      }
+    }
+    fetch("http://localhost:3000/graphql", {
+      method: 'POST',
+      body: JSON.stringify(requestBody),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+      .then(result => {
+        if (result.status !== 200 && result.status !== 201) {
+          throw new Error("Failed")
+        }
+        return result.json()
+      })
+      .then(resData => {
+        if (resData && resData.data.singleHorse) {
+          this.setState({ exist: true, isLoading: false })          
+        }
+        else {
+          this.setState({ isLoading: false })
+          document.getElementById("weight").focus();
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      })
+  }
+
+
+  saveHandler = (event) => {
+
+    this.setState({ isLoading: true })
+    const requestBody = {
+      query: `
+        mutation CreateHorse($horse: HorseInput) {
+          createHorse(horseInput: $horse) {
+            _id
+            name
+            weight
+            age
+            color
+            sex
+            sire
+            dam
           }
         }
       `,
@@ -82,9 +158,10 @@ class CreateHorsePage extends Component {
       })
       .then(resData => {
         this.setState((prevState) => {
-          return { horses: [...prevState.horses, resData.data.createHorse] }
+          return { isLoading: false }
         })
-        this.modalCancelHandler();
+        this.setState({ created: true })
+        
       })
       .catch(error => {
         console.log(error);
@@ -97,7 +174,7 @@ class CreateHorsePage extends Component {
         <form>
           <div className="col-md-3 mb-3">
             <label htmlFor="name">Name</label>
-            <input type="text" className="form-control" onChange={this.onHandleChange} id="name" value={this.state.horse.name} />
+            <input type="text" onBlur={this.validateHorse} className="form-control" onChange={this.onHandleChange} id="name" value={this.state.horse.name} />
           </div>
 
           <div className="col-md-3 mb-3">
@@ -106,7 +183,7 @@ class CreateHorsePage extends Component {
           </div>
           <div className="col-md-3 mb-3">
             <label htmlFor="age">Age</label>
-            <select className="form-control" onChange={this.onHandleChange} id="age" value={this.state.horse.age}>
+            <select className="form-control" onChange={this.onAgeChangeHandler} id="age" value={this.state.horse.age}>
               <option value="2">2</option>
               <option value="3">3</option>
               <option value="4">4</option>
@@ -149,14 +226,43 @@ class CreateHorsePage extends Component {
             <label htmlFor="dam">Dam</label>
             <input type="text" className="form-control" onChange={this.onHandleChange} id="dam" value={this.state.horse.dam} />
           </div>
-          <button className="btn btn-secondary">
-            Cancel
-          </button>
-
-          <button onClick={this.saveHandler} className="btn btn-primary">
-            Save
-          </button>
         </form>
+        <button className="btn btn-secondary">
+          Cancel
+        </button>
+        <button onClick={this.saveHandler} className="btn btn-primary">
+          Save
+        </button>
+
+        <Dialog header= "Horse Exists!" visible={this.state.exist} style={{ width: '50vw' }} modal={true} onHide={this.modalCancelHandler}>
+          {this.state.horse.name} already exists!
+        </Dialog>
+        <Dialog header={this.state.horse.name + " Created!"} visible={this.state.created} style={{ width: '50vw' }} modal={true} onHide={this.modalCancelHandler}>
+          <div>
+            <div>
+              Name: {this.state.horse.name}
+            </div>
+            <div>
+              Age: {this.state.horse.age}
+            </div>
+            <div>
+              Color: {this.state.horse.color}
+            </div>
+            <div>
+              Sex: {this.state.horse.sex}
+            </div>
+            <div>
+              Sire: {this.state.horse.sire}
+            </div>
+            <div>
+              Dam: {this.state.horse.dam}
+            </div>
+          </div>
+        </Dialog>
+
+        {
+          this.state.isLoading && <Spinner />
+        }
       </React.Fragment >
     );
   }
