@@ -54,6 +54,7 @@ module.exports = buildSchema(`
     horseTools: [String] 
     totalHorses: Int
     horseAge: Int
+    distance: Int
   }
 
   type Position {
@@ -169,6 +170,7 @@ module.exports = buildSchema(`
     horseTools: [String] 
     totalHorses: Int 
     horseAge: Int
+    distance: Int
   }
 
   input ProgramInput {

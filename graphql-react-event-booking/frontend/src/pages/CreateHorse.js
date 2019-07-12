@@ -51,10 +51,10 @@ class CreateHorsePage extends Component {
         dam: ""
       }
     })
+    document.getElementById("name").focus();
   }
 
   onHandleChange = (e) => {
-
     let newHorse = Object.assign({}, this.state.horse)
     newHorse[e.target.id] = e.target.value
     this.setState({ horse: newHorse })

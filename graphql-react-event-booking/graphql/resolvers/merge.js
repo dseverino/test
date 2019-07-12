@@ -175,7 +175,8 @@ const transformRaceDetail = raceDetail => {
     bet: raceDetail.bet,
     horseTools: raceDetail.horseTools,
     totalHorses: raceDetail.totalHorses,
-    horseAge: raceDetail.horseAge
+    horseAge: raceDetail.horseAge,
+    distance: raceDetail.distance
   }
 }
 
