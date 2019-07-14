@@ -38,8 +38,8 @@ export class OrderComponent implements OnInit {
     console.log('clicked');
   }
 
-  onRefreshClick(event){
-    console.log(event)
+  onRefreshClick(event) {
+    console.log(event);
   }
 
 }

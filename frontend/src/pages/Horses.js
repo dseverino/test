@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 
-import Modal from "../components/Modal/Modal";
-import Backdrop from "../components/Backdrop/Backdrop";
-import HorseList from "../components/Horses/HorseList/HorseList"
+//import Modal from "../components/Modal/Modal";
+//import Backdrop from "../components/Backdrop/Backdrop";
+//import HorseList from "../components/Horses/HorseList/HorseList"
 import Spinner from "../components/Spinner/Spinner";
 
 import { DataTable } from 'primereact/datatable';
@@ -87,14 +87,18 @@ class HorsesPage extends Component {
   render() {
     return (
       <React.Fragment>
-        <DataTable value={this.state.horses} paginator={true} rows={15} first={this.state.first} onPage={(e) => this.setState({first: e.first})}>
+        <DataTable value={this.state.horses} paginator={true} rows={15} first={this.state.first} onPage={(e) => this.setState({ first: e.first })}
+          totalRecords={10}>
           <Column field="name" header="Name" />
           <Column field="age" header="Age" />
           <Column field="color" header="Color" />
           <Column field="sex" header="Sex" />
           <Column field="sire" header="Sire" />
           <Column field="dam" header="Dam" />
-        </DataTable>       
+        </DataTable>
+        {
+          this.state.isLoading && <Spinner />
+        }
       </React.Fragment>
     );
   }

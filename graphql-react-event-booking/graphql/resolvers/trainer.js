@@ -24,5 +24,19 @@ module.exports = {
     } catch (error) {
       throw error
     }   
+  },
+  singleTrainer: async (args) => {
+    try {
+      
+      //Horse.remove().then()
+      const result = await Trainer.findOne({ name: args.name });
+      
+      if(result){        
+        return transformTrainer(result)
+      }
+    }
+    catch (err) {
+      throw err
+    }
   }
 }

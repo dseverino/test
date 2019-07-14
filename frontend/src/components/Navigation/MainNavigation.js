@@ -35,16 +35,41 @@ const mainNavigation = props => (
                 token &&
                 <React.Fragment>
                   <li className="dropdown">
-                    <a className="dropbtn">
+                    <NavLink to="/races" className="dropbtn">
                       Races
-                    </a>
-                    <NavLink to="/races">Create Race</NavLink>
+                    </NavLink>
+                    <NavLink to="/createRace">Create Race</NavLink>
                   </li>
                   <li className="dropdown">
                     <button onClick={logout}>Logout</button>
                   </li>
                 </React.Fragment>
               }
+
+              <li className="dropdown">
+                <NavLink to="/jockeys" className="dropbtn">
+                  Jockeys
+                </NavLink>
+                <div className="dropdown-content">
+                  <NavLink to="/createjockey">Create Jockey</NavLink>
+                </div>
+              </li>
+              <li className="dropdown">
+                <NavLink to="/stable" className="dropbtn">
+                  Stables
+                </NavLink>
+                <div className="dropdown-content">
+                  <NavLink to="/createstable">Create Stable</NavLink>
+                </div>
+              </li>
+              <li className="dropdown">
+                <NavLink to="/trainer" className="dropbtn">
+                  Trainers
+                </NavLink>
+                <div className="dropdown-content">
+                  <NavLink to="/createtrainer">Create Trainer</NavLink>
+                </div>
+              </li>
 
             </ul>
           </nav>

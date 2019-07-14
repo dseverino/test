@@ -4,6 +4,12 @@ import { BrowserRouter, Route, Redirect, Switch } from "react-router-dom"
 import AuthPage from "./pages/Auth"
 import RacesPage from "./pages/Races"
 import HorsesPage from "./pages/Horses"
+import CreateJockeyPage from "./pages/CreateJockey"
+import JockeysPage from "./pages/Jockey"
+import StablePage from "./pages/Stable"
+import CreateStablePage from "./pages/CreateStable"
+import TrainerPage from "./pages/Trainer"
+import CreateTrainerPage from "./pages/CreateTrainer"
 import CreateHorsePage from "./pages/CreateHorse"
 import MainNavigation from "./components/Navigation/MainNavigation"
 
@@ -40,6 +46,12 @@ class App extends Component {
 
                 <Route path="/horses" component={HorsesPage} />
                 <Route path="/createhorse" component={CreateHorsePage} />
+                <Route path="/jockeys" component={JockeysPage} />
+                <Route path="/createjockey" component={CreateJockeyPage} />
+                <Route path="/stable" component={StablePage} />
+                <Route path="/createstable" component={CreateStablePage} />
+                <Route path="/trainer" component={TrainerPage} />
+                <Route path="/createtrainer" component={CreateTrainerPage} />
                 
                 {this.state.token && <Route path="/races" component={RacesPage} />}
                 {!this.state.token && <Redirect from="/races" to="/auth" exact />}

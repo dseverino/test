@@ -1,2 +1,5 @@
 node_modules
 ng5/package-lock.json
+frontend/.gitignore
+frontend/README.md
+frontend/package-lock.json

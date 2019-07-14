@@ -1,16 +1,16 @@
 import React, { Component } from "react";
 
 import AuthContext from "../context/auth-context";
-import Backdrop from "../components/Backdrop/Backdrop";
-import TestModal from "../components/Modal/Modal";
-import Modal from "react-bootstrap-modal";
+//import Backdrop from "../components/Backdrop/Backdrop";
+//import TestModal from "../components/Modal/Modal";
+//import Modal from "react-bootstrap-modal";
 import { Dialog } from 'primereact/dialog';
 import Spinner from "../components/Spinner/Spinner";
 //import ModalHeader from "react-bootstrap/ModalHeader";
 
 import "../pages/Horses.css";
-import { InputText } from 'primereact/inputtext';
-import { Dropdown } from 'primereact/dropdown';
+//import { InputText } from 'primereact/inputtext';
+//import { Dropdown } from 'primereact/dropdown';
 
 class CreateHorsePage extends Component {
   static contextType = AuthContext
@@ -25,7 +25,7 @@ class CreateHorsePage extends Component {
     horse: {
       name: "",
       weight: "",
-      age: 2,
+      age: 3,
       color: "Z",
       sex: "M",
       sire: "",
@@ -37,14 +37,13 @@ class CreateHorsePage extends Component {
   startCreateHorse = () => {
     this.setState({ exist: true })
   }
-
   modalCancelHandler = (event) => {
     this.setState({ creating: false, exist: false, created: false })
     this.setState({
       horse: {
         name: "",
         weight: "",
-        age: 2,
+        age: 3,
         color: "Z",
         sex: "M",
         sire: "",
@@ -53,19 +52,16 @@ class CreateHorsePage extends Component {
     })
     document.getElementById("name").focus();
   }
-
   onHandleChange = (e) => {
     let newHorse = Object.assign({}, this.state.horse)
     newHorse[e.target.id] = e.target.value
     this.setState({ horse: newHorse })
   }
-
   onAgeChangeHandler = (e) => {
     let newHorse = Object.assign({}, this.state.horse)
     newHorse[e.target.id] = parseInt(e.target.value)
     this.setState({ horse: newHorse })
   }
-
   validateHorse = () => {
     if (!this.state.horse.name) {
       return false;
@@ -115,8 +111,6 @@ class CreateHorsePage extends Component {
         console.log(error);
       })
   }
-
-
   saveHandler = (event) => {
 
     this.setState({ isLoading: true })
@@ -167,7 +161,6 @@ class CreateHorsePage extends Component {
         console.log(error);
       })
   }
-
   render() {
     return (
       <React.Fragment>
@@ -195,6 +188,7 @@ class CreateHorsePage extends Component {
               <option value="10">10</option>
               <option value="11">11</option>
               <option value="12">12</option>
+              <option value="13">13</option>
             </select>
           </div>
 

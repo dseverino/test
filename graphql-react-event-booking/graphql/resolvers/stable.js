@@ -24,5 +24,19 @@ module.exports = {
     } catch (error) {
       throw error
     }   
+  },
+  singleStable: async (args) => {
+    try {
+      
+      //Horse.remove().then()
+      const result = await Stable.findOne({ name: args.name });
+      
+      if(result){        
+        return transformStable(result)
+      }
+    }
+    catch (err) {
+      throw err
+    }
   }
 }
