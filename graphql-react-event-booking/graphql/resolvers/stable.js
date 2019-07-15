@@ -2,6 +2,7 @@ const Stable = require("../../models/stable")
 const { transformStable } = require("../resolvers/merge")
 
 module.exports = {
+
   createStable: async (args) => {
     const stable = new Stable({
       name: args.stableInput.name
@@ -39,4 +40,5 @@ module.exports = {
       throw err
     }
   }
+  
 }

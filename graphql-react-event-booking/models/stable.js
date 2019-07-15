@@ -5,7 +5,12 @@ const stableSchema = new mongoose.Schema(
     name: {
       type: String,
       required: true
-    }
+    },
+    horses: [
+      {
+        type: mongoose.Schema.Types.ObjectId
+      }      
+    ]
   }
 )
 

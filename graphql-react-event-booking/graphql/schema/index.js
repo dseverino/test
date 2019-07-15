@@ -32,6 +32,7 @@ module.exports = buildSchema(`
     sire: String!
     dam: String!
     raceDetails: [HorseRaceDetail]
+    stable: Stable
   }
 
   type HorseRaceDetail {
@@ -104,8 +105,9 @@ module.exports = buildSchema(`
     name: String!
   }
   type Stable {
-    _id: ID!
-    name: String!
+    _id: ID
+    name: String
+    horses: [Horse]
   }
   type Trainer {
     _id: ID!
@@ -113,7 +115,7 @@ module.exports = buildSchema(`
   }
 
   input PositionInput {
-    start: String 
+    start: String
     quarterMile: String
     halfMile: String
     thirdQuarter: String
@@ -149,6 +151,7 @@ module.exports = buildSchema(`
     sex: String!
     sire: String!
     dam: String!
+    stable: ID
   }
 
   input HorseRaceDetailInput {    

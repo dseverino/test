@@ -59,8 +59,14 @@ const jockey = async jockeyId => {
 }
 const stable = async stableId => {
   try {
-    const stable = await stableLoader.load(stableId)
-    return transformStable(stable)
+    if(stableId){
+      const stable = await stableLoader.load(stableId)
+      return transformStable(stable)
+    }
+    else{
+      return 
+    }
+    
   } catch (error) {
     throw error
   }
@@ -150,6 +156,7 @@ const transformHorse = horse => {
     sex: horse.sex,
     sire: horse.sire,
     dam: horse.dam,
+    stable: () => stable(horse.stable),
     raceDetails: () => raceDetailLoader.loadMany(horse.raceDetails)
   }
 }
@@ -225,7 +232,8 @@ const transformStable = stable => {
   return {
     ...stable,
     _id: stable.id,
-    name: stable.name
+    name: stable.name,
+    horses: () => horseLoader.loadMany(stable.horses)
   }
 }
 

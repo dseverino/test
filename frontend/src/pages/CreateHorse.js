@@ -1,16 +1,12 @@
 import React, { Component } from "react";
 
 import AuthContext from "../context/auth-context";
-//import Backdrop from "../components/Backdrop/Backdrop";
-//import TestModal from "../components/Modal/Modal";
-//import Modal from "react-bootstrap-modal";
+
+import {Dropdown} from 'primereact/dropdown';
 import { Dialog } from 'primereact/dialog';
 import Spinner from "../components/Spinner/Spinner";
-//import ModalHeader from "react-bootstrap/ModalHeader";
 
-import "../pages/Horses.css";
-//import { InputText } from 'primereact/inputtext';
-//import { Dropdown } from 'primereact/dropdown';
+//import "../pages/Horses.css";
 
 class CreateHorsePage extends Component {
   static contextType = AuthContext
@@ -22,6 +18,8 @@ class CreateHorsePage extends Component {
     exist: false,
     visible: false,
     created: false,
+    selectedStable: null,
+    stables: [],
     horse: {
       name: "",
       weight: "",
@@ -29,10 +27,53 @@ class CreateHorsePage extends Component {
       color: "Z",
       sex: "M",
       sire: "",
-      dam: ""
+      dam: "",
+      stable: ""
     }
   }
   isActive = true;
+
+  componentDidMount() {
+    this.loadStables();
+  }
+
+  loadStables() {
+    this.setState({ isLoading: true })
+    const requestBody = {
+      query: `
+        query {
+          stables {
+            _id
+            name
+          }
+        }
+      `
+    }
+    fetch("http://localhost:3000/graphql", {
+      method: 'POST',
+      body: JSON.stringify(requestBody),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+      .then(result => {
+        if (result.status !== 200 && result.status !== 201) {
+          throw new Error("Failed")
+        }
+        return result.json()
+      })
+      .then(resData => {
+        if (resData && resData.data.stables) {
+          this.setState({ stables: resData.data.stables, isLoading: false })          
+        }
+        else {
+          this.setState({ isLoading: false })
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      })
+  }
 
   startCreateHorse = () => {
     this.setState({ exist: true })
@@ -61,6 +102,11 @@ class CreateHorsePage extends Component {
     let newHorse = Object.assign({}, this.state.horse)
     newHorse[e.target.id] = parseInt(e.target.value)
     this.setState({ horse: newHorse })
+  }
+  onStableChangeHandler = (e) => {
+    let newHorse = Object.assign({}, this.state.horse)
+    newHorse[e.target.id] = e.target.value._id
+    this.setState({ selectedStable: e.target.value, horse: newHorse });
   }
   validateHorse = () => {
     if (!this.state.horse.name) {
@@ -169,7 +215,6 @@ class CreateHorsePage extends Component {
             <label htmlFor="name">Name</label>
             <input type="text" onBlur={this.validateHorse} className="form-control" onChange={this.onHandleChange} id="name" value={this.state.horse.name} />
           </div>
-
           <div className="col-md-3 mb-3">
             <label htmlFor="weight">Weight</label>
             <input type="text" className="form-control" onChange={this.onHandleChange} id="weight" value={this.state.horse.weight} />
@@ -191,7 +236,6 @@ class CreateHorsePage extends Component {
               <option value="13">13</option>
             </select>
           </div>
-
           <div className="col-md-3 mb-3">
             <label htmlFor="sex">Color</label>
             <select className="form-control" onChange={this.onHandleChange} id="color" value={this.state.horse.color}>
@@ -202,7 +246,6 @@ class CreateHorsePage extends Component {
               <option value="Ro">Ro</option>
             </select>
           </div>
-
           <div className="col-md-3 mb-3">
             <label htmlFor="sex">Sex</label>
             <select className="form-control" id="sex" value={this.state.horse.sex} onChange={this.onHandleChange}>
@@ -211,7 +254,6 @@ class CreateHorsePage extends Component {
               <option value="H">H</option>
             </select>
           </div>
-
           <div className="col-md-3 mb-3">
             <label htmlFor="sire">Sire</label>
             <input type="text" className="form-control" onChange={this.onHandleChange} id="sire" value={this.state.horse.sire} />
@@ -219,6 +261,10 @@ class CreateHorsePage extends Component {
           <div className="col-md-3 mb-3">
             <label htmlFor="dam">Dam</label>
             <input type="text" className="form-control" onChange={this.onHandleChange} id="dam" value={this.state.horse.dam} />
+          </div>
+          <div className="col-md-3 mb-3">
+            <label htmlFor="stable">Stable</label>
+            <Dropdown id="stable" optionLabel="name" filter={true} value={this.state.selectedStable} options={this.state.stables} onChange={this.onStableChangeHandler} placeholder="Select a Stable"/>
           </div>
         </form>
         <button className="btn btn-secondary">

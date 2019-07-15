@@ -28,7 +28,10 @@ const horseSchema = new Schema({
     raceDetails: [
         {
             type: mongoose.Schema.Types.ObjectId
-        }        
-    ]
+        }
+    ],
+    stable: {
+        type: mongoose.Schema.Types.ObjectId
+    }
 })
 module.exports = mongoose.model("Horse", horseSchema);

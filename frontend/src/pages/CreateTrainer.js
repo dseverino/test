@@ -19,7 +19,6 @@ class CreateTrainerPage extends Component {
       name: ""
     }
   }
-  isActive = true;
 
   startCreateTrainer = () => {
     this.setState({ exist: true })

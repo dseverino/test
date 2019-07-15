@@ -5,13 +5,13 @@ const { transformHorse } = require("./merge");
 module.exports = {
   singleHorse: async (args) => {
     try {
-      
+
       //Horse.remove().then()
       const horse = await Horse.findOne({ name: args.name });
-      
-      if(horse){        
+
+      if (horse) {
         return transformHorse(horse);
-      }            
+      }
     }
     catch (err) {
       throw err
@@ -35,21 +35,16 @@ module.exports = {
     /*if (!req.loggedIn) {
       throw new Error("User not authenticated!")
     }*/
-    const horse = await Horse.findOne({ name: args.horseInput.name })
-    if (!horse) {
-      const newHorse = new Horse(args.horseInput);
-      try {
-        const result = await newHorse.save()
-        let createdHorse = transformHorse(result)
-        return createdHorse;
-      }
-      catch (err) {
-        console.log(err)
-        throw err
-      }
+    
+    const newHorse = new Horse(args.horseInput);
+    try {
+      const result = await newHorse.save();
+      let createdHorse = transformHorse(result);
+      return createdHorse;
     }
-    else {
-      throw new Error("Horse already exists!")
+    catch (err) {
+      console.log(err);
+      throw err;
     }
   },
 
