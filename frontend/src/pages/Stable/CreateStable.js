@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 
-import AuthContext from "../context/auth-context";
+import AuthContext from "../../context/auth-context";
 import { Dialog } from 'primereact/dialog';
-import Spinner from "../components/Spinner/Spinner";
+import Spinner from "../../components/Spinner/Spinner";
 
 //import "../pages/Stables.css";
 

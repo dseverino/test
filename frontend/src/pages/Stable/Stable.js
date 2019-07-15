@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 
-import Spinner from "../components/Spinner/Spinner";
+import Spinner from "../../components/Spinner/Spinner";
 
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 
-import AuthContext from "../context/auth-context";
+import AuthContext from "../../context/auth-context";
 
 //import "../pages/Horses.css";
 

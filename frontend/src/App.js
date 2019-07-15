@@ -6,8 +6,9 @@ import RacesPage from "./pages/Races"
 import HorsesPage from "./pages/Horses"
 import CreateJockeyPage from "./pages/CreateJockey"
 import JockeysPage from "./pages/Jockey"
-import StablePage from "./pages/Stable"
-import CreateStablePage from "./pages/CreateStable"
+import StablePage from "./pages/Stable/Stable"
+import CreateStablePage from "./pages/Stable/CreateStable"
+import SearchStablePage from "./pages/Stable/SearchStable"
 import TrainerPage from "./pages/Trainer"
 import CreateTrainerPage from "./pages/CreateTrainer"
 import CreateHorsePage from "./pages/CreateHorse"
@@ -50,6 +51,7 @@ class App extends Component {
                 <Route path="/createjockey" component={CreateJockeyPage} />
                 <Route path="/stable" component={StablePage} />
                 <Route path="/createstable" component={CreateStablePage} />
+                <Route path="/SearchStable" component={SearchStablePage} />
                 <Route path="/trainer" component={TrainerPage} />
                 <Route path="/createtrainer" component={CreateTrainerPage} />
                 

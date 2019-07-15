@@ -1,4 +1,5 @@
-const Horse = require("../../models/horse")
+const Horse = require("../../models/horse");
+const Stable = require("../../models/stable");
 const { transformHorse } = require("./merge");
 //const User = require("../../models/user")
 
@@ -40,6 +41,10 @@ module.exports = {
     try {
       const result = await newHorse.save();
       let createdHorse = transformHorse(result);
+      const stable = await Stable.findById(args.horseInput.stable, function(err, doc) {
+        doc.horses = [...doc.horses, createdHorse._id]
+        doc.save();
+      })
       return createdHorse;
     }
     catch (err) {

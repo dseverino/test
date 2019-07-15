@@ -54,14 +54,17 @@ const mainNavigation = props => (
                   <NavLink to="/createjockey">Create Jockey</NavLink>
                 </div>
               </li>
+
               <li className="dropdown">
                 <NavLink to="/stable" className="dropbtn">
                   Stables
                 </NavLink>
                 <div className="dropdown-content">
                   <NavLink to="/createstable">Create Stable</NavLink>
-                </div>
+                  <NavLink to="/searchstable">Search Stable</NavLink>
+                </div>                
               </li>
+
               <li className="dropdown">
                 <NavLink to="/trainer" className="dropbtn">
                   Trainers

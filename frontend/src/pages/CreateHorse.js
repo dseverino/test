@@ -196,12 +196,8 @@ class CreateHorsePage extends Component {
         }
         return result.json()
       })
-      .then(resData => {
-        this.setState((prevState) => {
-          return { isLoading: false }
-        })
-        this.setState({ created: true })
-        
+      .then(resData => {        
+        this.setState({ created: true, selectedStable: null, isLoading: false })        
       })
       .catch(error => {
         console.log(error);

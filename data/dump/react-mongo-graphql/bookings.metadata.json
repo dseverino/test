@@ -1,1 +1,1 @@
-{"options":{},"indexes":[{"v":2,"key":{"_id":1},"name":"_id_","ns":"react-mongo-graphql.bookings"}],"uuid":"667a2dff8c794156943659ba14e30aea"}
+{"options":{},"indexes":[{"v":2,"key":{"_id":1},"name":"_id_","ns":"react-mongo-graphql.bookings"}]}
