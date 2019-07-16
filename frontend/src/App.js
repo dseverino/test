@@ -1,17 +1,19 @@
 import React, { Component } from 'react';
 import { BrowserRouter, Route, Redirect, Switch } from "react-router-dom"
 
-import AuthPage from "./pages/Auth"
-import RacesPage from "./pages/Races"
-import HorsesPage from "./pages/Horses"
-import CreateJockeyPage from "./pages/CreateJockey"
-import JockeysPage from "./pages/Jockey"
+import AuthPage from "./pages/Auth/Auth"
+import RacesPage from "./pages/Race/Races"
+import HorsesPage from "./pages/Horse/Horses"
+import CreateHorsePage from "./pages/Horse/CreateHorse"
+import AddHorseStable from "./pages/Horse/AddHorseStable"
+import CreateJockeyPage from "./pages/Jockey/CreateJockey"
+import JockeysPage from "./pages/Jockey/Jockey"
 import StablePage from "./pages/Stable/Stable"
 import CreateStablePage from "./pages/Stable/CreateStable"
 import SearchStablePage from "./pages/Stable/SearchStable"
-import TrainerPage from "./pages/Trainer"
-import CreateTrainerPage from "./pages/CreateTrainer"
-import CreateHorsePage from "./pages/CreateHorse"
+import TrainerPage from "./pages/Trainer/Trainer"
+import CreateTrainerPage from "./pages/Trainer/CreateTrainer"
+
 import MainNavigation from "./components/Navigation/MainNavigation"
 
 import AuthContext from "./context/auth-context";
@@ -47,6 +49,7 @@ class App extends Component {
 
                 <Route path="/horses" component={HorsesPage} />
                 <Route path="/createhorse" component={CreateHorsePage} />
+                <Route path="/addhorsestable" component={AddHorseStable} />
                 <Route path="/jockeys" component={JockeysPage} />
                 <Route path="/createjockey" component={CreateJockeyPage} />
                 <Route path="/stable" component={StablePage} />

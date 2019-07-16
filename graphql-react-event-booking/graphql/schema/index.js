@@ -209,6 +209,7 @@ module.exports = buildSchema(`
 
   type RootQuery {
     horses: [Horse!]!
+    horsesWithoutStable: [Horse]!
     singleHorse(name: String!): Horse
     singleJockey(name: String!): Jockey
     singleStable(name: String!): Stable
@@ -232,6 +233,7 @@ module.exports = buildSchema(`
     deleteRace(raceId: String): Race!
     addRace(programId: String, raceId: String): Program!
     addHorse(raceId: ID, horseId: ID): Race!
+    addHorseStable(horseId: ID, stableId: ID): Horse
     createHorseRaceDetail(horseRaceDetail: HorseRaceDetailInput): Horse
     createJockey(jockeyInput: JockeyInput): Jockey
     addRaceDetail(raceDetailId: ID, horseId: ID): Horse

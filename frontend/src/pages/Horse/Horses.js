@@ -3,14 +3,14 @@ import React, { Component } from "react";
 //import Modal from "../components/Modal/Modal";
 //import Backdrop from "../components/Backdrop/Backdrop";
 //import HorseList from "../components/Horses/HorseList/HorseList"
-import Spinner from "../components/Spinner/Spinner";
+import Spinner from "../../components/Spinner/Spinner";
 
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 
-import AuthContext from "../context/auth-context";
+import AuthContext from "../../context/auth-context";
 
-import "../pages/Horses.css";
+import "../../pages/Horse/Horses.css";
 
 class HorsesPage extends Component {
   static contextType = AuthContext

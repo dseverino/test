@@ -1,62 +1,60 @@
 import React, { Component } from "react";
 
-import AuthContext from "../context/auth-context";
+import AuthContext from "../../context/auth-context";
 import { Dialog } from 'primereact/dialog';
-import Spinner from "../components/Spinner/Spinner";
+import Spinner from "../../components/Spinner/Spinner";
 
-//import "../pages/Trainers.css";
+//import "../pages/Jockeys.css";
 
-class CreateTrainerPage extends Component {
+class CreateJockeyPage extends Component {
   static contextType = AuthContext
 
   state = {
     creating: false,
+    Jockeys: [],
     isLoading: false,
     exist: false,
     visible: false,
     created: false,
-    trainer: {
+    jockey: {
       name: ""
     }
   }
+  isActive = true;
 
-  startCreateTrainer = () => {
+  startCreateJockey = () => {
     this.setState({ exist: true })
   }
   modalCancelHandler = (event) => {
     this.setState({ creating: false, exist: false, created: false })
     this.setState({
-      trainer: {
+      jockey: {
         name: ""
       }
     })
     document.getElementById("name").focus();
   }
   onHandleChange = (e) => {
-    let newTrainer = Object.assign({}, this.state.trainer)
-    newTrainer[e.target.id] = e.target.value
-    this.setState({ trainer: newTrainer })
+    let newJockey = Object.assign({}, this.state.jockey)
+    newJockey[e.target.id] = e.target.value
+    this.setState({ jockey: newJockey })
   }
-  onAgeChangeHandler = (e) => {
-    let newTrainer = Object.assign({}, this.state.trainer)
-    newTrainer[e.target.id] = parseInt(e.target.value)
-    this.setState({ trainer: newTrainer })
-  }
-  validateTrainer = () => {
-    if (!this.state.trainer.name) {
+
+  validateJockey = () => {
+    if (!this.state.jockey.name) {
       return false;
     }
     this.setState({ isLoading: true })
     const requestBody = {
       query: `
-        query SingleTrainer($name: String!) {
-          singleTrainer(name: $name) {
+        query SingleJockey($name: String!) {
+          singleJockey(name: $name) {
             name
           }
         }
       `,
       variables: {
-        name: this.state.trainer.name
+        name: this.state.jockey.name
       }
     }
     fetch("http://localhost:3000/graphql", {
@@ -73,14 +71,14 @@ class CreateTrainerPage extends Component {
         return result.json()
       })
       .then(resData => {
-        if (resData && resData.data.singleTrainer) {
-          this.setState({ exist: true});
+        if (resData && resData.data.singleJockey) {
+          this.setState({ exist: true });  
         }
-        this.setState({ isLoading: false });
+        this.setState({ isLoading: false })          
       })
       .catch(error => {
         console.log(error);
-        this.setState({ isLoading: false });
+        this.setState({ isLoading: false })          
       })
   }
   saveHandler = (event) => {
@@ -88,15 +86,15 @@ class CreateTrainerPage extends Component {
     this.setState({ isLoading: true })
     const requestBody = {
       query: `
-        mutation CreateTrainer($trainer: TrainerInput) {
-          createTrainer(trainerInput: $trainer) {
+        mutation CreateJockey($jockey: JockeyInput) {
+          createJockey(jockeyInput: $jockey) {
             _id
             name
           }
         }
       `,
       variables: {
-        trainer: this.state.trainer
+        jockey: this.state.jockey
       }
     }
 
@@ -133,7 +131,7 @@ class CreateTrainerPage extends Component {
         <form>
           <div className="col-md-3 mb-3">
             <label htmlFor="name">Name</label>
-            <input type="text" onBlur={this.validateTrainer} className="form-control" onChange={this.onHandleChange} id="name" value={this.state.trainer.name} />
+            <input type="text" onBlur={this.validateJockey} className="form-control" onChange={this.onHandleChange} id="name" value={this.state.jockey.name} />
           </div>
         </form>
         <button className="btn btn-secondary">
@@ -143,13 +141,13 @@ class CreateTrainerPage extends Component {
           Save
         </button>
 
-        <Dialog header= "Trainer Exists!" visible={this.state.exist} style={{ width: '50vw' }} modal={true} onHide={this.modalCancelHandler}>
-          {this.state.trainer.name} already exists!
+        <Dialog header= "Jockey Exists!" visible={this.state.exist} style={{ width: '50vw' }} modal={true} onHide={this.modalCancelHandler}>
+          {this.state.jockey.name} already exists!
         </Dialog>
-        <Dialog header={this.state.trainer.name + " Created!"} visible={this.state.created} style={{ width: '50vw' }} modal={true} onHide={this.modalCancelHandler}>
+        <Dialog header={this.state.jockey.name + " Created!"} visible={this.state.created} style={{ width: '50vw' }} modal={true} onHide={this.modalCancelHandler}>
           <div>
             <div>
-              Name: {this.state.trainer.name}
+              Name: {this.state.jockey.name}
             </div>
           </div>
         </Dialog>
@@ -162,4 +160,4 @@ class CreateTrainerPage extends Component {
   }
 }
 
-export default CreateTrainerPage
+export default CreateJockeyPage

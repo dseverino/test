@@ -36,12 +36,12 @@ module.exports = {
     /*if (!req.loggedIn) {
       throw new Error("User not authenticated!")
     }*/
-    
+
     const newHorse = new Horse(args.horseInput);
     try {
       const result = await newHorse.save();
       let createdHorse = transformHorse(result);
-      const stable = await Stable.findById(args.horseInput.stable, function(err, doc) {
+      const stable = await Stable.findById(args.horseInput.stable, function (err, doc) {
         doc.horses = [...doc.horses, createdHorse._id]
         doc.save();
       })
@@ -63,6 +63,36 @@ module.exports = {
       }
     } catch (error) {
       throw error
+    }
+  },
+
+  addHorseStable: async (args) => {
+    try {
+
+      const horse = await Horse.findOne({ _id: args.horseId });
+      horse.stable = args.stableId;
+      const horseUpdated = await horse.save();
+
+      const stable = await Stable.findOne({ _id: args.stableId });
+      stable.horses = stable.horses ? [...stable.horses, args.horseId] : [args.horseId];
+      await stable.save();
+      return transformHorse(horseUpdated)
+
+    } catch (error) {
+      throw error
+    }
+  },
+
+  horsesWithoutStable: async () => {
+    try {
+      //Horse.remove().then()
+      const horses = await Horse.find({ stable: { $exists: false } });
+      return horses.map(horse => {
+        return transformHorse(horse)
+      })
+    }
+    catch (err) {
+      throw err
     }
   }
 }

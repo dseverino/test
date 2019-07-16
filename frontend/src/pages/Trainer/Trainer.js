@@ -1,19 +1,19 @@
 import React, { Component } from "react";
 
-import Spinner from "../components/Spinner/Spinner";
+import Spinner from "../../components/Spinner/Spinner";
 
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 
-import AuthContext from "../context/auth-context";
+import AuthContext from "../../context/auth-context";
 
 //import "../pages/Horses.css";
 
-class JockeysPage extends Component {
+class TrainersPage extends Component {
   static contextType = AuthContext
 
   componentDidMount = () => {
-    this.fetchJockeys()
+    this.fetchTrainers()
   }
 
   componentWillUnmount() {
@@ -22,20 +22,20 @@ class JockeysPage extends Component {
 
   state = {
     creating: false,
-    jockeys: [],
+    trainers: [],
     isLoading: false,
-    jockey: {
+    trainer: {
       name: ''
     }
   }
   isActive = true;
 
-  fetchJockeys() {
+  fetchTrainers() {
     this.setState({ isLoading: true })
     const requestBody = {
       query: `
         query {
-          jockeys {
+          trainers {
             _id
             name
           }
@@ -58,7 +58,7 @@ class JockeysPage extends Component {
       })
       .then(resData => {
         if (this.isActive) {
-          this.setState({ jockeys: resData.data.jockeys, isLoading: false });
+          this.setState({ trainers: resData.data.trainers, isLoading: false });
         }
       })
       .catch(error => {
@@ -70,7 +70,7 @@ class JockeysPage extends Component {
   render() {
     return (
       <React.Fragment>
-        <DataTable value={this.state.jockeys} paginator={true} rows={15} first={this.state.first} onPage={(e) => this.setState({ first: e.first })}
+        <DataTable value={this.state.trainers} paginator={true} rows={15} first={this.state.first} onPage={(e) => this.setState({ first: e.first })}
           totalRecords={10}>
           <Column field="name" header="Name" />
         </DataTable>
@@ -82,4 +82,4 @@ class JockeysPage extends Component {
   }
 }
 
-export default JockeysPage
+export default TrainersPage

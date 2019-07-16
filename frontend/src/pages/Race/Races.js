@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 
-import AuthContext from "../context/auth-context";
+import AuthContext from "../../context/auth-context";
 
-import BookingList from "../components/Bookings/BookingList/BookingList"
-import BookingsChart from "../components/Bookings/BookingsChart/BookingsChart"
-import Spinner from "../components/Spinner/Spinner"
-import BookingsControls from "../components/Bookings/BookingsControls/BookingsControls"
+import BookingList from "../../components/Bookings/BookingList/BookingList"
+import BookingsChart from "../../components/Bookings/BookingsChart/BookingsChart"
+import Spinner from "../../components/Spinner/Spinner"
+import BookingsControls from "../../components/Bookings/BookingsControls/BookingsControls"
 
 class BookingsPage extends Component {
   static contextType = AuthContext

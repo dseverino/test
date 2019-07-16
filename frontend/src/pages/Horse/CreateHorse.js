@@ -1,10 +1,10 @@
 import React, { Component } from "react";
 
-import AuthContext from "../context/auth-context";
+import AuthContext from "../../context/auth-context";
 
 import {Dropdown} from 'primereact/dropdown';
 import { Dialog } from 'primereact/dialog';
-import Spinner from "../components/Spinner/Spinner";
+import Spinner from "../../components/Spinner/Spinner";
 
 //import "../pages/Horses.css";
 
