@@ -140,6 +140,7 @@ class StablesPage extends Component {
       .then(resData => {     
         this.state.horses.splice(resData.data.addHorseStable, 1);
         this.setState({ horse: resData.data.addHorseStable, isLoading: false, selectedHorse: null, selectedStable: null });
+        this.fetchHorses()
       })
       .catch(error => {
         console.log(error)
@@ -158,9 +159,9 @@ class StablesPage extends Component {
           <div className="col-md-3 mb-3">
             <label htmlFor="stable">Select Stable</label>
             <Dropdown id="stable" showClear={true} optionLabel="name" filter={true} value={this.state.selectedStable} options={this.state.stables} onChange={this.onStableChangeHandler} placeholder="Select a Stable" />
-          </div>
+          </div>          
           <div style={{ paddingLeft: "89px", marginTop: "30px" }}>
-            <button onClick={this.onAddHorseHandler} className="btn btn-primary">
+            <button disabled={!this.state.selectedHorse && !this.state.selectedStable} onClick={this.onAddHorseHandler} className="btn btn-primary">
               Add Horse
           </button>
           </div>

@@ -28,7 +28,7 @@ const jockeyLoader = new DataLoader(jockeyId => {
   return Jockey.find({_id: {$in: jockeyId}})
 })
 const stableLoader = new DataLoader(stableId => {
-  return Stable.find({_id: {$in: stableId}})
+  return stable(stableId)
 })
 const trainerLoader = new DataLoader(trainerId => {
   return Trainer.find({_id: {$in: trainerId}})
@@ -58,15 +58,11 @@ const jockey = async jockeyId => {
   }
 }
 const stable = async stableId => {
-  try {
-    if(stableId){
-      const stable = await stableLoader.load(stableId)
-      return transformStable(stable)
-    }
-    else{
-      return 
-    }
-    
+  try {    
+    const stable = await Stable.find({_id: {$in: stableId}})
+    if(stable){
+      return transformStable(stable);
+    }    
   } catch (error) {
     throw error
   }
@@ -156,7 +152,7 @@ const transformHorse = horse => {
     sex: horse.sex,
     sire: horse.sire,
     dam: horse.dam,
-    stable: () => stable(horse.stable),
+    stable: horse.stable ? () => stableLoader.load(horse.stable) : null,
     raceDetails: () => raceDetailLoader.loadMany(horse.raceDetails)
   }
 }
@@ -228,7 +224,7 @@ const transformTrainer = trainer => {
     name: trainer.name
   }
 }
-const transformStable = stable => {
+const transformStable = stable => {  
   return {
     ...stable,
     _id: stable.id,
