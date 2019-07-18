@@ -22,7 +22,9 @@ module.exports = {
   horses: async () => {
     try {
       //Horse.remove().then()
-      const horses = await Horse.find();
+      const ids = ["Cadeau De Alcala", "Avalon"]
+      const horses = await Horse.find({name: { $in: ids}}).sort({name: 1})
+      
       return horses.map(horse => {
         return transformHorse(horse)
       })
@@ -86,7 +88,8 @@ module.exports = {
   horsesWithoutStable: async () => {
     try {
       //Horse.remove().then()
-      const horses = await Horse.find({ stable: { $exists: false } });
+      const horses = await Horse.find({ stable: { $exists: false } }).sort({name: 1});
+      console.log(horses)
       return horses.map(horse => {
         return transformHorse(horse)
       })

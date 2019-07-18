@@ -258,7 +258,7 @@ class CreateHorsePage extends Component {
             <label htmlFor="dam">Dam</label>
             <input type="text" className="form-control" onChange={this.onHandleChange} id="dam" value={this.state.horse.dam} />
           </div>
-          <div className="col-md-3 mb-3">
+          <div className="col-md-3 mb-3" style={{display: "flex", flexDirection: "column"}}>
             <label htmlFor="stable">Stable</label>
             <Dropdown id="stable" optionLabel="name" filter={true} value={this.state.selectedStable} options={this.state.stables} onChange={this.onStableChangeHandler} placeholder="Select a Stable"/>
           </div>

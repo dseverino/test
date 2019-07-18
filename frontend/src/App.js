@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Redirect, Switch } from "react-router-dom"
 import AuthPage from "./pages/Auth/Auth"
 import RacesPage from "./pages/Race/Races"
 import HorsesPage from "./pages/Horse/Horses"
+import SearchHorsePage from "./pages/Horse/SearchHorse"
 import CreateHorsePage from "./pages/Horse/CreateHorse"
 import AddHorseStable from "./pages/Horse/AddHorseStable"
 import CreateJockeyPage from "./pages/Jockey/CreateJockey"
@@ -50,6 +51,8 @@ class App extends Component {
                 <Route path="/horses" component={HorsesPage} />
                 <Route path="/createhorse" component={CreateHorsePage} />
                 <Route path="/addhorsestable" component={AddHorseStable} />
+                <Route path="/horseDetails" component={SearchHorsePage} />
+                
                 <Route path="/jockeys" component={JockeysPage} />
                 <Route path="/createjockey" component={CreateJockeyPage} />
                 <Route path="/stable" component={StablePage} />

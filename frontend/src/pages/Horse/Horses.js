@@ -55,6 +55,9 @@ class HorsesPage extends Component {
             age
             sire
             dam
+            stable {
+              name
+            }
           }
         }
       `
@@ -87,14 +90,14 @@ class HorsesPage extends Component {
   render() {
     return (
       <React.Fragment>
-        <DataTable value={this.state.horses} paginator={true} rows={15} first={this.state.first} onPage={(e) => this.setState({ first: e.first })}
-          totalRecords={10}>
+        <DataTable value={this.state.horses} paginator={true} rows={15} first={this.state.first} onPage={(e) => this.setState({ first: e.first })}>
           <Column field="name" header="Name" />
           <Column field="age" header="Age" />
           <Column field="color" header="Color" />
           <Column field="sex" header="Sex" />
           <Column field="sire" header="Sire" />
           <Column field="dam" header="Dam" />
+          <Column field="stable.name" header="Stable" />
         </DataTable>
         {
           this.state.isLoading && <Spinner />

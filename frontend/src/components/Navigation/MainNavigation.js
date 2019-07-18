@@ -29,6 +29,7 @@ const mainNavigation = props => (
                 <div className="dropdown-content">
                   <NavLink to="/createhorse">Create Horse</NavLink>
                   <NavLink to="/addhorsestable">Add Horse to Stable</NavLink>
+                  <NavLink to="/horseDetails">Load Horse details</NavLink>
                 </div>
               </li>
 

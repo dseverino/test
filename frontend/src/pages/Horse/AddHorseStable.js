@@ -161,7 +161,7 @@ class StablesPage extends Component {
             <Dropdown id="stable" showClear={true} optionLabel="name" filter={true} value={this.state.selectedStable} options={this.state.stables} onChange={this.onStableChangeHandler} placeholder="Select a Stable" />
           </div>          
           <div style={{ paddingLeft: "89px", marginTop: "30px" }}>
-            <button disabled={!this.state.selectedHorse && !this.state.selectedStable} onClick={this.onAddHorseHandler} className="btn btn-primary">
+            <button disabled={!this.state.selectedHorse || !this.state.selectedStable} onClick={this.onAddHorseHandler} className="btn btn-primary">
               Add Horse
           </button>
           </div>

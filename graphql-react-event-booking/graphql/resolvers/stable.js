@@ -18,7 +18,7 @@ module.exports = {
   },
   stables: async (args) => {
     try {
-      const stables = await Stable.find()      
+      const stables = await Stable.find().sort({name: 1});
       return stables.map(stable => {
         return transformStable(stable)
       })
