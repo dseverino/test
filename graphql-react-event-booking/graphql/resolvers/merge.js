@@ -27,12 +27,23 @@ const raceDetailLoader = new DataLoader(raceDetailIds => {
 const jockeyLoader = new DataLoader(jockeyId => {
   return Jockey.find({ _id: { $in: jockeyId } })
 })
-const stableLoader = new DataLoader(stableId => {
-  return stable(stableId)
+const stableLoader = new DataLoader(stableIds => {
+  return stables(stableIds)
 })
 const trainerLoader = new DataLoader(trainerId => {
   return Trainer.find({ _id: { $in: trainerId } })
 })
+
+const singleStableLoader = new DataLoader(stableId => {
+  return Stable.find({_id: { _in: {stableId}}})
+})
+const singleStable = async stableId => {
+  const stables = await singleStableLoader.load(stableId);
+  console.log(stables)
+  return stables.map(stable => {
+    return transformStable(stable)
+  })
+}
 
 const user = async userId => {
   try {
@@ -57,12 +68,17 @@ const jockey = async jockeyId => {
     throw error
   }
 }
-const stable = async stableId => {
-  console.log(stableId)
+const stables = async stableIds => {
   try {
-    const stable = await Stable.find({ _id: { $in: stableId } })
-    console.log(stable)
-    return transformStable(stable);
+    const m = { $match : { "_id" : { $in : stableIds } } };
+    const a = { $addFields : { "__order" : { $indexOfArray : [ stableIds, "$_id" ] } } };
+    const s = { $sort : { "__order" : 1 } };
+    //Stable.aggregate( [ m, a, s ] );
+    const stables = await /*Stable.aggregate( [ m, a, s ] );*/Stable.find({ _id: { $in: stableIds } })
+    console.log(stables.length)
+    return stables.map(stable => {
+      return transformStable(stable);
+    }) 
   } catch (error) {
     throw error
   }
@@ -117,14 +133,13 @@ const raceDetails = async raceDetailIds => {
 }
 
 const horses = async horseIds => {
-
+  //console.log(horseIds)
   try {
-    const horses = await Horse.find({ _id: { $in: horseIds } })
-    horses.sort((a, b) => {
-      return (
-        horseIds.indexOf(a._id.toString()) - horseIds.indexOf(b._id.toString())
-      );
-    });
+    const m = { $match : { "_id" : { $in : horseIds } } };
+    const a = { $addFields : { "__order" : { $indexOfArray : [ horseIds, "$_id" ] } } };
+    const s = { $sort : { "__order" : 1 } };
+    const horses = await Horse.aggregate([m, a, s])//await Horse.find({ _id: { $in: horseIds } });
+    
     return horses.map(horse => {
       return transformHorse(horse)
     })
@@ -144,10 +159,9 @@ const transformUser = (user) => {
 }
 
 const transformHorse = horse => {
-
   return {
-    ...horse._doc,
-    _id: horse.id,
+    ...horse,
+    _id: horse._id.toString(),
     name: horse.name,
     weight: horse.weight,
     age: horse.age,
@@ -155,7 +169,7 @@ const transformHorse = horse => {
     sex: horse.sex,
     sire: horse.sire,
     dam: horse.dam,
-    stable: () => stableLoader.load(horse.stable),
+    stable: () => singleStable(horse.stable),// stableLoader.load(horse.stable),
     raceDetails: () => raceDetailLoader.loadMany(horse.raceDetails)
   }
 }
@@ -229,7 +243,7 @@ const transformTrainer = trainer => {
 }
 const transformStable = stable => {
   return {
-    _id: stable.id,
+    _id: stable._id.toString(),
     name: stable.name,
     horses: () => horseLoader.loadMany(stable.horses)
   }
