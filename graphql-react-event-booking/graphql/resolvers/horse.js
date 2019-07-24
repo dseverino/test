@@ -22,7 +22,7 @@ module.exports = {
   horses: async () => {
     try {
       //Horse.remove().then()
-      const horses = await Horse.find().sort({name: 1}).limit(12)
+      const horses = await Horse.find().sort({name: 1})
       return horses.map(horse => {
         return transformHorse(horse)
       })

@@ -34,17 +34,6 @@ const trainerLoader = new DataLoader(trainerId => {
   return Trainer.find({ _id: { $in: trainerId } })
 })
 
-const singleStableLoader = new DataLoader(stableId => {
-  return Stable.find({_id: { _in: {stableId}}})
-})
-const singleStable = async stableId => {
-  const stables = await singleStableLoader.load(stableId);
-  console.log(stables)
-  return stables.map(stable => {
-    return transformStable(stable)
-  })
-}
-
 const user = async userId => {
   try {
     const user = await userLoader.load(userId.toString())
@@ -70,13 +59,41 @@ const jockey = async jockeyId => {
 }
 const stables = async stableIds => {
   try {
+    //console.log(stableIds)
     const m = { $match : { "_id" : { $in : stableIds } } };
     const a = { $addFields : { "__order" : { $indexOfArray : [ stableIds, "$_id" ] } } };
-    const s = { $sort : { "__order" : 1 } };
-    //Stable.aggregate( [ m, a, s ] );
-    const stables = await /*Stable.aggregate( [ m, a, s ] );*/Stable.find({ _id: { $in: stableIds } })
-    console.log(stables.length)
+    const s = { $sort : { "__order" : 1 } };    
+    const stables = await Stable.aggregate( [ m, a, s ] );
+    let count = 0;
+    let updatedStables = [];
+    
+    if(stableIds.length > stables.length){
+      for(var i = 0; i < stableIds.length; i++){
+        updatedStables.push(stableIds[i].toString());
+        if(!stables[i]){          
+          stables.splice(i, 0, stables[updatedStables.indexOf(updatedStables[i])] )
+        }
+        else if(stableIds[i].toString() != stables[i]._id.toString()){
+          stables.splice(i, 0, stables[updatedStables.indexOf(updatedStables[i])] )
+          console.log(i, stableIds[i])
+          console.log(stables[i]._id)
+        }       
+      }
+    }
+    
     return stables.map(stable => {
+      //{
+        //console.log("***********")
+        //console.log(stableIds[count])
+        //console.log(stable._id.toString())
+        //let correctStable = stables[stableIds.indexOf(stableIds[count])]
+        //stables.splice(count, 0, correctStable);
+        //stable = correctStable;
+        //console.log(stables.length)    
+        //console.log("******************")    
+      //}
+      //console.log(stable)      
+      count++
       return transformStable(stable);
     }) 
   } catch (error) {
@@ -169,7 +186,7 @@ const transformHorse = horse => {
     sex: horse.sex,
     sire: horse.sire,
     dam: horse.dam,
-    stable: () => singleStable(horse.stable),// stableLoader.load(horse.stable),
+    stable: () => stableLoader.load(horse.stable),
     raceDetails: () => raceDetailLoader.loadMany(horse.raceDetails)
   }
 }
