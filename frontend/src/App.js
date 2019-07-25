@@ -1,19 +1,20 @@
 import React, { Component } from 'react';
-import { BrowserRouter, Route, Redirect, Switch } from "react-router-dom"
+import { BrowserRouter, Route, Redirect, Switch } from "react-router-dom";
 
-import AuthPage from "./pages/Auth/Auth"
-import RacesPage from "./pages/Race/Races"
-import HorsesPage from "./pages/Horse/Horses"
-import SearchHorsePage from "./pages/Horse/SearchHorse"
-import CreateHorsePage from "./pages/Horse/CreateHorse"
-import AddHorseStable from "./pages/Horse/AddHorseStable"
-import CreateJockeyPage from "./pages/Jockey/CreateJockey"
-import JockeysPage from "./pages/Jockey/Jockey"
-import StablePage from "./pages/Stable/Stable"
-import CreateStablePage from "./pages/Stable/CreateStable"
-import SearchStablePage from "./pages/Stable/SearchStable"
-import TrainerPage from "./pages/Trainer/Trainer"
-import CreateTrainerPage from "./pages/Trainer/CreateTrainer"
+import AuthPage from "./pages/Auth/Auth";
+import RacesPage from "./pages/Race/Races";
+import HorsesPage from "./pages/Horse/Horses";
+import SearchHorsePage from "./pages/Horse/SearchHorse";
+import CreateHorsePage from "./pages/Horse/CreateHorse";
+import AddHorseStable from "./pages/Horse/AddHorseStable";
+import CreateJockeyPage from "./pages/Jockey/CreateJockey";
+import JockeysPage from "./pages/Jockey/Jockey";
+import StablePage from "./pages/Stable/Stable";
+import CreateStablePage from "./pages/Stable/CreateStable";
+import SearchStablePage from "./pages/Stable/SearchStable";
+import TrainerPage from "./pages/Trainer/Trainer";
+import CreateTrainerPage from "./pages/Trainer/CreateTrainer";
+import CreateProgramPage from "./pages/Program/CreateProgram";
 
 import MainNavigation from "./components/Navigation/MainNavigation"
 
@@ -47,7 +48,7 @@ class App extends Component {
 
                 {!this.state.token && <Route path="/auth" component={AuthPage} />}
                 {this.state.token && <Redirect from="/auth" to="/horses" exact />}
-
+                <Route path="/createprogram" component={CreateProgramPage} />
                 <Route path="/horses" component={HorsesPage} />
                 <Route path="/createhorse" component={CreateHorsePage} />
                 <Route path="/addhorsestable" component={AddHorseStable} />

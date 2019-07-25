@@ -4,7 +4,10 @@ const Schema = mongoose.Schema;
 const raceSchema = new Schema(
   {
     programId: {
-      type: String
+      type: Number
+    },
+    raceId: {
+      type: Number
     },
     event: {
       type: String,

@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const programSchema = new mongoose.Schema(
   {
     number: {
-      type: String,
+      type: Number,
       required: true
     },
     races: [
