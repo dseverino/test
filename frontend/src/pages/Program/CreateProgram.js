@@ -12,71 +12,57 @@ import {Calendar} from 'primereact/calendar';
 //import { InputText } from 'primereact/inputtext';
 //import { Dropdown } from 'primereact/dropdown';
 
-class CreateHorsePage extends Component {
+class CreateProgramPage extends Component {
   static contextType = AuthContext
 
   state = {
     creating: false,
-    horses: [],
     isLoading: false,
     exist: false,
     visible: false,
     created: false,
     program: {
-
+      number: 1,
+      date: null
     }
   }
   isActive = true;
 
-  startCreateHorse = () => {
+  startCreateProgram = () => {
     this.setState({ exist: true })
   }
   modalCancelHandler = (event) => {
     this.setState({ creating: false, exist: false, created: false })
     this.setState({
-      horse: {
-        name: "",
-        weight: "",
-        age: 3,
-        color: "Z",
-        sex: "M",
-        sire: "",
-        dam: ""
+      program: {
+        number: 1,
+        date: ""        
       }
     })
-    document.getElementById("name").focus();
+    document.getElementById("number").focus();
   }
-  onHandleChange = (e) => {
-    let newHorse = Object.assign({}, this.state.horse)
-    newHorse[e.target.id] = e.target.value
-    this.setState({ horse: newHorse })
+  onHandleChange = (e) => {    
+    let newProgram = Object.assign({}, this.state.program)
+    newProgram[e.target.id] = e.target.value
+    this.setState({ program: newProgram });
   }
-  onAgeChangeHandler = (e) => {
-    let newHorse = Object.assign({}, this.state.horse)
-    newHorse[e.target.id] = parseInt(e.target.value)
-    this.setState({ horse: newHorse })
-  }
+
   validateProgram = () => {
-    if (!this.state.horse.name) {
+    console.log(this.state.program)
+    if (!this.state.program.number) {
       return false;
     }
     this.setState({ isLoading: true })
     const requestBody = {
       query: `
-        query SingleHorse($name: String!) {
-          singleHorse(name: $name) {
-            name
-            weight
-            age
-            color
-            sex
-            sire
-            dam
+        query SingleProgram($number: String!) {
+          singleProgram(number: $number) {
+            number            
           }
         }
       `,
       variables: {
-        name: this.state.horse.name
+        number: this.state.program.number
       }
     }
     fetch("http://localhost:3000/graphql", {
@@ -93,7 +79,7 @@ class CreateHorsePage extends Component {
         return result.json()
       })
       .then(resData => {
-        if (resData && resData.data.singleHorse) {
+        if (resData && resData.data.singleProgram) {
           this.setState({ exist: true, isLoading: false })
         }
         else {
@@ -110,21 +96,16 @@ class CreateHorsePage extends Component {
     this.setState({ isLoading: true })
     const requestBody = {
       query: `
-        mutation CreateHorse($horse: HorseInput) {
-          createHorse(horseInput: $horse) {
+        mutation CreateProgram($program: programInput) {
+          createProgram(programInput: $program) {
             _id
-            name
-            weight
-            age
-            color
-            sex
-            sire
-            dam
+            number
+            date            
           }
         }
       `,
       variables: {
-        horse: this.state.horse
+        program: this.state.program
       }
     }
 
@@ -161,14 +142,12 @@ class CreateHorsePage extends Component {
         <form>
           <div className="col-md-3 mb-3">
             <label htmlFor="number">Number</label>
-            <input type="number" onBlur={this.validateProgram} className="form-control" onChange={this.onHandleChange} id="number" value={this.state.program.number} />
+            <input type="number" min="1" value={this.state.program.number} onBlur={this.validateProgram} className="form-control" onChange={this.onHandleChange} id="number" />
           </div>
-
           <div className="col-md-3 mb-3">
             <label htmlFor="date">Date</label>
-            <Calendar value={this.state.program.date} onChange={this.onHandleChange}></Calendar>
+            <Calendar format="d/m/Y" id="date" value={this.state.program.date} onChange={this.onHandleChange}></Calendar>           
           </div>
-          
         </form>
         <button className="btn btn-secondary">
           Cancel
@@ -177,16 +156,16 @@ class CreateHorsePage extends Component {
           Save
         </button>
 
-        <Dialog header="Horse Exists!" visible={this.state.exist} style={{ width: '50vw' }} modal={true} onHide={this.modalCancelHandler}>
+        <Dialog header="Program Exists!" visible={this.state.exist} style={{ width: '50vw' }} modal={true} onHide={this.modalCancelHandler}>
           {this.state.program.number} already exists!
         </Dialog>
         <Dialog header={this.state.program.number + " Created!"} visible={this.state.created} style={{ width: '50vw' }} modal={true} onHide={this.modalCancelHandler}>
           <div>
             <div>
-              Name: {this.state.program.number}
+              Number: {this.state.program.number}
             </div>
             <div>
-              Age: {this.state.program.date}
+              Date: {this.state.program.date}
             </div>
           </div>
         </Dialog>
@@ -199,4 +178,4 @@ class CreateHorsePage extends Component {
   }
 }
 
-export default CreateHorsePage
+export default CreateProgramPage

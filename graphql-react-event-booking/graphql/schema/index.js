@@ -3,9 +3,9 @@ const { buildSchema } = require("graphql");
 module.exports = buildSchema(`
   type Program {
     _id: ID!
-    number: String!
+    number: Int!
     date: String!
-    races: [Race!]    
+    races: [Race!]
   }
 
   type Race {
@@ -177,7 +177,7 @@ module.exports = buildSchema(`
   }
 
   input ProgramInput {
-    number: String!
+    number: Int!
     date: String!
   }
 
@@ -210,6 +210,7 @@ module.exports = buildSchema(`
   type RootQuery {
     horses: [Horse!]!
     horsesWithoutStable: [Horse]!
+    singleProgram(programId: Int): Program
     singleHorse(name: String!): Horse
     singleJockey(name: String!): Jockey
     singleStable(name: String!): Stable
@@ -217,12 +218,11 @@ module.exports = buildSchema(`
     users: [User!]!
     programs: [Program!]!
     races: [Race!]!
-    login(email: String!, password: String!): AuthData!
-    singleProgram(programId: String): Program
+    login(email: String!, password: String!): AuthData!    
     jockeys: [Jockey!]!
     stables: [Stable!]!
     trainers: [Trainer!]!
-    horseRaceDetails: [HorseRaceDetail]
+    horseRaceDetails: [HorseRaceDetail]    
   }
 
   type RootMutation {

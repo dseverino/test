@@ -9,7 +9,7 @@ const raceSchema = new Schema(
     raceId: {
       type: Number
     },
-    event: {
+    number: {
       type: String,
       required: true
     },

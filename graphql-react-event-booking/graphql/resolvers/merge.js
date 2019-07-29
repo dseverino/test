@@ -61,7 +61,7 @@ const stables = async stableIds => {
   try {
     const m = { $match : { "_id" : { $in : stableIds } } };
     const a = { $addFields : { "__order" : { $indexOfArray : [ stableIds, "$_id" ] } } };
-    const s = { $sort : { "__order" : 1 } };    
+    const s = { $sort : { "__order" : 1 } };
     const stables = await Stable.aggregate( [ m, a, s ] );
     
     let updatedStables = [];
