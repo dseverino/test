@@ -6,7 +6,7 @@ import AuthContext from "../../context/auth-context";
 //import Modal from "react-bootstrap-modal";
 import { Dialog } from 'primereact/dialog';
 import Spinner from "../../components/Spinner/Spinner";
-import {Calendar} from 'primereact/calendar';
+import { Calendar } from 'primereact/calendar';
 //import ModalHeader from "react-bootstrap/ModalHeader";
 
 //import { InputText } from 'primereact/inputtext';
@@ -36,28 +36,27 @@ class CreateProgramPage extends Component {
     this.setState({
       program: {
         number: 1,
-        date: ""        
+        date: ""
       }
     })
     document.getElementById("number").focus();
   }
-  onHandleChange = (e) => {    
+  onHandleChange = (e) => {
     let newProgram = Object.assign({}, this.state.program)
     newProgram[e.target.id] = e.target.value
     this.setState({ program: newProgram });
   }
 
   validateProgram = () => {
-    console.log(this.state.program)
     if (!this.state.program.number) {
       return false;
     }
     this.setState({ isLoading: true })
     const requestBody = {
       query: `
-        query SingleProgram($number: String!) {
-          singleProgram(number: $number) {
-            number            
+        query SingleProgram($number: Int!) {
+          singleProgram(programId: $number) {
+            number                        
           }
         }
       `,
@@ -83,8 +82,7 @@ class CreateProgramPage extends Component {
           this.setState({ exist: true, isLoading: false })
         }
         else {
-          this.setState({ isLoading: false })
-          document.getElementById("weight").focus();
+          this.setState({ isLoading: false });          
         }
       })
       .catch(error => {
@@ -146,7 +144,7 @@ class CreateProgramPage extends Component {
           </div>
           <div className="col-md-3 mb-3">
             <label htmlFor="date">Date</label>
-            <Calendar format="d/m/Y" id="date" value={this.state.program.date} onChange={this.onHandleChange}></Calendar>           
+            <Calendar format="d/m/Y" id="date" value={this.state.program.date} onChange={this.onHandleChange}></Calendar>
           </div>
         </form>
         <button className="btn btn-secondary">

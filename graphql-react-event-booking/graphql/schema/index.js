@@ -222,7 +222,7 @@ module.exports = buildSchema(`
     jockeys: [Jockey!]!
     stables: [Stable!]!
     trainers: [Trainer!]!
-    horseRaceDetails: [HorseRaceDetail]    
+    horseRaceDetails: [HorseRaceDetail]
   }
 
   type RootMutation {

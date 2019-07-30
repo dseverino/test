@@ -62,10 +62,7 @@ module.exports = {
       const program = await Program.findOne({number: args.programId});
       if(program){
         return transformProgram(program)
-      }
-      else {
-        throw new Error("Program does not exist.")
-      }
+      }      
     } catch (error) {
       throw error
     }
