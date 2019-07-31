@@ -27,8 +27,17 @@ const mainNavigation = props => (
                   Programs
                 </NavLink>
                 <div className="dropdown-content">
-                  <NavLink to="/createprogram">Create Program</NavLink>                  
+                  <NavLink to="/createprogram">Create Program</NavLink>
                 </div>
+              </li>
+
+              <li className="dropdown">
+                <NavLink to="/races" className="dropbtn">
+                  Races
+                </NavLink>
+                <div className="dropdown-content">
+                  <NavLink to="/createRace">Create Race</NavLink>
+                </div>                
               </li>
 
               <li className="dropdown">
@@ -41,21 +50,6 @@ const mainNavigation = props => (
                   <NavLink to="/horseDetails">Load Horse details</NavLink>
                 </div>
               </li>
-
-              {
-                token &&
-                <React.Fragment>
-                  <li className="dropdown">
-                    <NavLink to="/races" className="dropbtn">
-                      Races
-                    </NavLink>
-                    <NavLink to="/createRace">Create Race</NavLink>
-                  </li>
-                  <li className="dropdown">
-                    <button onClick={logout}>Logout</button>
-                  </li>
-                </React.Fragment>
-              }
 
               <li className="dropdown">
                 <NavLink to="/jockeys" className="dropbtn">

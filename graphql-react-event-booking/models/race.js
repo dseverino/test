@@ -6,9 +6,6 @@ const raceSchema = new Schema(
     programId: {
       type: Number
     },
-    raceId: {
-      type: Number
-    },
     number: {
       type: String,
       required: true

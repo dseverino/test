@@ -15,6 +15,7 @@ import SearchStablePage from "./pages/Stable/SearchStable";
 import TrainerPage from "./pages/Trainer/Trainer";
 import CreateTrainerPage from "./pages/Trainer/CreateTrainer";
 import CreateProgramPage from "./pages/Program/CreateProgram";
+import CreateRacePage from "./pages/Race/CreateRace";
 
 import MainNavigation from "./components/Navigation/MainNavigation"
 
@@ -62,8 +63,9 @@ class App extends Component {
                 <Route path="/trainer" component={TrainerPage} />
                 <Route path="/createtrainer" component={CreateTrainerPage} />
                 
-                {this.state.token && <Route path="/races" component={RacesPage} />}
-                {!this.state.token && <Redirect from="/races" to="/auth" exact />}
+                <Route path="/races" component={RacesPage} />}
+                <Route path="/createrace" component={CreateRacePage} />}
+                
               </Switch>
             </main>
           </AuthContext.Provider>

@@ -25,17 +25,7 @@ module.exports = {
     /*if (!req.loggedIn) {
       throw new Error("User not authenticated!")
     }*/
-    const race = new Race({
-      event: args.raceInput.event,
-      programId: args.raceInput.programId,
-      distance: args.raceInput.distance,
-      claimingPrice: args.raceInput.claimingPrice,
-      claimingType: args.raceInput.claimingType,
-      procedence: args.raceInput.procedence,
-      horseAge: args.raceInput.horseAge,
-      spec: args.raceInput.spec,
-      purse: args.raceInput.purse
-    })
+    const race = new Race(args.raceInput);
     try {
       const result = await race.save();
       if (result && result.programId) {
@@ -61,17 +51,17 @@ module.exports = {
 
   addHorse: async (args) => {
     //(raceId: ID, horseId: ID): Race!
-    try{
+    try {
       const race = await Race.findById(args.raceId)
-      if(race){
+      if (race) {
         race.horses = [...race.horses, args.horseId]
         await race.save();
         return transformRace(race);
       }
     }
-    catch(err){
+    catch (err) {
       throw err
-    }    
+    }
   }
 
 }

@@ -21,6 +21,17 @@ module.exports = buildSchema(`
     purse: String
     horses: [Horse]
   }
+  input RaceInput {
+    programId: String
+    event: String!
+    distance: String!
+    claimingPrice: [String!]!
+    claimingType: [String!]!
+    procedence: [String!]!
+    horseAge: Int!
+    spec: String
+    purse: String!
+  }
 
   type Horse {
     _id: ID!
@@ -179,18 +190,6 @@ module.exports = buildSchema(`
   input ProgramInput {
     number: Int!
     date: String!
-  }
-
-  input RaceInput {
-    programId: String
-    event: String!
-    distance: String!
-    claimingPrice: [String!]!
-    claimingType: [String!]!
-    procedence: [String!]!
-    horseAge: Int!
-    spec: String
-    purse: String!
   }
 
   input UserInput {

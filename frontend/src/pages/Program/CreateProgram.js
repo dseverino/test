@@ -41,7 +41,15 @@ class CreateProgramPage extends Component {
     })
     document.getElementById("number").focus();
   }
-  onHandleChange = (e) => {
+
+  onNumberChangeHandler = (e) => {
+    let newProgram = Object.assign({}, this.state.program)
+    newProgram[e.target.id] = parseInt(e.target.value)
+    this.setState({ program: newProgram })
+  }
+
+  onHandleChange = (e) => {    
+    //console.log(date)
     let newProgram = Object.assign({}, this.state.program)
     newProgram[e.target.id] = e.target.value
     this.setState({ program: newProgram });
@@ -89,12 +97,13 @@ class CreateProgramPage extends Component {
         console.log(error);
       })
   }
+
   saveHandler = (event) => {
 
     this.setState({ isLoading: true })
     const requestBody = {
       query: `
-        mutation CreateProgram($program: programInput) {
+        mutation CreateProgram($program: ProgramInput) {
           createProgram(programInput: $program) {
             _id
             number
@@ -134,17 +143,18 @@ class CreateProgramPage extends Component {
         console.log(error);
       })
   }
+
   render() {
     return (
       <React.Fragment>
         <form>
           <div className="col-md-3 mb-3">
             <label htmlFor="number">Number</label>
-            <input type="number" min="1" value={this.state.program.number} onBlur={this.validateProgram} className="form-control" onChange={this.onHandleChange} id="number" />
+            <input type="number" min="1" value={this.state.program.number} onBlur={this.validateProgram} className="form-control" onChange={this.onNumberChangeHandler} id="number" />
           </div>
           <div className="col-md-3 mb-3">
             <label htmlFor="date">Date</label>
-            <Calendar format="d/m/Y" id="date" value={this.state.program.date} onChange={this.onHandleChange}></Calendar>
+            <Calendar format="dd/mm/yy" id="date" value={this.state.program.date} onChange={this.onHandleChange}></Calendar>
           </div>
         </form>
         <button className="btn btn-secondary">
@@ -157,13 +167,14 @@ class CreateProgramPage extends Component {
         <Dialog header="Program Exists!" visible={this.state.exist} style={{ width: '50vw' }} modal={true} onHide={this.modalCancelHandler}>
           {this.state.program.number} already exists!
         </Dialog>
+
         <Dialog header={this.state.program.number + " Created!"} visible={this.state.created} style={{ width: '50vw' }} modal={true} onHide={this.modalCancelHandler}>
           <div>
             <div>
               Number: {this.state.program.number}
             </div>
             <div>
-              Date: {this.state.program.date}
+              Date: {}
             </div>
           </div>
         </Dialog>

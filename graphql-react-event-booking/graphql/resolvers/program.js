@@ -22,10 +22,8 @@ module.exports = {
     /*if (!req.loggedIn) {
       throw new Error("User not authenticated!")
     }*/
-    const program = new Program({
-      date: args.programInput.date,
-      number: args.programInput.number
-    })
+    console.log(args)
+    const program = new Program(args.programInput)
     try {
       const result = await program.save();
       return transformProgram(result)
