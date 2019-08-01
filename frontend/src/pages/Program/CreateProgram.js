@@ -22,7 +22,7 @@ class CreateProgramPage extends Component {
     visible: false,
     created: false,
     program: {
-      number: 1,
+      number: "",
       date: null
     }
   }
@@ -35,7 +35,7 @@ class CreateProgramPage extends Component {
     this.setState({ creating: false, exist: false, created: false })
     this.setState({
       program: {
-        number: 1,
+        number: "",
         date: ""
       }
     })
@@ -172,10 +172,7 @@ class CreateProgramPage extends Component {
           <div>
             <div>
               Number: {this.state.program.number}
-            </div>
-            <div>
-              Date: {}
-            </div>
+            </div>            
           </div>
         </Dialog>
 

@@ -39,7 +39,7 @@ const horseRaceDetailSchema = new Schema({
   bet: String,
   horseTools: [String],
   totalHorses: Number,
-  horseAge: Number,
+  horseAge: String,
   claimingPrice: Number,
   distance: {
     type: Number,

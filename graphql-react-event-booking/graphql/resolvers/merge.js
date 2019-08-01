@@ -219,7 +219,7 @@ const transformRace = race => {
     distance: race.distance,
     claimingPrice: race.claimingPrice,
     claimingType: race.claimingType,
-    procedence: race.procedence,
+    procedences: race.procedences,
     spec: race.spec,
     horseAge: race.horseAge,
     programId: race.programId,

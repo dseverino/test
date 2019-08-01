@@ -6,8 +6,9 @@ import AuthContext from "../../context/auth-context";
 //import Modal from "react-bootstrap-modal";
 import { Dialog } from 'primereact/dialog';
 import Spinner from "../../components/Spinner/Spinner";
-import {Dropdown} from 'primereact/dropdown';
-import {Checkbox} from 'primereact/checkbox';
+import { Dropdown } from 'primereact/dropdown';
+import { Checkbox } from 'primereact/checkbox';
+import { InputText } from 'primereact/inputtext';
 //import ModalHeader from "react-bootstrap/ModalHeader";
 
 //import { InputText } from 'primereact/inputtext';
@@ -16,47 +17,59 @@ import {Checkbox} from 'primereact/checkbox';
 class CreateRacePage extends Component {
   static contextType = AuthContext
 
+  constructor(props) {
+    super(props)
+
+    this.events = [
+      "1ra Carrera", 
+      "2da Carrera", 
+      "3ra Carrera", 
+      "4ta Carrera", 
+      "5ta Carrera", 
+      "6ta Carrera",
+    ]
+  }
+
   state = {
     creating: false,
     races: [],
     isLoading: false,
-    exist: false,
+    programExist: false,
+    programNotExist: false,
     visible: false,
     created: false,
     race: {
-      programId: null,
-      event: null,
-      distance: null,
-      procedence: []
+      event: "1ra Carrera",
+      distance: "1,100 Metros",
+      procedences: [],
+      horseAge: "3 Años y Mayores",
+      claimingType: "Libres",
+      claimingPrice: "40,000",
+      purse: "",
+      programId: "",
+      spec: ""
     }
   }
 
-  claimingTypes = [
-    {label: 'Libres', value: 'Libres'},
-    {label: 'Ganadores de 1 y 2 primeras', value: 'Ganadores de 1 y 2 primeras'},
-    {label: 'No Ganadores', value: 'No Ganadores'}
-  ];
-
-  isActive = true;
-
-  startCreateRace = () => {
-    this.setState({ exist: true })
-  }
-
   modalCancelHandler = (event) => {
-    this.setState({ creating: false, exist: false, created: false })
+    this.setState({ creating: false, programExist: false, created: false })
     this.setState({
       race: {
-        name: "",
-        weight: "",
-        age: 3,
-        color: "Z",
-        sex: "M",
-        sire: "",
-        dam: ""
+        event: this.events[this.events.indexOf(this.state.race.event)],
+        distance: "1,100 Metros",
+        procedences: [],
+        horseAge: "3 Años y Mayores",
+        claimingType: "Libres",
+        claimingPrice: "40,000",
+        purse: "",
+        programId: "",
+        spec: ""
       }
     })
-    document.getElementById("name").focus();
+  }
+
+  notExistHandler = () => {
+    this.setState({ programNotExist: false })
   }
 
   onHandleChange = (e) => {
@@ -64,32 +77,32 @@ class CreateRacePage extends Component {
     newRace[e.target.id] = e.target.value
     this.setState({ race: newRace })
   }
+
   onNumberChangeHandler = (e) => {
-    let newRace = Object.assign({}, this.state.race)
-    newRace[e.target.id] = parseInt(e.target.value)
-    this.setState({ race: newRace })
+
+    let newRace = Object.assign({}, this.state.race);
+    newRace[e.target.id] = parseInt(e.target.value);
+    this.setState({ race: newRace });
   }
+
   validateProgram = () => {
-    if (!this.state.race.name) {
+    if (!this.state.race.programId) {
       return false;
     }
     this.setState({ isLoading: true })
     const requestBody = {
       query: `
-        query SingleProgram($program: String!) {
-          singleProgram(name: $name) {
-            name
-            weight
-            age
-            color
-            sex
-            sire
-            dam
+        query SingleProgram($programId: Int!) {
+          singleProgram(programId: $programId) {
+            _id
+            races{
+              event
+            }
           }
         }
       `,
       variables: {
-        name: this.state.race.name
+        programId: this.state.race.programId
       }
     }
     fetch("http://localhost:3000/graphql", {
@@ -101,38 +114,44 @@ class CreateRacePage extends Component {
     })
       .then(result => {
         if (result.status !== 200 && result.status !== 201) {
-          throw new Error("Failed")
+          throw new Error("Failed");
         }
         return result.json()
       })
       .then(resData => {
-        if (resData && resData.data.singleRace) {
-          this.setState({ exist: true, isLoading: false })          
+        if (resData && resData.data.singleProgram) {
+          this.setState({ programExist: true, isLoading: false });
+          if (resData.data.singleProgram.races.length) {            
+            let newRace = Object.assign({}, this.state.race);
+            newRace["event"] = this.events[resData.data.singleProgram.races.length]
+            this.setState({ race: newRace });
+          }
         }
         else {
-          this.setState({ isLoading: false })
-          document.getElementById("weight").focus();
+          this.setState({ programNotExist: true, programExist: false });
         }
+        this.setState({ isLoading: false })
       })
       .catch(error => {
         console.log(error);
       })
   }
-  saveHandler = (event) => {
 
+  saveHandler = (event) => {
     this.setState({ isLoading: true })
     const requestBody = {
       query: `
         mutation CreateRace($race: RaceInput) {
           createRace(raceInput: $race) {
-            _id
-            name
-            weight
-            age
-            color
-            sex
-            sire
-            dam
+            programId
+            event
+            distance
+            claimingPrice
+            claimingType
+            procedences
+            horseAge
+            spec
+            purse
           }
         }
       `,
@@ -162,80 +181,106 @@ class CreateRacePage extends Component {
           return { isLoading: false }
         })
         this.setState({ created: true })
-        
+
       })
       .catch(error => {
         console.log(error);
       })
   }
 
-  onProcedenceChange = (e) => {
+  onProcedencesChange = (e) => {
     console.log(e)
-    let newRace = Object.assign({}, this.state.race)
-    //newRace[e.target.id] = e.target.value
-    //this.setState({ race: newRace });    
+    let newRace = Object.assign({}, this.state.race);
+    if (e.checked)
+      newRace.procedences.push(e.value);
+    else
+      newRace.procedences.splice(newRace.procedences.indexOf(e.value), 1);
+    this.setState({ race: newRace });
   }
+
   render() {
+    const distances = [
+      { label: "1,000 Metros", value: "1,000 Metros" },
+      { label: "1,100 Metros", value: "1,100 Metros" },
+      { label: "1,200 Metros", value: "1,200 Metros" },
+      { label: "1,300 Metros", value: "1,300 Metros" },
+      { label: "1,400 Metros", value: "1,400 Metros" },
+      { label: "1,700 Metros", value: "1,700 Metros" },
+      { label: "1,800 Metros", value: "1,800 Metros" },
+      { label: "1,900 Metros", value: "1,900 Metros" },
+      { label: "2,000 Metros", value: "2,000 Metros" },
+    ]
+    const claimingPrices = [
+      { label: "40,000", value: "40,000" },
+      { label: "75,000", value: "75,000" },
+      { label: "125,000", value: "125,000" },
+      { label: "No Reclamables", value: "No Reclamables" }
+    ]
+    const claimingTypes = [
+      { label: "Libres", value: "Libres" },
+      { label: "Ganadores de 1 y 2 primeras", value: "Ganadores de 1 y 2 primeras" },
+      { label: "No Ganadores", value: "No Ganadores" }
+    ]
+    const ages = [
+      { label: "2 Años", value: "2 Años" },
+      { label: "3 Años", value: "3 Años" },
+      { label: "3 Años y Mayores", value: "3 Años y Mayores" }
+    ]
     return (
       <React.Fragment>
         <form>
           <div className="col-md-3 mb-3">
-            <label htmlFor="program">Program</label>
-            <input type="text" onBlur={this.validateProgram} className="form-control" onChange={this.onHandleChange} id="program" value={this.state.race.program} />
+            <label htmlFor="programId">Program</label>
+            <InputText keyfilter="pint" onBlur={this.validateProgram} className="form-control" onChange={this.onNumberChangeHandler} id="programId" value={this.state.race.programId} />
           </div>
 
           <div className="col-md-3 mb-3">
             <label htmlFor="event">Event</label>
-            <select className="form-control" onChange={this.onHandleChange} id="event" value={this.state.race.event}>
-              <option value="1ra">1ra</option>
-              <option value="2da">2da</option>
-              <option value="3ra">3ra</option>
-              <option value="4ta">4ta</option>
-              <option value="5ta">5ta</option>
-              <option value="6ta">6ta</option>
-            </select>
+            <InputText disabled={true} className="form-control" id="event" value={this.state.race.event} />
           </div>
 
           <div className="col-md-3 mb-3">
             <label htmlFor="distance">Distance</label>
-            <select className="form-control" onChange={this.onHandleChange} id="distance" value={this.state.race.distance}>
-              <option value="1000">1,000 Metros</option>
-              <option value="1100">1,100 Metros</option>
-              <option value="1200">1,200 Metros</option>
-              <option value="1300">1,300 Metros</option>
-              <option value="1400">1,400 Metros</option>
-              <option value="1700">1,700 Metros</option>
-              <option value="1800">1,800 Metros</option>
-              <option value="1900">1,900 Metros</option>
-              <option value="2000">2,000 Metros</option>
-            </select>
+            <Dropdown disabled={!this.state.programExist} id="distance" value={this.state.race.distance} options={distances} onChange={this.onHandleChange} />
           </div>
 
           <div className="col-md-3 mb-3">
             <label htmlFor="claimingPrice">Claiming Price</label>
-            <select className="form-control" id="claimingPrice" value={this.state.race.claimingPrice} onChange={this.onHandleChange}>
-              <option value="40,000">40,000</option>
-              <option value="75,000">75,000</option>
-              <option value="125,000">125,000</option>
-              <option value="No Reclamables">No Reclamables</option>
-            </select>
-                        
+            <Dropdown disabled={!this.state.programExist} id="claimingPrice" value={this.state.race.claimingPrice} options={claimingPrices} onChange={this.onHandleChange} />
           </div>
           <div className="col-md-3 mb-3">
             <label htmlFor="claimingType">Claiming Type</label>
-            <Dropdown value={this.state.race.claimingType} options={this.claimingTypes} />
-          </div>          
+            <Dropdown disabled={!this.state.programExist} id="claimingType" value={this.state.race.claimingType} options={claimingTypes} onChange={this.onHandleChange} />
+          </div>
 
           <div className="col-md-3 mb-3">
-            <label htmlFor="procedence">Procedence</label>
-            <Checkbox inputId="Nativos" value="Nativos" onChange={this.onProcedenceChange}></Checkbox>
-            <Checkbox inputId="Importados" value="Importados" onChange={this.onProcedenceChange}></Checkbox>            
+            <label htmlFor="procedences">procedences</label>
+            <div className="p-col-12">
+              <label htmlFor="nativos" className="p-checkbox-label">Nativos</label>
+              <Checkbox disabled={!this.state.programExist} inputId="nativos" value="Nativos" onChange={this.onProcedencesChange} checked={this.state.race.procedences.includes("Nativos")} />
+            </div>
+            <div className="p-col-12">
+              <label htmlFor="importados" className="p-checkbox-label">Importados</label>
+              <Checkbox disabled={!this.state.programExist} inputId="importados" value="Importados" onChange={this.onProcedencesChange} checked={this.state.race.procedences.includes("Importados")} />
+            </div>
           </div>
+
           <div className="col-md-3 mb-3">
-            <label htmlFor="dam">Dam</label>
-            <input type="text" className="form-control" onChange={this.onHandleChange} id="dam" value={this.state.race.dam} />
+            <label htmlFor="horseAge">Age</label>
+            <Dropdown disabled={!this.state.programExist} id="claimingType" value={this.state.race.horseAge} options={ages} onChange={this.onHandleChange} />
+          </div>
+
+          <div className="col-md-3 mb-3">
+            <label htmlFor="spec">Specifications</label>
+            <input disabled={!this.state.programExist} type="text" className="form-control" onChange={this.onHandleChange} id="spec" value={this.state.race.spec} />
+          </div>
+
+          <div className="col-md-3 mb-3">
+            <label htmlFor="purse">Purse</label>
+            <InputText disabled={!this.state.programExist} keyfilter="pint" className="form-control" value={this.state.race.purse} onChange={this.onNumberChangeHandler} id="purse" />
           </div>
         </form>
+
         <button className="btn btn-secondary">
           Cancel
         </button>
@@ -243,28 +288,29 @@ class CreateRacePage extends Component {
           Save
         </button>
 
-        <Dialog header= "Race Exists!" visible={this.state.exist} style={{ width: '50vw' }} modal={true} onHide={this.modalCancelHandler}>
-          {this.state.race.name} already exists!
+        <Dialog header="Not exists!" visible={this.state.programNotExist} style={{ width: '50vw' }} modal={true} onHide={this.notExistHandler}>
+          Program {this.state.race.prorgramId} does not exist!
         </Dialog>
-        <Dialog header={this.state.race.name + " Created!"} visible={this.state.created} style={{ width: '50vw' }} modal={true} onHide={this.modalCancelHandler}>
+
+        <Dialog header={this.state.race.event + " Created!"} visible={this.state.created} style={{ width: '50vw' }} modal={true} onHide={this.modalCancelHandler}>
           <div>
             <div>
-              Name: {this.state.race.name}
+              Event: {this.state.race.event}
             </div>
             <div>
-              Age: {this.state.race.age}
+              Distance: {this.state.race.distance}
             </div>
             <div>
-              Color: {this.state.race.color}
+              Procedence: {this.state.race.procedences.toString()}
             </div>
             <div>
-              Sex: {this.state.race.sex}
+              Age: {this.state.race.horseAge}
             </div>
             <div>
-              Sire: {this.state.race.sire}
+              Claiming: {this.state.race.claimingPrice} {this.state.race.claimingType}
             </div>
             <div>
-              Dam: {this.state.race.dam}
+              Event: {this.state.race.event}
             </div>
           </div>
         </Dialog>

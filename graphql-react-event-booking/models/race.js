@@ -6,7 +6,7 @@ const raceSchema = new Schema(
     programId: {
       type: Number
     },
-    number: {
+    event: {
       type: String,
       required: true
     },
@@ -26,7 +26,7 @@ const raceSchema = new Schema(
         required: true
       }
     ],
-    procedence: [
+    procedences: [
       {
         type: String,
         required: true
@@ -40,7 +40,7 @@ const raceSchema = new Schema(
       required: true
     },
     purse: {
-      type: String,
+      type: Number,
       required: true
     },
     horses: [
