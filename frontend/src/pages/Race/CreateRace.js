@@ -9,10 +9,7 @@ import Spinner from "../../components/Spinner/Spinner";
 import { Dropdown } from 'primereact/dropdown';
 import { Checkbox } from 'primereact/checkbox';
 import { InputText } from 'primereact/inputtext';
-//import ModalHeader from "react-bootstrap/ModalHeader";
-
-//import { InputText } from 'primereact/inputtext';
-//import { Dropdown } from 'primereact/dropdown';
+import "./Race.css"
 
 class CreateRacePage extends Component {
   static contextType = AuthContext
@@ -21,11 +18,11 @@ class CreateRacePage extends Component {
     super(props)
 
     this.events = [
-      "1ra Carrera", 
-      "2da Carrera", 
-      "3ra Carrera", 
-      "4ta Carrera", 
-      "5ta Carrera", 
+      "1ra Carrera",
+      "2da Carrera",
+      "3ra Carrera",
+      "4ta Carrera",
+      "5ta Carrera",
       "6ta Carrera",
     ]
   }
@@ -38,6 +35,8 @@ class CreateRacePage extends Component {
     programNotExist: false,
     visible: false,
     created: false,
+    claiming1: "",
+    claiming2: "",
     race: {
       event: "1ra Carrera",
       distance: "1,100 Metros",
@@ -51,31 +50,51 @@ class CreateRacePage extends Component {
     }
   }
 
-  modalCancelHandler = (event) => {
-    this.setState({ creating: false, programExist: false, created: false })
+  modalCancelHandler = (event) => {    
+    this.setState({ creating: false, created: false });
     this.setState({
       race: {
         event: this.events[this.events.indexOf(this.state.race.event)],
         distance: "1,100 Metros",
         procedences: [],
         horseAge: "3 Años y Mayores",
-        claimingType: "Libres",
-        claimingPrice: "40,000",
+        claiming1: "",
+        claiming2: "",
         purse: "",
-        programId: "",
+        programId: this.state.race.programId,
         spec: ""
       }
     })
   }
 
+  clearValuesHandler = () => {
+    let newRrace = {
+      ...this.state.race,
+      event: this.events[this.events.indexOf(this.state.race.event) + 1],
+      distance: "1,100 Metros",
+      procedences: [],
+      horseAge: "3 Años y Mayores",
+      claiming1: "",
+      claiming2: "",
+      purse: "",
+      spec: ""
+    }
+    this.setState({ race: newRrace, })
+  }
+
   notExistHandler = () => {
     this.setState({ programNotExist: false })
+    this.props.history.push("/createprogram")
   }
 
   onHandleChange = (e) => {
     let newRace = Object.assign({}, this.state.race)
-    newRace[e.target.id] = e.target.value
-    this.setState({ race: newRace })
+    newRace[e.target.id] = e.target.value;
+    this.setState({ race: newRace });
+  }
+
+  onClaimingChange = (e) => {
+
   }
 
   onNumberChangeHandler = (e) => {
@@ -121,7 +140,7 @@ class CreateRacePage extends Component {
       .then(resData => {
         if (resData && resData.data.singleProgram) {
           this.setState({ programExist: true, isLoading: false });
-          if (resData.data.singleProgram.races.length) {            
+          if (resData.data.singleProgram.races.length) {
             let newRace = Object.assign({}, this.state.race);
             newRace["event"] = this.events[resData.data.singleProgram.races.length]
             this.setState({ race: newRace });
@@ -181,7 +200,7 @@ class CreateRacePage extends Component {
           return { isLoading: false }
         })
         this.setState({ created: true })
-
+        this.clearValuesHandler()
       })
       .catch(error => {
         console.log(error);
@@ -189,7 +208,6 @@ class CreateRacePage extends Component {
   }
 
   onProcedencesChange = (e) => {
-    console.log(e)
     let newRace = Object.assign({}, this.state.race);
     if (e.checked)
       newRace.procedences.push(e.value);
@@ -210,22 +228,18 @@ class CreateRacePage extends Component {
       { label: "1,900 Metros", value: "1,900 Metros" },
       { label: "2,000 Metros", value: "2,000 Metros" },
     ]
-    const claimingPrices = [
-      { label: "40,000", value: "40,000" },
-      { label: "75,000", value: "75,000" },
+    const claimings = [
+      { label: "40,000 Libres", value: "40,000 Libres" },
+      { label: "75,000 Ganadroes de 1 y 2 primeras", value: "75,000 Ganadroes de 1 y 2 primeras" },
       { label: "125,000", value: "125,000" },
       { label: "No Reclamables", value: "No Reclamables" }
-    ]
-    const claimingTypes = [
-      { label: "Libres", value: "Libres" },
-      { label: "Ganadores de 1 y 2 primeras", value: "Ganadores de 1 y 2 primeras" },
-      { label: "No Ganadores", value: "No Ganadores" }
-    ]
+    ];
+
     const ages = [
       { label: "2 Años", value: "2 Años" },
       { label: "3 Años", value: "3 Años" },
       { label: "3 Años y Mayores", value: "3 Años y Mayores" }
-    ]
+    ];
     return (
       <React.Fragment>
         <form>
@@ -239,33 +253,37 @@ class CreateRacePage extends Component {
             <InputText disabled={true} className="form-control" id="event" value={this.state.race.event} />
           </div>
 
-          <div className="col-md-3 mb-3">
+          <div className="col-md-3 mb-4">
             <label htmlFor="distance">Distance</label>
             <Dropdown disabled={!this.state.programExist} id="distance" value={this.state.race.distance} options={distances} onChange={this.onHandleChange} />
           </div>
 
-          <div className="col-md-3 mb-3">
-            <label htmlFor="claimingPrice">Claiming Price</label>
-            <Dropdown disabled={!this.state.programExist} id="claimingPrice" value={this.state.race.claimingPrice} options={claimingPrices} onChange={this.onHandleChange} />
-          </div>
-          <div className="col-md-3 mb-3">
-            <label htmlFor="claimingType">Claiming Type</label>
-            <Dropdown disabled={!this.state.programExist} id="claimingType" value={this.state.race.claimingType} options={claimingTypes} onChange={this.onHandleChange} />
+          <div style={{ display: "flex" }}>
+            <div className="col-md-3 mb-3">
+              <label htmlFor="claimingPrice">Claiming 1</label>
+              <Dropdown className="claiming-dropdown" disabled={!this.state.programExist} id="claimingPrice1" value={this.state.claiming1} options={claimings} onChange={this.onClaimingChange} />
+            </div>
+            <div className="col-md-3 mb-3">
+              <label htmlFor="claimingType">Claiming 2</label>
+              <Dropdown className="claiming-dropdown" disabled={!this.state.programExist} id="claimingType1" value={this.state.claiming2} options={claimings} onChange={this.onClaimingChange} />
+            </div>
           </div>
 
-          <div className="col-md-3 mb-3">
+          <div className="col-md-3 mb-4">
             <label htmlFor="procedences">procedences</label>
-            <div className="p-col-12">
-              <label htmlFor="nativos" className="p-checkbox-label">Nativos</label>
-              <Checkbox disabled={!this.state.programExist} inputId="nativos" value="Nativos" onChange={this.onProcedencesChange} checked={this.state.race.procedences.includes("Nativos")} />
-            </div>
-            <div className="p-col-12">
-              <label htmlFor="importados" className="p-checkbox-label">Importados</label>
-              <Checkbox disabled={!this.state.programExist} inputId="importados" value="Importados" onChange={this.onProcedencesChange} checked={this.state.race.procedences.includes("Importados")} />
+            <div style={{display: "flex"}}>
+              <div style={{width: "100px"}}>
+                <label style={{marginRight: "10px"}} htmlFor="nativos" className="p-checkbox-label">Nativos</label>
+                <Checkbox disabled={!this.state.programExist} inputId="nativos" value="Nativos" onChange={this.onProcedencesChange} checked={this.state.race.procedences.includes("Nativos")} />
+              </div>
+              <div className="p-col-12">
+                <label style={{marginRight: "10px"}} htmlFor="importados" className="p-checkbox-label">Importados</label>
+                <Checkbox disabled={!this.state.programExist} inputId="importados" value="Importados" onChange={this.onProcedencesChange} checked={this.state.race.procedences.includes("Importados")} />
+              </div>
             </div>
           </div>
 
-          <div className="col-md-3 mb-3">
+          <div className="col-md-3 mb-4">
             <label htmlFor="horseAge">Age</label>
             <Dropdown disabled={!this.state.programExist} id="claimingType" value={this.state.race.horseAge} options={ages} onChange={this.onHandleChange} />
           </div>
@@ -281,10 +299,10 @@ class CreateRacePage extends Component {
           </div>
         </form>
 
-        <button className="btn btn-secondary">
+        <button disabled={!this.state.programExist} className="btn btn-secondary">
           Cancel
         </button>
-        <button onClick={this.saveHandler} className="btn btn-primary">
+        <button disabled={!this.state.programExist} onClick={this.saveHandler} className="btn btn-primary">
           Save
         </button>
 
@@ -292,26 +310,9 @@ class CreateRacePage extends Component {
           Program {this.state.race.prorgramId} does not exist!
         </Dialog>
 
-        <Dialog header={this.state.race.event + " Created!"} visible={this.state.created} style={{ width: '50vw' }} modal={true} onHide={this.modalCancelHandler}>
+        <Dialog header={this.state.race.event + " Created!"} visible={this.state.created} style={{ width: '50vw' }} modal={true} onHide={() => this.setState({ created: false })}>
           <div>
-            <div>
-              Event: {this.state.race.event}
-            </div>
-            <div>
-              Distance: {this.state.race.distance}
-            </div>
-            <div>
-              Procedence: {this.state.race.procedences.toString()}
-            </div>
-            <div>
-              Age: {this.state.race.horseAge}
-            </div>
-            <div>
-              Claiming: {this.state.race.claimingPrice} {this.state.race.claimingType}
-            </div>
-            <div>
-              Event: {this.state.race.event}
-            </div>
+            Race created
           </div>
         </Dialog>
 

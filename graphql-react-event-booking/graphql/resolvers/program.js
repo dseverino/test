@@ -22,7 +22,7 @@ module.exports = {
     /*if (!req.loggedIn) {
       throw new Error("User not authenticated!")
     }*/
-    console.log(args)
+
     const program = new Program(args.programInput)
     try {
       const result = await program.save();
