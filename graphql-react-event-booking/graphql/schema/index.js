@@ -13,8 +13,7 @@ module.exports = buildSchema(`
     programId: String
     event: String!
     distance: String!
-    claimingPrice: [String!]!
-    claimingType: [String!]!
+    claimings: [String!]!
     procedences: [String!]!
     horseAge: String!
     spec: String
@@ -25,8 +24,7 @@ module.exports = buildSchema(`
     programId: Int
     event: String!
     distance: String!
-    claimingPrice: [String!]!
-    claimingType: [String!]!
+    claimings: [String!]!
     procedences: [String!]!
     horseAge: String!
     spec: String

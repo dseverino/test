@@ -14,13 +14,7 @@ const raceSchema = new Schema(
       type: String,
       required: true
     },
-    claimingPrice: [
-      {
-        type: String,
-        required: true
-      }
-    ],
-    claimingType: [
+    claimings: [
       {
         type: String,
         required: true

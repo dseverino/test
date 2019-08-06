@@ -211,22 +211,20 @@ const transformProgram = program => {
   }
 }
 
-const transformRace = race => {
-  return {
-    ...race,
-    _id: race.id,
-    event: race.event,
-    distance: race.distance,
-    claimingPrice: race.claimingPrice,
-    claimingType: race.claimingType,
-    procedences: race.procedences,
-    spec: race.spec,
-    horseAge: race.horseAge,
-    programId: race.programId,
-    purse: race.purse,
-    horses: () => horseLoader.loadMany(race.horses)
-  }
-}
+const transformRace = race => ({
+  ...race,
+  _id: race.id,
+  event: race.event,
+  distance: race.distance,
+  claimings: race.claimings,
+  claimingType: race.claimingType,
+  procedences: race.procedences,
+  spec: race.spec,
+  horseAge: race.horseAge,
+  programId: race.programId,
+  purse: race.purse,
+  horses: () => horseLoader.loadMany(race.horses)
+})
 
 const transformJockey = jockey => {
   return {
