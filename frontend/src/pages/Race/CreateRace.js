@@ -4,6 +4,14 @@ import AuthContext from "../../context/auth-context";
 //import Backdrop from "../components/Backdrop/Backdrop";
 //import TestModal from "../components/Modal/Modal";
 //import Modal from "react-bootstrap-modal";
+
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import { makeStyles } from '@material-ui/core/styles';
+
 import { Dialog } from 'primereact/dialog';
 import Spinner from "../../components/Spinner/Spinner";
 import { Dropdown } from 'primereact/dropdown';
@@ -73,11 +81,11 @@ class CreateRacePage extends Component {
       distance: "1,100 Metros",
       procedences: [],
       horseAge: "3 Años y Mayores",
-      claimings: [],      
+      claimings: [],
       purse: "",
       spec: ""
     }
-    this.setState({ race: newRrace, claiming1: "", claiming2: ""})
+    this.setState({ race: newRrace, claiming1: "", claiming2: "" })
   }
 
   notExistHandler = () => {
@@ -91,12 +99,12 @@ class CreateRacePage extends Component {
     this.setState({ race: newRace });
   }
 
-  onClaiming1Change = (e) => {    
+  onClaiming1Change = (e) => {
     let newRace = Object.assign({}, this.state.race);
     newRace.claimings[0] = e.value;
 
     this.setState({ race: newRace });
-    this.setState({claiming1: e.value});
+    this.setState({ claiming1: e.value });
   }
 
   onClaiming2Change = (e) => {
@@ -104,7 +112,7 @@ class CreateRacePage extends Component {
     newRace.claimings[1] = e.value;
 
     this.setState({ race: newRace });
-    this.setState({claiming2: e.value});
+    this.setState({ claiming2: e.value });
   }
 
   onNumberChangeHandler = (e) => {
@@ -225,6 +233,17 @@ class CreateRacePage extends Component {
     this.setState({ race: newRace });
   }
 
+  useStyles = makeStyles(theme => ({
+    button: {
+      display: 'block',
+      marginTop: theme.spacing(2),
+    },
+    formControl: {
+      margin: theme.spacing(1),
+      minWidth: 120,
+    },
+  }));
+
   render() {
     const distances = [
       { label: "1,000 Metros", value: "1,000 Metros" },
@@ -241,15 +260,15 @@ class CreateRacePage extends Component {
       { label: "40,000 Libres", value: "40,000 Libres" },
       { label: "75,000 Libres", value: "75,000 Libres" },
       { label: "75,000 Ganadores de 1 y 2 primeras", value: "75,000 Ganadores de 1 y 2 primeras" },
-      { label: "175,000 No Ganadores", value: "175,000 No Ganadores"},
-      { label: "250,000 Ganadores de 1 y 2 primeras", value: "250,000 Ganadores de 1 y 2 primeras" },      
+      { label: "175,000 No Ganadores", value: "175,000 No Ganadores" },
+      { label: "250,000 Ganadores de 1 y 2 primeras", value: "250,000 Ganadores de 1 y 2 primeras" },
       { label: "250,000 Libres", value: "250,000 Libres" },
       { label: "300,000 Libres", value: "300,000 Libres" },
       { label: "No Reclamables Libres", value: "No Reclamables Libres" },
       { label: "No Reclamables No Ganadores", value: "No Reclamables No Ganadores" }
 
     ];
-
+    const classes = useStyles();
     const ages = [
       { label: "2 Años", value: "2 Años" },
       { label: "3 Años", value: "3 Años" },
@@ -260,19 +279,45 @@ class CreateRacePage extends Component {
         <div style={{ width: "60%" }}>
           <form>
             <div className="col-md-3 mb-3">
-              <label htmlFor="programId">Program</label>
-              <InputText keyfilter="pint" onBlur={this.validateProgram} className="form-control" onChange={this.onNumberChangeHandler} id="programId" value={this.state.race.programId} />
+              <TextField
+                id="programId"
+                label="Program"
+                keyfilter="pint"
+                onBlur={this.validateProgram}
+                onChange={this.onNumberChangeHandler}
+                value={this.state.race.programId}
+                margin="normal"
+                variant="outlined"
+              />
             </div>
 
             <div className="col-md-3 mb-3">
-              <label htmlFor="event">Event</label>
-              <InputText disabled={true} className="form-control" id="event" value={this.state.race.event} />
+              <TextField id="event" disabled={true} label="Event" keyfilter="pint"
+                onChange={this.onNumberChangeHandler} value={this.state.race.event} margin="normal" variant="outlined" />
             </div>
 
             <div className="col-md-3 mb-4">
               <label htmlFor="distance">Distance</label>
               <Dropdown disabled={!this.state.programExist} id="distance" value={this.state.race.distance} options={distances} onChange={this.onHandleChange} />
             </div>
+
+            <FormControl variant="outlined" className={classes.formControl}>
+              <InputLabel ref={inputLabel} htmlFor="distance">
+                Age
+              </InputLabel>
+              <Select
+                value={this.state.race.distance}
+                onChange={this.onHandleChange}
+                input={<OutlinedInput labelWidth={labelWidth} name="distance" id="distance" />}
+              >
+                <MenuItem value="">
+                  <em>None</em>
+                </MenuItem>
+                <MenuItem value={10}>Ten</MenuItem>
+                <MenuItem value={20}>Twenty</MenuItem>
+                <MenuItem value={30}>Thirty</MenuItem>
+              </Select>
+            </FormControl>
 
             <div style={{ display: "flex" }}>
               <div className="col-md-3 mb-3">
@@ -305,13 +350,12 @@ class CreateRacePage extends Component {
             </div>
 
             <div className="col-md-3 mb-3">
-              <label htmlFor="spec">Specifications</label>
-              <input disabled={!this.state.programExist} type="text" className="form-control" onChange={this.onHandleChange} id="spec" value={this.state.race.spec} />
+              <TextField label="Spec" disabled={!this.state.programExist} type="text" margin="normal" variant="outlined" onChange={this.onHandleChange} id="spec" value={this.state.race.spec} />
             </div>
 
             <div className="col-md-3 mb-3">
-              <label htmlFor="purse">Purse</label>
-              <InputText disabled={!this.state.programExist} keyfilter="pint" className="form-control" value={this.state.race.purse} onChange={this.onNumberChangeHandler} id="purse" />
+              <TextField id="purse" disabled={!this.state.programExist} label="Purse" keyfilter="pint"
+                onChange={this.onNumberChangeHandler} value={this.state.race.purse} margin="normal" variant="outlined" />
             </div>
           </form>
         </div>
@@ -322,7 +366,9 @@ class CreateRacePage extends Component {
         <button disabled={!this.state.programExist} onClick={this.saveHandler} className="btn btn-primary">
           Save
         </button>
-
+        <Button variant="contained" color="primary">
+          Hello World
+        </Button>
         <Dialog header="Not exists!" visible={this.state.programNotExist} style={{ width: '50vw' }} modal={true} onHide={this.notExistHandler}>
           Program {this.state.race.prorgramId} does not exist!
         </Dialog>
