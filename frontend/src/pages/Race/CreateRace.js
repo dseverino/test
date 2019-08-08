@@ -4,27 +4,30 @@ import AuthContext from "../../context/auth-context";
 //import Backdrop from "../components/Backdrop/Backdrop";
 //import TestModal from "../components/Modal/Modal";
 //import Modal from "react-bootstrap-modal";
-
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+import OutlinedInput from '@material-ui/core/OutlinedInput';
 import { makeStyles } from '@material-ui/core/styles';
 
 import { Dialog } from 'primereact/dialog';
 import Spinner from "../../components/Spinner/Spinner";
 import { Dropdown } from 'primereact/dropdown';
 import { Checkbox } from 'primereact/checkbox';
-import { InputText } from 'primereact/inputtext';
+//import { InputText } from 'primereact/inputtext';
 import "./Race.css"
+
 
 class CreateRacePage extends Component {
   static contextType = AuthContext
-
+  
+    
   constructor(props) {
     super(props)
-
+    
     this.events = [
       "1ra Carrera",
       "2da Carrera",
@@ -45,6 +48,7 @@ class CreateRacePage extends Component {
     created: false,
     claiming1: "",
     claiming2: "",
+    labelWidth: 0,
     race: {
       event: "1ra Carrera",
       distance: "1,100 Metros",
@@ -233,17 +237,6 @@ class CreateRacePage extends Component {
     this.setState({ race: newRace });
   }
 
-  useStyles = makeStyles(theme => ({
-    button: {
-      display: 'block',
-      marginTop: theme.spacing(2),
-    },
-    formControl: {
-      margin: theme.spacing(1),
-      minWidth: 120,
-    },
-  }));
-
   render() {
     const distances = [
       { label: "1,000 Metros", value: "1,000 Metros" },
@@ -268,7 +261,7 @@ class CreateRacePage extends Component {
       { label: "No Reclamables No Ganadores", value: "No Reclamables No Ganadores" }
 
     ];
-    const classes = useStyles();
+    
     const ages = [
       { label: "2 Años", value: "2 Años" },
       { label: "3 Años", value: "3 Años" },
@@ -298,24 +291,20 @@ class CreateRacePage extends Component {
 
             <div className="col-md-3 mb-4">
               <label htmlFor="distance">Distance</label>
-              <Dropdown disabled={!this.state.programExist} id="distance" value={this.state.race.distance} options={distances} onChange={this.onHandleChange} />
+              <Dropdown  id="distance" value={this.state.race.distance} options={distances} onChange={this.onHandleChange} />
             </div>
 
-            <FormControl variant="outlined" className={classes.formControl}>
-              <InputLabel ref={inputLabel} htmlFor="distance">
-                Age
+            <FormControl disabled={!this.state.programExist} className="col-md-3 mb-4" variant="outlined" >
+              <InputLabel htmlFor="distance">
+                Distance
               </InputLabel>
-              <Select
-                value={this.state.race.distance}
-                onChange={this.onHandleChange}
-                input={<OutlinedInput labelWidth={labelWidth} name="distance" id="distance" />}
-              >
-                <MenuItem value="">
-                  <em>None</em>
-                </MenuItem>
-                <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
+              <Select value={this.state.race.distance} onChange={this.onHandleChange}
+                input={<OutlinedInput labelWidth={65} name="distance" id="distance" />} >
+                  {
+                    distances.map(distance => {
+                      return <MenuItem key={distance.value} value={distance.value}>{distance.label}</MenuItem>
+                    })
+                  }                
               </Select>
             </FormControl>
 

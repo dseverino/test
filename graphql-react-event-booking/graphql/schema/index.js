@@ -45,7 +45,8 @@ module.exports = buildSchema(`
   }
 
   type HorseRaceDetail {
-    _id: ID!    
+    _id: ID!
+    date: String
     jockey: Jockey
     jockeyWeight: Int 
     trainer: Trainer
@@ -61,7 +62,7 @@ module.exports = buildSchema(`
     retired: Boolean 
     retiredDetails: String 
     bet: String 
-    horseTools: [String] 
+    horseEquipments: [String] 
     totalHorses: Int
     horseAge: String
     distance: Int
@@ -163,7 +164,8 @@ module.exports = buildSchema(`
     stable: ID
   }
 
-  input HorseRaceDetailInput {    
+  input HorseRaceDetailInput {   
+    date: String 
     jockey: ID 
     jockeyWeight: Int 
     trainer: ID
@@ -179,7 +181,7 @@ module.exports = buildSchema(`
     retired: Boolean 
     retiredDetails: String 
     bet: String 
-    horseTools: [String] 
+    horseEquipments: [String] 
     totalHorses: Int 
     horseAge: String
     distance: Int

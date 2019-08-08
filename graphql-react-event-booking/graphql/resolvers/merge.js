@@ -194,7 +194,7 @@ const transformRaceDetail = raceDetail => {
     retired: raceDetail.retired,
     retiredDetails: raceDetail.retiredDetails,
     bet: raceDetail.bet,
-    horseTools: raceDetail.horseTools,
+    horseEquipments: raceDetail.horseEquipments,
     totalHorses: raceDetail.totalHorses,
     horseAge: raceDetail.horseAge,
     distance: raceDetail.distance
