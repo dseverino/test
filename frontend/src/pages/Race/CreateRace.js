@@ -20,14 +20,23 @@ import { Checkbox } from 'primereact/checkbox';
 //import { InputText } from 'primereact/inputtext';
 import "./Race.css"
 
+const useStyles = makeStyles(theme => ({
+  button: {
+    margin: theme.spacing(1),
+  },
+  input: {
+    display: 'none',
+  },
+}));
+
 
 class CreateRacePage extends Component {
   static contextType = AuthContext
-  
-    
+
+
   constructor(props) {
     super(props)
-    
+
     this.events = [
       "1ra Carrera",
       "2da Carrera",
@@ -97,9 +106,9 @@ class CreateRacePage extends Component {
     this.props.history.push("/createprogram")
   }
 
-  onHandleChange = (e) => {
+  onHandleChange = (e) => {    
     let newRace = Object.assign({}, this.state.race);
-    newRace[e.target.id] = e.target.value;
+    newRace[e.target.id || e.target.name] = e.target.value;
     this.setState({ race: newRace });
   }
 
@@ -261,7 +270,7 @@ class CreateRacePage extends Component {
       { label: "No Reclamables No Ganadores", value: "No Reclamables No Ganadores" }
 
     ];
-    
+
     const ages = [
       { label: "2 Años", value: "2 Años" },
       { label: "3 Años", value: "3 Años" },
@@ -289,22 +298,16 @@ class CreateRacePage extends Component {
                 onChange={this.onNumberChangeHandler} value={this.state.race.event} margin="normal" variant="outlined" />
             </div>
 
-            <div className="col-md-3 mb-4">
-              <label htmlFor="distance">Distance</label>
-              <Dropdown  id="distance" value={this.state.race.distance} options={distances} onChange={this.onHandleChange} />
-            </div>
-
             <FormControl disabled={!this.state.programExist} className="col-md-3 mb-4" variant="outlined" >
               <InputLabel htmlFor="distance">
                 Distance
               </InputLabel>
-              <Select value={this.state.race.distance} onChange={this.onHandleChange}
-                input={<OutlinedInput labelWidth={65} name="distance" id="distance" />} >
-                  {
-                    distances.map(distance => {
-                      return <MenuItem key={distance.value} value={distance.value}>{distance.label}</MenuItem>
-                    })
-                  }                
+              <Select value={this.state.race.distance} onChange={this.onHandleChange} input={<OutlinedInput labelWidth={65} />} name="distance" id="distance" >
+                {
+                  distances.map(distance => {
+                    return <MenuItem key={distance.value} value={distance.value}>{distance.label}</MenuItem>
+                  })
+                }
               </Select>
             </FormControl>
 
@@ -333,10 +336,18 @@ class CreateRacePage extends Component {
               </div>
             </div>
 
-            <div className="col-md-3 mb-4">
-              <label htmlFor="horseAge">Age</label>
-              <Dropdown disabled={!this.state.programExist} id="claimingType" value={this.state.race.horseAge} options={ages} onChange={this.onHandleChange} />
-            </div>
+            <FormControl disabled={!this.state.programExist} className="col-md-3 mb-4" variant="outlined" >
+              <InputLabel htmlFor="horseAge">
+                Age
+              </InputLabel>
+              <Select value={this.state.race.horseAge} onChange={this.onHandleChange} input={<OutlinedInput labelWidth={65} />} name="horseAge" id="horseAge" >
+                {
+                  ages.map(age => {
+                    return <MenuItem key={age.value} value={age.value}>{age.label}</MenuItem>
+                  })
+                }
+              </Select>
+            </FormControl>
 
             <div className="col-md-3 mb-3">
               <TextField label="Spec" disabled={!this.state.programExist} type="text" margin="normal" variant="outlined" onChange={this.onHandleChange} id="spec" value={this.state.race.spec} />
@@ -355,7 +366,7 @@ class CreateRacePage extends Component {
         <button disabled={!this.state.programExist} onClick={this.saveHandler} className="btn btn-primary">
           Save
         </button>
-        <Button variant="contained" color="primary">
+        <Button variant="outlined" color="primary">
           Hello World
         </Button>
         <Dialog header="Not exists!" visible={this.state.programNotExist} style={{ width: '50vw' }} modal={true} onHide={this.notExistHandler}>

@@ -57,7 +57,8 @@ module.exports = {
 
   singleProgram: async (args) => {
     try {
-      const program = await Program.findOne({number: args.programId});
+      const program = await Program.findOne({date: args.date});
+      
       if(program){
         return transformProgram(program)
       }      

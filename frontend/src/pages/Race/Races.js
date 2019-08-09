@@ -1,48 +1,54 @@
 import React, { Component } from "react";
+import Spinner from "../../components/Spinner/Spinner";
 
 import AuthContext from "../../context/auth-context";
 
-import BookingList from "../../components/Bookings/BookingList/BookingList"
-import BookingsChart from "../../components/Bookings/BookingsChart/BookingsChart"
-import Spinner from "../../components/Spinner/Spinner"
-import BookingsControls from "../../components/Bookings/BookingsControls/BookingsControls"
+import { Calendar } from 'primereact/calendar';
 
 class BookingsPage extends Component {
   static contextType = AuthContext
 
   state = {
     isLoading: false,
-    bookings: [],
-    outputType: 'list'
+    programDate: "",
+    races: []
   }
 
   componentDidMount = () => {
-    this.fetchBookings()
+
   }
 
-  onCancelBookingHandler = (bookingId) => {
+  onProgramDateChange = (e) => {
+    this.setState({ programDate: e.value, isLoading: true }, () => this.loadProgramRaces());
+  }
+
+  loadProgramRaces = () => {
     this.setState({ isLoading: true })
     const requestBody = {
       query: `
-        mutation CancelBooking ($id: ID!){ 
-          cancelBooking(bookingId: $id) {
-            _id
-            title
-            description
+        query SingleProgram($date: String!) {
+          singleProgram(date: $date) {
+            races {
+              event
+              distance
+              claimings
+              procedences
+              horseAge
+              spec
+              purse
+            }
           }
         }
       `,
       variables: {
-        id: bookingId
+        date: this.state.programDate
       }
     }
-
     fetch("http://localhost:3000/graphql", {
       method: 'POST',
       body: JSON.stringify(requestBody),
       headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${this.context.token}`
+        "Content-Type": "application/json"
       }
     })
       .then(result => {
@@ -52,86 +58,30 @@ class BookingsPage extends Component {
         return result.json()
       })
       .then(resData => {
-        this.setState(prevState => {
-          return { bookings: this.state.bookings.filter(b => b._id !== bookingId), isLoading: false }
-        })
+        if (resData && resData.data.singleProgram) {
+          this.setState({ exist: true, isLoading: false })
+        }
+        else {
+          this.setState({ isLoading: false });
+        }
       })
       .catch(error => {
-        console.log(error)
-        this.setState({ isLoading: false });
+        console.log(error);
       })
-  }
-
-  fetchBookings = () => {
-    this.setState({ isLoading: true })
-    const requestBody = {
-      query: `
-        query { 
-          bookings {
-            _id
-            createdAt
-            updatedAt
-            event {
-              _id
-              title
-              date
-              price
-            }
-            user {
-              _id
-            }
-          }
-        }
-      `
-    }
-
-    fetch("http://localhost:3000/graphql", {
-      method: 'POST',
-      body: JSON.stringify(requestBody),
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${this.context.token}`
-      }
-    })
-      .then(result => {
-        if (result.status !== 200 && result.status !== 201) {
-          throw new Error("Failed")
-        }
-        return result.json()
-      })
-      .then(resData => {
-        this.setState({ bookings: resData.data.bookings, isLoading: false });
-      })
-      .catch(error => {
-        console.log(error)
-        this.setState({ isLoading: false });
-      })
-  }
-
-  changeOutputHandler = outputType => {
-    if(outputType === 'list'){
-      this.setState({outputType: 'list'})
-    }
-    else {
-      this.setState({outputType: 'chart'})
-    }
   }
 
   render() {
-    let content = <Spinner />;
-    if (!this.state.isLoading) {
-      content = (
-        <React.Fragment>
-          <BookingsControls changeOutput={this.changeOutputHandler} activeOutputType={this.state.outputType}/>
-          <div>
-            {this.state.outputType === 'list' ? <BookingList bookings={this.state.bookings} onCancelBooking={this.onCancelBookingHandler} userId={this.context.userId} /> : <BookingsChart bookings={this.state.bookings} />}
-          </div>
-        </React.Fragment>
-      )
-    }
     return (
       <React.Fragment>
-        {content}
+        <div>
+          <strong>Select Program Date: </strong>
+          <div className="col-md-3 mb-3">
+            <Calendar dateFormat="dd/mm/yy" showIcon={true} id="date" value={this.state.programDate} onChange={this.onProgramDateChange}></Calendar>
+          </div>
+        </div>
+        {
+          this.state.isLoading && <Spinner />
+        }
       </React.Fragment>
     );
   }

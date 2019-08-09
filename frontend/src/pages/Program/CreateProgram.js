@@ -49,7 +49,6 @@ class CreateProgramPage extends Component {
   }
 
   onHandleChange = (e) => {    
-    //console.log(date)
     let newProgram = Object.assign({}, this.state.program)
     newProgram[e.target.id] = e.target.value
     this.setState({ program: newProgram });
@@ -154,7 +153,7 @@ class CreateProgramPage extends Component {
           </div>
           <div className="col-md-3 mb-3">
             <label htmlFor="date">Date</label>
-            <Calendar format="dd/mm/yy" id="date" value={this.state.program.date} onChange={this.onHandleChange}></Calendar>
+            <Calendar dateFormat="dd/mm/yy" id="date" value={this.state.program.date} onChange={this.onHandleChange}></Calendar>
           </div>
         </form>
         <button className="btn btn-secondary">

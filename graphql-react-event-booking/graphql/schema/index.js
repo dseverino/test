@@ -208,8 +208,8 @@ module.exports = buildSchema(`
 
   type RootQuery {
     horses: [Horse!]!
-    horsesWithoutStable: [Horse]!
-    singleProgram(programId: Int): Program
+    horsesWithoutStable: [Horse]!    
+    singleProgram(date: String): Program
     singleHorse(name: String!): Horse
     singleJockey(name: String!): Jockey
     singleStable(name: String!): Stable
