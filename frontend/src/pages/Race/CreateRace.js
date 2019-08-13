@@ -11,7 +11,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
-import { makeStyles } from '@material-ui/core/styles';
+import { Calendar } from 'primereact/calendar';
 
 import { Dialog } from 'primereact/dialog';
 import Spinner from "../../components/Spinner/Spinner";
@@ -20,19 +20,8 @@ import { Checkbox } from 'primereact/checkbox';
 //import { InputText } from 'primereact/inputtext';
 import "./Race.css"
 
-const useStyles = makeStyles(theme => ({
-  button: {
-    margin: theme.spacing(1),
-  },
-  input: {
-    display: 'none',
-  },
-}));
-
-
 class CreateRacePage extends Component {
   static contextType = AuthContext
-
 
   constructor(props) {
     super(props)
@@ -65,6 +54,7 @@ class CreateRacePage extends Component {
       horseAge: "3 Años y Mayores",
       claimings: [],
       purse: "",
+      date: "",
       programId: "",
       spec: ""
     }
@@ -106,7 +96,7 @@ class CreateRacePage extends Component {
     this.props.history.push("/createprogram")
   }
 
-  onHandleChange = (e) => {    
+  onHandleChange = (e) => {
     let newRace = Object.assign({}, this.state.race);
     newRace[e.target.id || e.target.name] = e.target.value;
     this.setState({ race: newRace });
@@ -135,16 +125,20 @@ class CreateRacePage extends Component {
     this.setState({ race: newRace });
   }
 
-  validateProgram = () => {
-    if (!this.state.race.programId) {
-      return false;
-    }
+  onProgramDateChange = (e) => {
+    let newRace = Object.assign({}, this.state.race);
+    newRace[e.target.id || e.target.name] = e.target.value;
+    this.setState({ race: newRace }, () => this.loadProgram());
+  }
+
+  loadProgram = () => {
     this.setState({ isLoading: true })
     const requestBody = {
       query: `
-        query SingleProgram($programId: Int!) {
-          singleProgram(programId: $programId) {
+        query SingleProgram($date: String!) {
+          singleProgram(date: $date) {
             _id
+            number
             races{
               event
             }
@@ -152,7 +146,7 @@ class CreateRacePage extends Component {
         }
       `,
       variables: {
-        programId: this.state.race.programId
+        date: this.state.race.date
       }
     }
     fetch("http://localhost:3000/graphql", {
@@ -171,11 +165,13 @@ class CreateRacePage extends Component {
       .then(resData => {
         if (resData && resData.data.singleProgram) {
           this.setState({ programExist: true, isLoading: false });
+          let newRace = Object.assign({}, this.state.race);
+          newRace["programId"] = resData.data.singleProgram.number;
+
           if (resData.data.singleProgram.races.length) {
-            let newRace = Object.assign({}, this.state.race);
-            newRace["event"] = this.events[resData.data.singleProgram.races.length]
-            this.setState({ race: newRace });
+            newRace["event"] = this.events[resData.data.singleProgram.races.length]            
           }
+          this.setState({ race: newRace });
         }
         else {
           this.setState({ programNotExist: true, programExist: false });
@@ -262,41 +258,52 @@ class CreateRacePage extends Component {
       { label: "40,000 Libres", value: "40,000 Libres" },
       { label: "75,000 Libres", value: "75,000 Libres" },
       { label: "75,000 Ganadores de 1 y 2 primeras", value: "75,000 Ganadores de 1 y 2 primeras" },
+      { label: "125,000 Libres", value: "125,000 Libres" },
+      { label: "125,000 Ganadores de 1 y 2 primeras", value: "125,000 Ganadores de 1 y 2 primeras" },
       { label: "175,000 No Ganadores", value: "175,000 No Ganadores" },
-      { label: "250,000 Ganadores de 1 y 2 primeras", value: "250,000 Ganadores de 1 y 2 primeras" },
       { label: "250,000 Libres", value: "250,000 Libres" },
+      { label: "250,000 Ganadores de 1 y 2 primeras", value: "250,000 Ganadores de 1 y 2 primeras" },      
+      { label: "250,000 No Ganadores", value: "250,000 No Ganadores" },
       { label: "300,000 Libres", value: "300,000 Libres" },
       { label: "No Reclamables Libres", value: "No Reclamables Libres" },
       { label: "No Reclamables No Ganadores", value: "No Reclamables No Ganadores" }
 
     ];
-
     const ages = [
       { label: "2 Años", value: "2 Años" },
       { label: "3 Años", value: "3 Años" },
       { label: "3 Años y Mayores", value: "3 Años y Mayores" }
     ];
+
     return (
       <React.Fragment>
         <div style={{ width: "60%" }}>
           <form>
             <div className="col-md-3 mb-3">
-              <TextField
-                id="programId"
-                label="Program"
-                keyfilter="pint"
-                onBlur={this.validateProgram}
-                onChange={this.onNumberChangeHandler}
-                value={this.state.race.programId}
-                margin="normal"
-                variant="outlined"
-              />
+              <label htmlFor="date">Program Date</label>
+              <Calendar dateFormat="dd/mm/yy" id="date" value={this.state.race.date} onChange={this.onProgramDateChange}></Calendar>
+            </div>
+            <div className="col-md-3 mb-3">
+              <TextField id="programId"
+                label="Program" disabled={true} keyfilter="pint" value={this.state.race.programId} margin="normal" variant="outlined" />
             </div>
 
             <div className="col-md-3 mb-3">
-              <TextField id="event" disabled={true} label="Event" keyfilter="pint"
-                onChange={this.onNumberChangeHandler} value={this.state.race.event} margin="normal" variant="outlined" />
+              <FormControl disabled={true} variant="outlined" style={{width: "85%"}}>
+                <InputLabel htmlFor="event">
+                  Event
+                </InputLabel>
+                <Select value={this.state.race.event} input={<OutlinedInput labelWidth={65} />} name="event" id="event" >
+                  <MenuItem key={"1ra Carrera"} value={"1ra Carrera"}>1ra Carrera</MenuItem>
+                  <MenuItem key={"2da Carrera"} value={"2da Carrera"}>2da Carrera</MenuItem>
+                  <MenuItem key={"3ra Carrera"} value={"3ra Carrera"}>3ra Carrera</MenuItem>
+                  <MenuItem key={"4ta Carrera"} value={"4ta Carrera"}>4ta Carrera</MenuItem>
+                  <MenuItem key={"5ta Carrera"} value={"5ta Carrera"}>5ta Carrera</MenuItem>
+                  <MenuItem key={"6ta Carrera"} value={"6ta Carrera"}>6ta Carrera</MenuItem>
+                </Select>
+              </FormControl>
             </div>
+
 
             <FormControl disabled={!this.state.programExist} className="col-md-3 mb-4" variant="outlined" >
               <InputLabel htmlFor="distance">

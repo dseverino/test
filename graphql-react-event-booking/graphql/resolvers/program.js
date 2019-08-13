@@ -56,7 +56,7 @@ module.exports = {
   },
 
   singleProgram: async (args) => {
-    try {
+    try {      
       const program = await Program.findOne({date: args.date});
       
       if(program){

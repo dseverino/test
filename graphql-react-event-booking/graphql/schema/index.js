@@ -12,6 +12,7 @@ module.exports = buildSchema(`
     _id: ID!
     programId: String
     event: String!
+    date: String!
     distance: String!
     claimings: [String!]!
     procedences: [String!]!
@@ -23,6 +24,7 @@ module.exports = buildSchema(`
   input RaceInput {
     programId: Int
     event: String!
+    date: String!
     distance: String!
     claimings: [String!]!
     procedences: [String!]!

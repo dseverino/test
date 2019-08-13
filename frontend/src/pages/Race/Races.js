@@ -3,19 +3,31 @@ import Spinner from "../../components/Spinner/Spinner";
 
 import AuthContext from "../../context/auth-context";
 
+import AppBar from '@material-ui/core/AppBar';
 import { Calendar } from 'primereact/calendar';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
 
-class BookingsPage extends Component {
+import Paper from '@material-ui/core/Paper';
+
+import RaceTabPanel from '../../components/Race/RaceTabPanel'
+
+class Races extends Component {
   static contextType = AuthContext
 
   state = {
     isLoading: false,
     programDate: "",
+    selecteRace: 0,
     races: []
   }
 
   componentDidMount = () => {
 
+  }
+
+  handleChange = (event, newValue) => {
+    this.setState({ selecteRace: newValue })
   }
 
   onProgramDateChange = (e) => {
@@ -53,13 +65,13 @@ class BookingsPage extends Component {
     })
       .then(result => {
         if (result.status !== 200 && result.status !== 201) {
-          throw new Error("Failed")
+          throw new Error("Failed");
         }
-        return result.json()
+        return result.json();
       })
       .then(resData => {
         if (resData && resData.data.singleProgram) {
-          this.setState({ exist: true, isLoading: false })
+          this.setState({ races: resData.data.singleProgram.races, exist: true, isLoading: false });          
         }
         else {
           this.setState({ isLoading: false });
@@ -71,6 +83,16 @@ class BookingsPage extends Component {
   }
 
   render() {
+    const tabs = this.state.races.map(race => {
+      return (
+        <Tab key={race.event} label={race.event} />
+      )
+    })
+    const RaceTabs = this.state.races.map((race, index) => {      
+      return (
+        <RaceTabPanel key={index} race={race} value={this.state.selecteRace} index={index} />
+      )
+    })
     return (
       <React.Fragment>
         <div>
@@ -80,6 +102,19 @@ class BookingsPage extends Component {
           </div>
         </div>
         {
+          this.state.races.length > 0 && (
+            <React.Fragment>
+              <Paper style={{ flexGrow: 1 }}>
+                <Tabs value={this.state.selecteRace} onChange={this.handleChange} indicatorColor="primary" textColor="primary" >
+                  {tabs}
+                </Tabs>
+              </Paper>
+              { RaceTabs }              
+            </React.Fragment>
+          )
+        }
+
+        {
           this.state.isLoading && <Spinner />
         }
       </React.Fragment>
@@ -87,4 +122,4 @@ class BookingsPage extends Component {
   }
 }
 
-export default BookingsPage
+export default Races

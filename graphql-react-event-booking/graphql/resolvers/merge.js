@@ -215,6 +215,7 @@ const transformRace = race => ({
   ...race,
   _id: race.id,
   event: race.event,
+  date: race.date,
   distance: race.distance,
   claimings: race.claimings,
   claimingType: race.claimingType,
