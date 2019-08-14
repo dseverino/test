@@ -1,6 +1,9 @@
 import React from "react";
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
+import Paper from '@material-ui/core/Paper';
+
+import Horse from '../../components/Horse/Horse';
 
 const formatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -33,6 +36,10 @@ const raceTab = props => {
     <TabPanel value={props.value} index={props.index}>
       <div>{props.race.distance}. {props.race.procedences} {props.race.horseAge}, {claimings.toString()}. {props.race.spec}</div>
       <div>Premio RD{formatter.format(props.race.purse)}</div>
+
+      <Horse style={{ flexGrow: 1 }} />
+       
+      <Horse style={{ flexGrow: 1 }} />        
       
     </TabPanel>
   )
