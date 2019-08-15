@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 
+import TextField from '@material-ui/core/TextField';
+
 import AuthContext from "../../context/auth-context";
 //import Backdrop from "../components/Backdrop/Backdrop";
 //import TestModal from "../components/Modal/Modal";
@@ -43,6 +45,9 @@ class CreateProgramPage extends Component {
   }
 
   onNumberChangeHandler = (e) => {
+    if(e.target.value === ""){
+      return;
+    }
     let newProgram = Object.assign({}, this.state.program)
     newProgram[e.target.id] = parseInt(e.target.value)
     this.setState({ program: newProgram })
@@ -148,12 +153,12 @@ class CreateProgramPage extends Component {
       <React.Fragment>
         <form>
           <div className="col-md-3 mb-3">
-            <label htmlFor="number">Number</label>
-            <input type="number" min="1" value={this.state.program.number} onBlur={this.validateProgram} className="form-control" onChange={this.onNumberChangeHandler} id="number" />
-          </div>
-          <div className="col-md-3 mb-3">
             <label htmlFor="date">Date</label>
             <Calendar dateFormat="dd/mm/yy" id="date" value={this.state.program.date} onChange={this.onHandleChange}></Calendar>
+          </div>
+          <div className="col-md-3 mb-3">
+            <TextField id="number"
+                label="Program" onChange={this.onNumberChangeHandler} keyfilter="pint" value={this.state.program.number} margin="normal" variant="outlined" />
           </div>
         </form>
         <button className="btn btn-secondary">

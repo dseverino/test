@@ -304,7 +304,6 @@ class CreateRacePage extends Component {
               </FormControl>
             </div>
 
-
             <FormControl disabled={!this.state.programExist} className="col-md-3 mb-4" variant="outlined" >
               <InputLabel htmlFor="distance">
                 Distance
