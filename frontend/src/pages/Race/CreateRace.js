@@ -169,7 +169,7 @@ class CreateRacePage extends Component {
           newRace["programId"] = resData.data.singleProgram.number;
 
           if (resData.data.singleProgram.races.length) {
-            newRace["event"] = this.events[resData.data.singleProgram.races.length]            
+            newRace["event"] = this.events[resData.data.singleProgram.races.length]
           }
           this.setState({ race: newRace });
         }
@@ -262,11 +262,13 @@ class CreateRacePage extends Component {
       { label: "125,000 Ganadores de 1 y 2 primeras", value: "125,000 Ganadores de 1 y 2 primeras" },
       { label: "175,000 No Ganadores", value: "175,000 No Ganadores" },
       { label: "250,000 Libres", value: "250,000 Libres" },
-      { label: "250,000 Ganadores de 1 y 2 primeras", value: "250,000 Ganadores de 1 y 2 primeras" },      
+      { label: "250,000 Ganadores de 1 y 2 primeras", value: "250,000 Ganadores de 1 y 2 primeras" },
       { label: "250,000 No Ganadores", value: "250,000 No Ganadores" },
       { label: "300,000 Libres", value: "300,000 Libres" },
+      { label: "300,000 Ganadores de 1 y 2 primeras", value: "300,000 Ganadores de 1 y 2 primeras" },
       { label: "No Reclamables Libres", value: "No Reclamables Libres" },
-      { label: "No Reclamables No Ganadores", value: "No Reclamables No Ganadores" }
+      { label: "No Reclamables, Ganadores de 1 y 2 primeras", value: "No Reclamables, Ganadores de 1 y 2 primeras" },
+      { label: "No Reclamables, No Ganadores", value: "No Reclamables, No Ganadores" }
 
     ];
     const ages = [
@@ -289,7 +291,7 @@ class CreateRacePage extends Component {
             </div>
 
             <div className="col-md-3 mb-3">
-              <FormControl disabled={true} variant="outlined" style={{width: "85%"}}>
+              <FormControl disabled={true} variant="outlined" style={{ width: "85%" }}>
                 <InputLabel htmlFor="event">
                   Event
                 </InputLabel>
