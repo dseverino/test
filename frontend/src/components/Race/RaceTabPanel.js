@@ -45,7 +45,7 @@ function ConfirmationDialogRaw(props) {
     setValue(event.target.value);
   }
 
-  fetchHorses() {
+  function fetchHorses() {
     this.setState({ isLoading: true })
     const requestBody = {
       query: `
@@ -97,7 +97,6 @@ function ConfirmationDialogRaw(props) {
       <DialogTitle id="confirmation-dialog-title">Add Horse</DialogTitle>
       <DialogContent dividers>
         <div>
-
           <TextField
             id="standard-search"
             label="Horse Name"
@@ -116,7 +115,7 @@ function ConfirmationDialogRaw(props) {
             <DataTable value={horses} >
               <Column field="name" header="Name" />
               <Column field="age" header="Age" />
-              <Column field="sex" header="Sex" />              
+              <Column field="sex" header="Sex" />
             </DataTable>
           }
 
@@ -159,6 +158,11 @@ function TabPanel(props) {
 }
 
 const raceTab = props => {
+  const horses = props.race.horses.map(horse => {
+    return (
+      <Horse key={horse._id} horse={horse} style={{ flexGrow: 1 }}/>
+    )
+  })
   const claimings = props.race.claimings.map(claiming => {
     return "Reclamo RD$" + claiming
   })
@@ -195,10 +199,7 @@ const raceTab = props => {
         </Button>
       </div>
 
-
-      <Horse style={{ flexGrow: 1 }} />
-
-      <Horse style={{ flexGrow: 1 }} />
+      { horses }
 
       <ConfirmationDialogRaw
         id="add-horse"

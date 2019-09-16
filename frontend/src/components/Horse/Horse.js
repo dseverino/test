@@ -2,10 +2,11 @@ import React from "react";
 
 import Paper from '@material-ui/core/Paper';
 
-const horse = props => {  
+const horse = props => {
+  console.log(props.horse)
   return (
     <Paper className="horse">
-      Horse 1
+      {props.horse.name}
     </Paper>
   )
 }

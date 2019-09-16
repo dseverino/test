@@ -48,6 +48,62 @@ class Races extends Component {
               horseAge
               spec
               purse
+              horses {
+                _id
+                name
+                weight
+                age
+                color
+                sex
+                sire
+                dam
+                stable {         
+                  _id
+                  name
+                }
+                raceDetails {
+                  startingPosition
+                  claiming
+                  horseMedications
+                  horseEquipments
+                  jockey{
+                    name
+                  } 
+                  jockeyWeight
+                  stable {
+                    name
+                  }
+                  trainer {
+                    name
+                  }
+                  date
+                  raceNumber
+                  trackCondition          
+                  distance
+                   times {
+                    quarterMile
+                  }
+                  positions{
+                    start
+                  }
+                  lengths{
+                    quarterMile
+                  }
+                  bet
+                  trainingTimes{
+                    date
+                  }
+                  horseWeight
+                  claimed
+                  claimedBy{
+                    name
+                  }
+                  retired
+                  retiredDetails
+                  totalHorses
+                  horseAge
+                }
+              }
             }
           }
         }

@@ -221,12 +221,9 @@ class CreateRacePage extends Component {
         }
         return result.json()
       })
-      .then(resData => {
-        this.setState((prevState) => {
-          return { isLoading: false }
-        })
-        this.setState({ created: true })
-        this.clearValuesHandler()
+      .then(resData => {        
+        this.setState({ created: true, isLoading: false });
+        this.clearValuesHandler();
       })
       .catch(error => {
         console.log(error);
@@ -261,6 +258,7 @@ class CreateRacePage extends Component {
       { label: "125,000 Libres", value: "125,000 Libres" },
       { label: "125,000 Ganadores de 1 y 2 primeras", value: "125,000 Ganadores de 1 y 2 primeras" },
       { label: "175,000 No Ganadores", value: "175,000 No Ganadores" },
+      { label: "225,000 Libres", value: "225,000 Libres" },
       { label: "250,000 Libres", value: "250,000 Libres" },
       { label: "250,000 Ganadores de 1 y 2 primeras", value: "250,000 Ganadores de 1 y 2 primeras" },
       { label: "250,000 No Ganadores", value: "250,000 No Ganadores" },
@@ -319,17 +317,6 @@ class CreateRacePage extends Component {
               </Select>
             </FormControl>
 
-            <div style={{ display: "flex" }}>
-              <div className="col-md-3 mb-3">
-                <label htmlFor="claimingPrice">Claiming 1</label>
-                <Dropdown className="claiming-dropdown" disabled={!this.state.programExist} id="0" value={this.state.claiming1} options={claimings} onChange={this.onClaiming1Change} />
-              </div>
-              <div className="col-md-3 mb-3">
-                <label htmlFor="claimingType">Claiming 2</label>
-                <Dropdown className="claiming-dropdown" disabled={!this.state.programExist || !this.state.claiming1} id="1" value={this.state.claiming2} options={claimings} onChange={this.onClaiming2Change} />
-              </div>
-            </div>
-
             <div className="col-md-3 mb-4">
               <label htmlFor="procedences">procedences</label>
               <div style={{ display: "flex" }}>
@@ -341,6 +328,17 @@ class CreateRacePage extends Component {
                   <label style={{ marginRight: "10px" }} htmlFor="importados" className="p-checkbox-label">Importados</label>
                   <Checkbox disabled={!this.state.programExist} inputId="importados" value="Importados" onChange={this.onProcedencesChange} checked={this.state.race.procedences.includes("Importados")} />
                 </div>
+              </div>
+            </div>
+
+            <div style={{ display: "flex" }}>
+              <div className="col-md-3 mb-3">
+                <label htmlFor="claimingPrice">Claiming 1</label>
+                <Dropdown className="claiming-dropdown" disabled={!this.state.programExist} id="0" value={this.state.claiming1} options={claimings} onChange={this.onClaiming1Change} />
+              </div>
+              <div className="col-md-3 mb-3">
+                <label htmlFor="claimingType">Claiming 2</label>
+                <Dropdown className="claiming-dropdown" disabled={!this.state.programExist || !this.state.claiming1} id="1" value={this.state.claiming2} options={claimings} onChange={this.onClaiming2Change} />
               </div>
             </div>
 

@@ -47,27 +47,31 @@ module.exports = buildSchema(`
   }
 
   type HorseRaceDetail {
-    _id: ID!
-    date: String
+    _id: ID!    
+    startingPosition: Int    
+    claiming: String
+    horseMedications: [String] 
+    horseEquipments: [String]    
     jockey: Jockey
     jockeyWeight: Int 
-    trainer: Trainer
     stable: Stable
-    startingPosition: Int 
+    trainer: Trainer
+    date: String
+    raceNumber: Int
+    trackCondition: String
+    distance: Int
+    times: Time
     positions: Position
-    lengths: Length 
-    times: Time 
+    lengths: Length
+    bet: String    
     trainingTimes: [TrainingTime] 
     horseWeight: Int 
     claimed: Boolean
-    claimingPrice: Int
-    retired: Boolean 
-    retiredDetails: String 
-    bet: String 
-    horseEquipments: [String] 
+    claimedBy: Stable
+    retired: Boolean
+    retiredDetails: String
     totalHorses: Int
-    horseAge: String
-    distance: Int
+    horseAge: Int
   }
 
   type Position {
@@ -179,13 +183,17 @@ module.exports = buildSchema(`
     trainingTimes: [TrainingTimeInput] 
     horseWeight: Int 
     claimed: Boolean 
-    claimingPrice: Int
+    claimedBy: ID
+    claiming: String
+    trackCondition: String
+    raceNumber: Int
     retired: Boolean 
     retiredDetails: String 
     bet: String 
     horseEquipments: [String] 
+    horseMedications: [String]
     totalHorses: Int 
-    horseAge: String
+    horseAge: Int
     distance: Int
   }
 
@@ -235,7 +243,7 @@ module.exports = buildSchema(`
     addRace(programId: String, raceId: String): Program!
     addHorse(raceId: ID, horseId: ID): Race!
     addHorseStable(horseId: ID, stableId: ID): Horse
-    createHorseRaceDetail(horseRaceDetail: HorseRaceDetailInput): Horse
+    createHorseRaceDetail(horseRaceDetail: HorseRaceDetailInput, horseId: ID): HorseRaceDetail
     createJockey(jockeyInput: JockeyInput): Jockey
     addRaceDetail(raceDetailId: ID, horseId: ID): Horse
     createTrainer(trainerInput: TrainerInput): Trainer

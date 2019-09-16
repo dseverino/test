@@ -92,6 +92,14 @@ const trainer = async trainerId => {
     throw error
   }
 }
+const stable = async stableId => {
+  try {
+    const stable = await stableLoader.load(stableId)
+    return transformStable(stable)
+  } catch (error) {
+    throw error
+  }
+}
 
 const singleHorse = async horseId => {
   try {
@@ -175,7 +183,7 @@ const transformHorse = horse => {
   }
 }
 
-const transformRaceDetail = raceDetail => {
+const transformRaceDetail = raceDetail => {  
   return {
     ...raceDetail,
     _id: raceDetail.id,
@@ -190,7 +198,11 @@ const transformRaceDetail = raceDetail => {
     trainingTimes: raceDetail.trainingTimes,
     horseWeight: raceDetail.horseWeight,
     claimed: raceDetail.claimed,
-    claimingPrice: raceDetail.claimingPrice,
+    claiming: raceDetail.claiming,
+    claimedBy: raceDetail.claimedBy,
+    trackCondition: raceDetail.trackCondition,
+    raceNumber: raceDetail.raceNumber,
+    horseMedications: raceDetail.horseMedications,
     retired: raceDetail.retired,
     retiredDetails: raceDetail.retiredDetails,
     bet: raceDetail.bet,
