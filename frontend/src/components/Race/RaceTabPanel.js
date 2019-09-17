@@ -49,15 +49,18 @@ function ConfirmationDialogRaw(props) {
     this.setState({ isLoading: true })
     const requestBody = {
       query: `
-        query {
-          horses {
+        query Horse($name: String){
+          horse() {
             _id
             name            
             sex
             age            
           }
         }
-      `
+      `,
+      variables: {
+        name: 
+      }
     }
 
     fetch("http://localhost:3000/graphql", {
