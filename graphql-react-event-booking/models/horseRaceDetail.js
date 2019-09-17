@@ -37,6 +37,7 @@ const horseRaceDetailSchema = new Schema({
   claimedBy: mongoose.Schema.Types.ObjectId,
   retired: Boolean,
   retiredDetails: String,
+  comments: String,
   bet: String,
   horseEquipments: [String],
   totalHorses: Number,

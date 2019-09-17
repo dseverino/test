@@ -19,11 +19,12 @@ class Races extends Component {
     isLoading: false,
     programDate: "",
     selecteRace: 0,
-    races: []
+    races: [],
+    jockeys: []
   }
 
   componentDidMount = () => {
-
+    this.fetchJockeys();
   }
 
   handleChange = (event, newValue) => {
@@ -32,6 +33,41 @@ class Races extends Component {
 
   onProgramDateChange = (e) => {
     this.setState({ programDate: e.value, isLoading: true }, () => this.loadProgramRaces());
+  }
+
+  fetchJockeys = () => {
+    //setLoading(true);
+    const requestBody = {
+      query: `
+        query {
+          jockeys {
+            _id
+            name            
+          }
+        }
+      `
+    }
+
+    fetch("http://localhost:3000/graphql", {
+      method: 'POST',
+      body: JSON.stringify(requestBody),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+      .then(result => {
+        if (result.status !== 200 && result.status !== 201) {
+          throw new Error("Failed")
+        }
+        return result.json()
+      })
+      .then(resData => {
+        this.setState({ jockeys: resData.data.jockeys })
+      })
+      .catch(error => {
+        console.log(error)
+        //this.setState({ isLoading: false });
+      })
   }
 
   loadProgramRaces = () => {
@@ -102,6 +138,7 @@ class Races extends Component {
                   retiredDetails
                   totalHorses
                   horseAge
+                  comments
                 }
               }
             }
@@ -127,7 +164,7 @@ class Races extends Component {
       })
       .then(resData => {
         if (resData && resData.data.singleProgram) {
-          this.setState({ races: resData.data.singleProgram.races, exist: true, isLoading: false });          
+          this.setState({ races: resData.data.singleProgram.races, exist: true, isLoading: false });
         }
         else {
           this.setState({ isLoading: false });
@@ -144,9 +181,9 @@ class Races extends Component {
         <Tab key={race.event} label={race.event} />
       )
     })
-    const RaceTabs = this.state.races.map((race, index) => {      
+    const RaceTabs = this.state.races.map((race, index) => {
       return (
-        <RaceTabPanel key={index} race={race} value={this.state.selecteRace} index={index} />
+        <RaceTabPanel programDate={this.state.programDate} key={index} race={race} value={this.state.selecteRace} index={index} jockeys={this.state.jockeys}/>
       )
     })
     return (
@@ -165,7 +202,7 @@ class Races extends Component {
                   {tabs}
                 </Tabs>
               </Paper>
-              { RaceTabs }              
+              {RaceTabs}
             </React.Fragment>
           )
         }

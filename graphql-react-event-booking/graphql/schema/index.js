@@ -72,6 +72,7 @@ module.exports = buildSchema(`
     retiredDetails: String
     totalHorses: Int
     horseAge: Int
+    comments: String
   }
 
   type Position {
@@ -195,6 +196,7 @@ module.exports = buildSchema(`
     totalHorses: Int 
     horseAge: Int
     distance: Int
+    comments: String
   }
 
   input ProgramInput {

@@ -205,6 +205,7 @@ const transformRaceDetail = raceDetail => {
     horseMedications: raceDetail.horseMedications,
     retired: raceDetail.retired,
     retiredDetails: raceDetail.retiredDetails,
+    comments: raceDetail.comments,
     bet: raceDetail.bet,
     horseEquipments: raceDetail.horseEquipments,
     totalHorses: raceDetail.totalHorses,
