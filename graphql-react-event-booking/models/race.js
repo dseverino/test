@@ -7,7 +7,7 @@ const raceSchema = new Schema(
       type: Number
     },
     event: {
-      type: String,
+      type: Number,
       required: true
     },
     date: {
@@ -15,7 +15,7 @@ const raceSchema = new Schema(
       required: true
     },
     distance: {
-      type: String,
+      type: Number,
       required: true
     },
     claimings: [

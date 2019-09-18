@@ -20,11 +20,23 @@ class Races extends Component {
     programDate: "",
     selecteRace: 0,
     races: [],
-    jockeys: []
+    jockeys: [],
+    stables: [],
+    trainers: []
   }
 
   componentDidMount = () => {
     this.fetchJockeys();
+    this.fetchStables();
+    this.fetchTrainers();
+    this.events = [
+      "1ra Carrera",
+      "2da Carrera",
+      "3ra Carrera",
+      "4ta Carrera",
+      "5ta Carrera",
+      "6ta Carrera",
+    ]
   }
 
   handleChange = (event, newValue) => {
@@ -70,6 +82,76 @@ class Races extends Component {
       })
   }
 
+  fetchStables = () => {
+    //setLoading(true);
+    const requestBody = {
+      query: `
+        query {
+          stables {
+            _id
+            name            
+          }
+        }
+      `
+    }
+
+    fetch("http://localhost:3000/graphql", {
+      method: 'POST',
+      body: JSON.stringify(requestBody),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+      .then(result => {
+        if (result.status !== 200 && result.status !== 201) {
+          throw new Error("Failed")
+        }
+        return result.json()
+      })
+      .then(resData => {
+        this.setState({ stables: resData.data.stables })
+      })
+      .catch(error => {
+        console.log(error)
+        //this.setState({ isLoading: false });
+      })
+  }
+
+  fetchTrainers = () => {
+    //setLoading(true);
+    const requestBody = {
+      query: `
+        query {
+          trainers {
+            _id
+            name            
+          }
+        }
+      `
+    }
+
+    fetch("http://localhost:3000/graphql", {
+      method: 'POST',
+      body: JSON.stringify(requestBody),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+      .then(result => {
+        if (result.status !== 200 && result.status !== 201) {
+          throw new Error("Failed")
+        }
+        return result.json()
+      })
+      .then(resData => {
+        this.setState({ trainers: resData.data.trainers })
+      })
+      .catch(error => {
+        console.log(error)
+        //this.setState({ isLoading: false });
+      })
+  }
+
   loadProgramRaces = () => {
     this.setState({ isLoading: true })
     const requestBody = {
@@ -77,6 +159,7 @@ class Races extends Component {
         query SingleProgram($date: String!) {
           singleProgram(date: $date) {
             races {
+              _id
               event
               distance
               claimings
@@ -175,15 +258,55 @@ class Races extends Component {
       })
   }
 
+  addHorseToRace = (raceId, horseId) => {
+    const requestBody = {
+      query: `
+        mutation AddHorse($raceId: ID, $horseId: ID) {
+          addHorse(raceId: $raceId, horseId: $horseId) {
+            event
+            horses{
+              name              
+            }
+          }
+        }        
+      `,
+      variables: {
+        raceId: raceId,
+        horseId: horseId        
+      }
+    }
+
+    fetch("http://localhost:3000/graphql", {
+      method: 'POST',
+      body: JSON.stringify(requestBody),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+      .then(result => {
+        if (result.status !== 200 && result.status !== 201) {
+          throw new Error("Failed")
+        }
+        return result.json()
+      })
+      .then(resData => {
+        this.setState({ horses: resData.data.singleStable.horses, isLoading: false });
+      })
+      .catch(error => {
+        console.log(error)
+        this.setState({ isLoading: false });
+      })
+  }
+
   render() {
     const tabs = this.state.races.map(race => {
       return (
-        <Tab key={race.event} label={race.event} />
+        <Tab key={race.event} label={this.events[race.event - 1]} />
       )
     })
     const RaceTabs = this.state.races.map((race, index) => {
       return (
-        <RaceTabPanel programDate={this.state.programDate} key={index} race={race} value={this.state.selecteRace} index={index} jockeys={this.state.jockeys}/>
+        <RaceTabPanel programDate={this.state.programDate} horseaddedtorace={this.addHorseToRace} key={index} race={race} value={this.state.selecteRace} index={index} jockeys={this.state.jockeys} stables={this.state.stables} trainers={this.state.trainers}/>
       )
     })
     return (

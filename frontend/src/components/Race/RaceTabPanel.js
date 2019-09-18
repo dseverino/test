@@ -13,7 +13,7 @@ const formatter = new Intl.NumberFormat('en-US', {
   minimumFractionDigits: 2
 });
 
-const raceTab = props => {  
+const raceTab = props => {
   const horses = props.race.horses.map(horse => {
     return (
       <Horse key={horse._id} horse={horse} style={{ flexGrow: 1 }} />
@@ -23,7 +23,7 @@ const raceTab = props => {
     return "Reclamo RD$" + claiming
   })
 
-  const [open, setOpen] = React.useState(false);  
+  const [open, setOpen] = useState(false);  
 
   function handleClickListItem() {
     setOpen(true);
@@ -54,7 +54,15 @@ const raceTab = props => {
         keepMounted
         onClose={handleClose}
         jockeys={props.jockeys}
+        stables={props.stables}
+        trainers={props.trainers}
         date={props.programDate}
+        claimings={props.race.claimings}
+        horsesqty={props.race.horses.length + 1}
+        racenumber={props.race.event}
+        distance={props.race.distance}
+        onHorseAdded={props.horseaddedtorace}
+        raceId={props.race._id}
       />
 
     </TabPanel>
@@ -63,7 +71,7 @@ const raceTab = props => {
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
-
+  
   return (
     <Typography
       component="div"

@@ -48,8 +48,8 @@ class CreateRacePage extends Component {
     claiming2: "",
     labelWidth: 0,
     race: {
-      event: "1ra Carrera",
-      distance: "1,100 Metros",
+      event: 1,
+      distance: 1100,
       procedences: [],
       horseAge: "3 Años y Mayores",
       claimings: [],
@@ -65,7 +65,7 @@ class CreateRacePage extends Component {
     this.setState({
       race: {
         event: this.events[this.events.indexOf(this.state.race.event)],
-        distance: "1,100 Metros",
+        distance: 1100,
         procedences: [],
         horseAge: "3 Años y Mayores",
         claiming1: "",
@@ -81,7 +81,7 @@ class CreateRacePage extends Component {
     let newRrace = {
       ...this.state.race,
       event: this.events[this.events.indexOf(this.state.race.event) + 1],
-      distance: "1,100 Metros",
+      distance: 1100,
       procedences: [],
       horseAge: "3 Años y Mayores",
       claimings: [],
@@ -241,15 +241,15 @@ class CreateRacePage extends Component {
 
   render() {
     const distances = [
-      { label: "1,000 Metros", value: "1,000 Metros" },
-      { label: "1,100 Metros", value: "1,100 Metros" },
-      { label: "1,200 Metros", value: "1,200 Metros" },
-      { label: "1,300 Metros", value: "1,300 Metros" },
-      { label: "1,400 Metros", value: "1,400 Metros" },
-      { label: "1,700 Metros", value: "1,700 Metros" },
-      { label: "1,800 Metros", value: "1,800 Metros" },
-      { label: "1,900 Metros", value: "1,900 Metros" },
-      { label: "2,000 Metros", value: "2,000 Metros" },
+      { label: "1,000 Metros", value: 1000 },
+      { label: "1,100 Metros", value: 1100 },
+      { label: "1,200 Metros", value: 1200 },
+      { label: "1,300 Metros", value: 1300 },
+      { label: "1,400 Metros", value: 1400 },
+      { label: "1,700 Metros", value: 1700 },
+      { label: "1,800 Metros", value: 1800 },
+      { label: "1,900 Metros", value: 1900 },
+      { label: "2,000 Metros", value: 2000 },
     ]
     const claimings = [
       { label: "40,000 Libres", value: "40,000 Libres" },
@@ -294,12 +294,12 @@ class CreateRacePage extends Component {
                   Event
                 </InputLabel>
                 <Select value={this.state.race.event} input={<OutlinedInput labelWidth={65} />} name="event" id="event" >
-                  <MenuItem key={"1ra Carrera"} value={"1ra Carrera"}>1ra Carrera</MenuItem>
-                  <MenuItem key={"2da Carrera"} value={"2da Carrera"}>2da Carrera</MenuItem>
-                  <MenuItem key={"3ra Carrera"} value={"3ra Carrera"}>3ra Carrera</MenuItem>
-                  <MenuItem key={"4ta Carrera"} value={"4ta Carrera"}>4ta Carrera</MenuItem>
-                  <MenuItem key={"5ta Carrera"} value={"5ta Carrera"}>5ta Carrera</MenuItem>
-                  <MenuItem key={"6ta Carrera"} value={"6ta Carrera"}>6ta Carrera</MenuItem>
+                  <MenuItem key={"1ra Carrera"} value={1}>1ra Carrera</MenuItem>
+                  <MenuItem key={"2da Carrera"} value={2}>2da Carrera</MenuItem>
+                  <MenuItem key={"3ra Carrera"} value={3}>3ra Carrera</MenuItem>
+                  <MenuItem key={"4ta Carrera"} value={4}>4ta Carrera</MenuItem>
+                  <MenuItem key={"5ta Carrera"} value={5}>5ta Carrera</MenuItem>
+                  <MenuItem key={"6ta Carrera"} value={6}>6ta Carrera</MenuItem>
                 </Select>
               </FormControl>
             </div>

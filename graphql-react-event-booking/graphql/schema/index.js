@@ -11,9 +11,9 @@ module.exports = buildSchema(`
   type Race {
     _id: ID!
     programId: String
-    event: String!
+    event: Int!
     date: String!
-    distance: String!
+    distance: Int!
     claimings: [String!]!
     procedences: [String!]!
     horseAge: String!
@@ -23,9 +23,9 @@ module.exports = buildSchema(`
   }
   input RaceInput {
     programId: Int
-    event: String!
+    event: Int!
     date: String!
-    distance: String!
+    distance: Int!
     claimings: [String!]!
     procedences: [String!]!
     horseAge: String!
