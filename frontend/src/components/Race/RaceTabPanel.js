@@ -16,7 +16,7 @@ const formatter = new Intl.NumberFormat('en-US', {
 const raceTab = props => {
   const horses = props.race.horses.map(horse => {
     return (
-      <Horse key={horse._id} horse={horse} style={{ flexGrow: 1 }} />
+      <Horse key={horse._id} horse={horse} dateSelected={props.programDate}/>
     )
   })
   const claimings = props.race.claimings.map(claiming => {
@@ -63,6 +63,7 @@ const raceTab = props => {
         distance={props.race.distance}
         onHorseAdded={props.horseaddedtorace}
         raceId={props.race._id}
+        index={props.index}
       />
 
     </TabPanel>

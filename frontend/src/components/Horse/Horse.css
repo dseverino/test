@@ -1,7 +1,11 @@
-.horses__list {    
-    width: 40rem;
-    max-width: 90%;
-    margin: 2rem auto;
-    list-style: none;
-    padding: 0;
+.horse__card {    
+    box-shadow: 0 2px 0 0 rgba(230, 230, 230, 0.5);
+    transition: box-shadow .5s ease;
+    border: 1px solid #e6e7e9;
+    background-color: #fff;
 }
+
+.horse__card:hover {
+    box-shadow: 0 5px 20px 0 rgba(0,0,0,0.2);
+}
+

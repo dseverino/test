@@ -15,7 +15,7 @@ module.exports = {
         const horse = await Horse.findById(args.horseId)
         if (horse) {
           horse.raceDetails = [...horse.raceDetails, horseRaceDetail.id]
-          const result = await horse.save();          
+          const result = await horse.save();
         }
       }
       return transformRaceDetail(raceDetail);

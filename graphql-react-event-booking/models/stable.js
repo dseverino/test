@@ -10,6 +10,11 @@ const stableSchema = new mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId
       }      
+    ],
+    trainers: [
+      {
+        type: mongoose.Schema.Types.ObjectId
+      }
     ]
   }
 )

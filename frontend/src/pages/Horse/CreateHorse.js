@@ -78,12 +78,17 @@ class CreateHorsePage extends Component {
   startCreateHorse = () => {
     this.setState({ exist: true })
   }
+
+  onCancelHandler = (event) => {
+    console.log(this.state.horse)
+  }
+
   modalCancelHandler = (event) => {
     this.setState({ creating: false, exist: false, created: false })
     this.setState({
       horse: {
         name: "",
-        weight: "",
+        weight: 0,
         age: 3,
         color: "Z",
         sex: "M",
@@ -213,7 +218,7 @@ class CreateHorsePage extends Component {
           </div>
           <div className="col-md-3 mb-3">
             <label htmlFor="weight">Weight</label>
-            <input type="text" className="form-control" onChange={this.onHandleChange} id="weight" value={this.state.horse.weight} />
+            <input type="number" className="form-control" onChange={this.onAgeChangeHandler} id="weight" value={this.state.horse.weight} />
           </div>
           <div className="col-md-3 mb-3">
             <label htmlFor="age">Age</label>
@@ -263,7 +268,7 @@ class CreateHorsePage extends Component {
             <Dropdown id="stable" optionLabel="name" filter={true} value={this.state.selectedStable} options={this.state.stables} onChange={this.onStableChangeHandler} placeholder="Select a Stable"/>
           </div>
         </form>
-        <button className="btn btn-secondary">
+        <button onClick={this.onCancelHandler} className="btn btn-secondary">
           Cancel
         </button>
         <button onClick={this.saveHandler} className="btn btn-primary">

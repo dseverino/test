@@ -45,6 +45,10 @@ const horseRaceDetailSchema = new Schema({
   claiming: String,
   trackCondition: String,
   raceNumber: Number,
+  date: {
+    type: Date,
+    required: true
+  },
   horseMedications: [String],
   distance: {
     type: Number,

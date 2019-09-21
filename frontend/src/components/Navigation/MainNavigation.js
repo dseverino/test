@@ -67,6 +67,7 @@ const mainNavigation = props => (
                 <div className="dropdown-content">
                   <NavLink to="/createstable">Create Stable</NavLink>
                   <NavLink to="/searchstable">Search Stable</NavLink>
+                  <NavLink to="/addtrainertostable">Add Trainer to Stable</NavLink>
                 </div>
               </li>
 

@@ -33,8 +33,8 @@ module.exports = {
   },
   horse: async (args) => {   
     try {
-      const name = new RegExp(".*" + args.name + ".*", "i")
-      const horses = await Horse.find({name: { $regex: name }}).sort({name: 1})      
+      const name = new RegExp(".*" + args.name + ".*", "i");
+      const horses = await Horse.find({name: { $regex: name }}).sort({name: 1});
       return horses.map(horse => {
         return transformHorse(horse);
       })

@@ -36,7 +36,7 @@ module.exports = buildSchema(`
   type Horse {
     _id: ID!
     name: String!
-    weight: String
+    weight: Int
     age: Int!
     color: String!
     sex: String!
@@ -125,6 +125,7 @@ module.exports = buildSchema(`
     _id: ID
     name: String
     horses: [Horse]
+    trainers: [Trainer]
   }
   type Trainer {
     _id: ID!
@@ -162,7 +163,7 @@ module.exports = buildSchema(`
 
   input HorseInput {
     name: String!
-    weight: String
+    weight: Int
     age: Int!
     color: String!
     sex: String!
@@ -246,6 +247,7 @@ module.exports = buildSchema(`
     addRace(programId: String, raceId: String): Program!
     addHorse(raceId: ID, horseId: ID): Race!
     addHorseStable(horseId: ID, stableId: ID): Horse
+    addTrainerStable(stableId: ID, trainerId: ID): Stable
     createHorseRaceDetail(horseRaceDetail: HorseRaceDetailInput, horseId: ID): HorseRaceDetail
     createJockey(jockeyInput: JockeyInput): Jockey
     addRaceDetail(raceDetailId: ID, horseId: ID): Horse

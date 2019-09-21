@@ -27,12 +27,12 @@ class CreateRacePage extends Component {
     super(props)
 
     this.events = [
-      "1ra Carrera",
-      "2da Carrera",
-      "3ra Carrera",
-      "4ta Carrera",
-      "5ta Carrera",
-      "6ta Carrera",
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
     ]
   }
 
@@ -58,6 +58,64 @@ class CreateRacePage extends Component {
       programId: "",
       spec: ""
     }
+  }
+
+  onProgramDateChange = (e) => {
+    let newRace = Object.assign({}, this.state.race);
+    newRace[e.target.id || e.target.name] = e.target.value;
+    this.setState({ race: newRace }, () => this.loadProgram());
+  }
+
+  loadProgram = () => {
+    this.setState({ isLoading: true })
+    const requestBody = {
+      query: `
+        query SingleProgram($date: String!) {
+          singleProgram(date: $date) {
+            _id
+            number
+            races{
+              event
+            }
+          }
+        }
+      `,
+      variables: {
+        date: this.state.race.date
+      }
+    }
+    fetch("http://localhost:3000/graphql", {
+      method: 'POST',
+      body: JSON.stringify(requestBody),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+      .then(result => {
+        if (result.status !== 200 && result.status !== 201) {
+          throw new Error("Failed");
+        }
+        return result.json()
+      })
+      .then(resData => {
+        if (resData && resData.data.singleProgram) {
+          this.setState({ programExist: true, isLoading: false });
+          let newRace = Object.assign({}, this.state.race);
+          newRace["programId"] = resData.data.singleProgram.number;
+
+          if (resData.data.singleProgram.races.length) {
+            newRace["event"] = this.events[resData.data.singleProgram.races.length]
+          }
+          this.setState({ race: newRace });
+        }
+        else {
+          this.setState({ programNotExist: true, programExist: false });
+        }
+        this.setState({ isLoading: false })
+      })
+      .catch(error => {
+        console.log(error);
+      })
   }
 
   modalCancelHandler = (event) => {
@@ -123,64 +181,6 @@ class CreateRacePage extends Component {
     let newRace = Object.assign({}, this.state.race);
     newRace[e.target.id] = parseInt(e.target.value);
     this.setState({ race: newRace });
-  }
-
-  onProgramDateChange = (e) => {
-    let newRace = Object.assign({}, this.state.race);
-    newRace[e.target.id || e.target.name] = e.target.value;
-    this.setState({ race: newRace }, () => this.loadProgram());
-  }
-
-  loadProgram = () => {
-    this.setState({ isLoading: true })
-    const requestBody = {
-      query: `
-        query SingleProgram($date: String!) {
-          singleProgram(date: $date) {
-            _id
-            number
-            races{
-              event
-            }
-          }
-        }
-      `,
-      variables: {
-        date: this.state.race.date
-      }
-    }
-    fetch("http://localhost:3000/graphql", {
-      method: 'POST',
-      body: JSON.stringify(requestBody),
-      headers: {
-        "Content-Type": "application/json"
-      }
-    })
-      .then(result => {
-        if (result.status !== 200 && result.status !== 201) {
-          throw new Error("Failed");
-        }
-        return result.json()
-      })
-      .then(resData => {
-        if (resData && resData.data.singleProgram) {
-          this.setState({ programExist: true, isLoading: false });
-          let newRace = Object.assign({}, this.state.race);
-          newRace["programId"] = resData.data.singleProgram.number;
-
-          if (resData.data.singleProgram.races.length) {
-            newRace["event"] = this.events[resData.data.singleProgram.races.length]
-          }
-          this.setState({ race: newRace });
-        }
-        else {
-          this.setState({ programNotExist: true, programExist: false });
-        }
-        this.setState({ isLoading: false })
-      })
-      .catch(error => {
-        console.log(error);
-      })
   }
 
   saveHandler = (event) => {

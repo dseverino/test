@@ -12,6 +12,7 @@ import JockeysPage from "./pages/Jockey/Jockey";
 import StablePage from "./pages/Stable/Stable";
 import CreateStablePage from "./pages/Stable/CreateStable";
 import SearchStablePage from "./pages/Stable/SearchStable";
+import StableAddTrainerPage from "./pages/Stable/AddTrainerStable"
 import TrainerPage from "./pages/Trainer/Trainer";
 import CreateTrainerPage from "./pages/Trainer/CreateTrainer";
 import CreateProgramPage from "./pages/Program/CreateProgram";
@@ -60,6 +61,7 @@ class App extends Component {
                 <Route path="/stable" component={StablePage} />
                 <Route path="/createstable" component={CreateStablePage} />
                 <Route path="/SearchStable" component={SearchStablePage} />
+                <Route path="/addtrainertostable" component={StableAddTrainerPage} />
                 <Route path="/trainer" component={TrainerPage} />
                 <Route path="/createtrainer" component={CreateTrainerPage} />
                 

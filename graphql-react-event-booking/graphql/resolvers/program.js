@@ -8,7 +8,7 @@ module.exports = {
         //throw new Error("User not authenticated!")
       }*/
       //Program.deleteMany().then()
-      const programs = await Program.find();
+      const programs = await Program.find().sort({number: -1}).limit(1)
 
       return programs.map(program => {
         return transformProgram(program)

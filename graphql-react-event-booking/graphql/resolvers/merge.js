@@ -24,14 +24,14 @@ const raceDetailLoader = new DataLoader(raceDetailIds => {
   return raceDetails(raceDetailIds)
 })
 
-const jockeyLoader = new DataLoader(jockeyId => {
-  return Jockey.find({ _id: { $in: jockeyId } })
+const jockeyLoader = new DataLoader(jockeyIds => {
+  return jockeys(jockeyIds);  
 })
 const stableLoader = new DataLoader(stableIds => {
-  return stables(stableIds)
+  return stables(stableIds);
 })
-const trainerLoader = new DataLoader(trainerId => {
-  return Trainer.find({ _id: { $in: trainerId } })
+const trainerLoader = new DataLoader(trainerIds => {
+  return trainers(trainerIds);
 })
 
 const user = async userId => {
@@ -49,14 +49,25 @@ const user = async userId => {
   }
 }
 
-const jockey = async jockeyId => {
+const jockey = async jockeyId => {  
   try {
-    const jockey = await jockeyLoader.load(jockeyId)
+    const jockey = await jockeyLoader.load(jockeyId);    
     return transformJockey(jockey)
   } catch (error) {
     throw error
   }
 }
+const jockeys = async jockeyIds => {
+  try{    
+    const results = await Jockey.find({ _id: { $in: jockeyIds } });   
+    return jockeyIds.map((jockeyId) => results.find((jockey) => jockey._id.toString() === jockeyId.toString()))
+  }
+  catch (error) {
+    throw error
+  }
+  
+}
+
 const stables = async stableIds => {
   try {
     const m = { $match : { "_id" : { $in : stableIds } } };
@@ -82,6 +93,33 @@ const stables = async stableIds => {
     }) 
   } catch (error) {
     throw error
+  }
+}
+const trainers = async trainerIds => {  
+  try {
+    const m = { $match : { "_id" : { $in : trainerIds } } };
+    const a = { $addFields : { "__order" : { $indexOfArray : [ trainerIds, "$_id" ] } } };
+    const s = { $sort : { "__order" : 1 } };
+    const trainers = await Trainer.aggregate( [ m, a, s ] );    
+    //const trainers = await Trainer.find({ _id: { $in: trainerIds } })
+    let updatedTrainers = [];
+    if(trainerIds.length > trainers.length){
+      for(var i = 0; i < trainerIds.length; i++){
+        updatedTrainers.push(trainerIds[i].toString());
+        if(!trainers[i]){
+          trainers.splice(i, 0, trainers[updatedTrainers.indexOf(updatedTrainers[i])] )
+        }
+        else if(trainerIds[i].toString() != trainers[i]._id.toString()){
+          trainers.splice(i, 0, trainers[updatedTrainers.indexOf(updatedTrainers[i])] )          
+        }
+      }
+    }
+    return trainers.map(trainer => {      
+      return transformTrainer(trainer)
+    })
+  }
+  catch (err) {
+    throw err
   }
 }
 const trainer = async trainerId => {
@@ -132,7 +170,7 @@ const races = async raceIds => {
 const raceDetails = async raceDetailIds => {
 
   try {
-    const raceDetails = await HorseRaceDetail.find({ _id: { $in: raceDetailIds } })
+    const raceDetails = await HorseRaceDetail.find({ _id: { $in: raceDetailIds } }).sort( {date: -1 })
     return raceDetails.map(raceDetail => {
       return transformRaceDetail(raceDetail)
     })
@@ -187,7 +225,7 @@ const transformRaceDetail = raceDetail => {
   return {
     ...raceDetail,
     _id: raceDetail.id,
-    jockey: () => jockey(raceDetail.jockey.toString()),
+    jockey: () => jockey(raceDetail.jockey),
     jockeyWeight: raceDetail.jockeyWeight,
     trainer: () => trainer(raceDetail.trainer),
     stable: () => stable(raceDetail.stable),
@@ -201,13 +239,14 @@ const transformRaceDetail = raceDetail => {
     claiming: raceDetail.claiming,
     claimedBy: raceDetail.claimedBy,
     trackCondition: raceDetail.trackCondition,
+    date: raceDetail.date.toISOString(),
     raceNumber: raceDetail.raceNumber,
-    horseMedications: raceDetail.horseMedications,
+    horseMedications: raceDetail.horseMedications.sort((a, b) => (a < b) ? 1 : ((b < a) ? -1 : 0)),
     retired: raceDetail.retired,
     retiredDetails: raceDetail.retiredDetails,
     comments: raceDetail.comments,
     bet: raceDetail.bet,
-    horseEquipments: raceDetail.horseEquipments,
+    horseEquipments: raceDetail.horseEquipments.sort(),
     totalHorses: raceDetail.totalHorses,
     horseAge: raceDetail.horseAge,
     distance: raceDetail.distance
@@ -240,24 +279,25 @@ const transformRace = race => ({
   horses: () => horseLoader.loadMany(race.horses)
 })
 
-const transformJockey = jockey => {
+const transformJockey = jockey => {  
   return {
     ...jockey,
     _id: jockey.id,
     name: jockey.name
   }
 }
-const transformTrainer = trainer => {
+const transformTrainer = trainer => {  
   return {
     ...trainer,
-    _id: trainer.id,
+    _id: trainer._id.toString(),
     name: trainer.name
   }
 }
-const transformStable = stable => {
+const transformStable = stable => {  
   return {
     _id: stable._id.toString(),
     name: stable.name,
+    trainers: stable.trainers ? () => trainerLoader.loadMany(stable.trainers) : [],
     horses: () => horseLoader.loadMany(stable.horses)
   }
 }

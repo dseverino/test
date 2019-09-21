@@ -30,6 +30,47 @@ class CreateProgramPage extends Component {
   }
   isActive = true;
 
+  fetchGreatestProgramNumber = () => {
+    this.setState({ isLoading: true })
+    const requestBody = {
+      query: `
+        query {
+          programs {
+            _id
+            number
+          }
+        }
+      `
+    }
+    fetch("http://localhost:3000/graphql", {
+      method: 'POST',
+      body: JSON.stringify(requestBody),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+      .then(result => {
+        if (result.status !== 200 && result.status !== 201) {
+          throw new Error("Failed");
+        }
+        return result.json()
+      })
+      .then(resData => {
+        if (resData && resData.data.programs) {
+          this.setState(prevState => {
+            return {...prevState, program: {
+              number: resData.data.programs[0].number + 1,
+              date: prevState.program.date
+            }}            
+          })
+        }        
+        this.setState({ isLoading: false })
+      })
+      .catch(error => {
+        console.log(error);
+      })
+  }
+
   startCreateProgram = () => {
     this.setState({ exist: true })
   }
@@ -45,7 +86,7 @@ class CreateProgramPage extends Component {
   }
 
   onNumberChangeHandler = (e) => {
-    if(e.target.value === ""){
+    if (e.target.value === "") {
       return;
     }
     let newProgram = Object.assign({}, this.state.program)
@@ -53,10 +94,11 @@ class CreateProgramPage extends Component {
     this.setState({ program: newProgram })
   }
 
-  onHandleChange = (e) => {    
+  onHandleChange = (e) => {
     let newProgram = Object.assign({}, this.state.program)
     newProgram[e.target.id] = e.target.value
     this.setState({ program: newProgram });
+    this.fetchGreatestProgramNumber();
   }
 
   validateProgram = () => {
@@ -94,7 +136,7 @@ class CreateProgramPage extends Component {
           this.setState({ exist: true, isLoading: false })
         }
         else {
-          this.setState({ isLoading: false });          
+          this.setState({ isLoading: false });
         }
       })
       .catch(error => {
@@ -158,7 +200,7 @@ class CreateProgramPage extends Component {
           </div>
           <div className="col-md-3 mb-3">
             <TextField id="number"
-                label="Program" onChange={this.onNumberChangeHandler} keyfilter="pint" value={this.state.program.number} margin="normal" variant="outlined" />
+              label="Program" onChange={this.onNumberChangeHandler} keyfilter="pint" value={this.state.program.number} margin="normal" variant="outlined" />
           </div>
         </form>
         <button className="btn btn-secondary">
@@ -176,7 +218,7 @@ class CreateProgramPage extends Component {
           <div>
             <div>
               Number: {this.state.program.number}
-            </div>            
+            </div>
           </div>
         </Dialog>
 

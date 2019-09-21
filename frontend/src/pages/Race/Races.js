@@ -3,7 +3,6 @@ import Spinner from "../../components/Spinner/Spinner";
 
 import AuthContext from "../../context/auth-context";
 
-import AppBar from '@material-ui/core/AppBar';
 import { Calendar } from 'primereact/calendar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -44,7 +43,7 @@ class Races extends Component {
   }
 
   onProgramDateChange = (e) => {
-    this.setState({ programDate: e.value, isLoading: true }, () => this.loadProgramRaces());
+    this.setState({ programDate: e.value, isLoading: true, selecteRace: 0 }, () => this.loadProgramRaces());
   }
 
   fetchJockeys = () => {
@@ -178,7 +177,7 @@ class Races extends Component {
                 dam
                 stable {         
                   _id
-                  name
+                  name                  
                 }
                 raceDetails {
                   startingPosition
@@ -258,21 +257,82 @@ class Races extends Component {
       })
   }
 
-  addHorseToRace = (raceId, horseId) => {
+  addHorseToRace = (raceIndex, raceId, selectedHorse) => {
     const requestBody = {
       query: `
         mutation AddHorse($raceId: ID, $horseId: ID) {
           addHorse(raceId: $raceId, horseId: $horseId) {
+            _id
             event
-            horses{
-              name              
+            distance
+            claimings
+            procedences
+            horseAge
+            spec
+            purse
+            horses {
+              _id
+              name
+              weight
+              age
+              color
+              sex
+              sire
+              dam
+              stable {         
+                _id
+                name                  
+              }
+              raceDetails {
+                startingPosition
+                claiming
+                horseMedications
+                horseEquipments
+                jockey{
+                  name
+                } 
+                jockeyWeight
+                stable {
+                  name
+                }
+                trainer {
+                  name
+                }
+                date
+                raceNumber
+                trackCondition          
+                distance
+                  times {
+                  quarterMile
+                }
+                positions{
+                  start
+                }
+                lengths{
+                  quarterMile
+                }
+                bet
+                trainingTimes{
+                  date
+                }
+                horseWeight
+                claimed
+                claimedBy{
+                  name
+                }
+                retired
+                retiredDetails
+                totalHorses
+                horseAge
+                comments
+              }
             }
           }
-        }        
+        }
       `,
       variables: {
         raceId: raceId,
-        horseId: horseId        
+        horseId: selectedHorse._id
       }
     }
 
@@ -289,8 +349,12 @@ class Races extends Component {
         }
         return result.json()
       })
-      .then(resData => {
-        this.setState({ horses: resData.data.singleStable.horses, isLoading: false });
+      .then(resData => {        
+        this.setState((prevState) => {
+          const races = prevState.races;
+          races[raceIndex] = resData.data.addHorse;
+          return {...prevState, races: races, isLoading: false }
+        })
       })
       .catch(error => {
         console.log(error)
@@ -314,7 +378,7 @@ class Races extends Component {
         <div>
           <strong>Select Program Date: </strong>
           <div className="col-md-3 mb-3">
-            <Calendar dateFormat="dd/mm/yy" showIcon={true} id="date" value={this.state.programDate} onChange={this.onProgramDateChange}></Calendar>
+            <Calendar readOnlyInput={true} dateFormat="dd/mm/yy" showIcon={true} id="date" value={this.state.programDate} onChange={this.onProgramDateChange}></Calendar>
           </div>
         </div>
         {

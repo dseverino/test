@@ -18,9 +18,9 @@ import { Column } from 'primereact/column';
 import Button from '@material-ui/core/Button';
 
 const ConfirmationDialogRaw = (props) => {  
-  
+
   const { onClose, open, onHorseAdded, raceId, ...other } = props;
-  
+
   const [values, setValues] = React.useState({
     name: "",
     selectedHorse: null,
@@ -47,6 +47,7 @@ const ConfirmationDialogRaw = (props) => {
     distance: props.distance
   });
   const [horses, setHorses] = React.useState([]);
+  
   const jockeys = props.jockeys.map(jockey => {
     return { label: jockey.name, value: jockey._id }
   })
@@ -63,10 +64,14 @@ const ConfirmationDialogRaw = (props) => {
   const [loading, setLoading] = React.useState(false);
 
   function handleCancel() {
+    clearValues()
+    onClose();
+  }
+
+  function clearValues() {
     setValues({ name: "", selectedHorse: null, E: true, F: true, G: false, Gs: false, LA: false, B: true, L: false })
     setHorseRaceDetail({ jockey: "", date: props.date, jockeyWeight: "", trainer: "", stable: "", horseWeight: "", startingPosition: props.horsesqty, raceNumber: props.racenumber, horseEquipments: ["E", "F"], horseMedications: ["B"], horseAge: 0, distance: props.distance });
     setHorses([])
-    onClose();    
   }
 
   function handleAdd() {
@@ -98,9 +103,9 @@ const ConfirmationDialogRaw = (props) => {
         }
         return result.json()
       })
-      .then(resData => {
-        this.handleCancel();
-        onHorseAdded(raceId, values.selectedHorse._id)
+      .then(resData => {        
+        onHorseAdded(props.index, raceId, values.selectedHorse);
+        handleCancel();
       })
       .catch(error => {
         console.log(error)
@@ -116,15 +121,27 @@ const ConfirmationDialogRaw = (props) => {
     setLoading(true);
     const requestBody = {
       query: `
-          query Horse($name: String){
-            horse(name: $name) {
+        query Horse($name: String){
+          horse(name: $name) {
+            _id
+            name
+            weight
+            age
+            color
+            sex
+            sire
+            dam
+            stable {         
               _id
-              name            
-              sex
-              age            
-            }
+              name
+              trainers {
+                _id
+                name
+              }
+            }            
           }
-        `,
+        }
+      `,
       variables: {
         name: values.name
       }
@@ -146,6 +163,7 @@ const ConfirmationDialogRaw = (props) => {
       .then(resData => {
         setHorses(resData.data.horse);
         setValues({ ...values, ["selectedHorse"]: null });
+        setHorseRaceDetail({ jockey: "", date: props.date, jockeyWeight: "", trainer: "", stable: "", horseWeight: "", startingPosition: props.horsesqty, raceNumber: props.racenumber, horseEquipments: ["E", "F"], horseMedications: ["B"], horseAge: 0, distance: props.distance });
       })
       .catch(error => {
         console.log(error)
@@ -153,7 +171,7 @@ const ConfirmationDialogRaw = (props) => {
       })
   }
 
-  const onEquipmentChange = (name, col) => event => {
+  const onEquipMedicationChange = (name, col) => event => {
     if (event.target.checked) {
       horseRaceDetail[col].push(name);
       setValues({ ...values, [name]: true });
@@ -164,9 +182,20 @@ const ConfirmationDialogRaw = (props) => {
     }
   }
 
-  const onHorseSelectionChange = (e) => {
-    setValues({ ...values, ["selectedHorse"]: e.value })
-    horseRaceDetail.horseAge = e.value.age
+  const onHorseSelectionChange = (e) => {    
+    setValues({ ...values, ["selectedHorse"]: e.value });
+    setHorseRaceDetail({...horseRaceDetail, horseAge: e.value.age});
+  }
+
+  React.useEffect(() => {    
+    if(values.selectedHorse){
+      setHorseRaceDetail({...horseRaceDetail, horseWeight: values.selectedHorse.weight ? values.selectedHorse.weight : ""});
+    }    
+  }, [values.selectedHorse])
+
+  const onStableSelection = (e) => {
+    const trainers = values.selectedHorse.stable.trainers;
+    setHorseRaceDetail({ ...horseRaceDetail, ["stable"]: e.value, ["trainer"]: trainers.length === 1 ? trainers[0]._id : ""});
   }
 
   return (
@@ -221,7 +250,7 @@ const ConfirmationDialogRaw = (props) => {
               </div>
               <div className="col-md-3 mb-3">
                 <label>Stable</label>
-                <Dropdown options={stables} filter={true} value={horseRaceDetail.stable} onChange={e => setHorseRaceDetail({ ...horseRaceDetail, ["stable"]: e.value })} />
+                <Dropdown options={stables} filter={true} value={horseRaceDetail.stable} onChange={onStableSelection} />
               </div>
               <div className="col-md-3 mb-3">
                 <label>Trainer</label>
@@ -239,26 +268,26 @@ const ConfirmationDialogRaw = (props) => {
                 <FormLabel component="legend">Horse Equipments</FormLabel>
                 <FormGroup>
                   <FormControlLabel
-                    control={<Checkbox checked={values.E} onChange={onEquipmentChange("E", "horseEquipments")} value="E" />}
+                    control={<Checkbox checked={values.E} onChange={onEquipMedicationChange("E", "horseEquipments")} value="E" />}
                     label="E"
                   />
                   <FormControlLabel
-                    control={<Checkbox checked={values.F} onChange={onEquipmentChange("F", "horseEquipments")} value="F" />}
+                    control={<Checkbox checked={values.F} onChange={onEquipMedicationChange("F", "horseEquipments")} value="F" />}
                     label="F"
                   />
                   <FormControlLabel
                     control={
-                      <Checkbox checked={values.G} onChange={onEquipmentChange("G", "horseEquipments")} value="G" />}
+                      <Checkbox checked={values.G} onChange={onEquipMedicationChange("G", "horseEquipments")} value="G" />}
                     label="G"
                   />
                   <FormControlLabel
                     control={
-                      <Checkbox checked={values.Gs} onChange={onEquipmentChange("Gs", "horseEquipments")} value="Gs" />}
+                      <Checkbox checked={values.Gs} onChange={onEquipMedicationChange("Gs", "horseEquipments")} value="Gs" />}
                     label="Gs"
                   />
                   <FormControlLabel
                     control={
-                      <Checkbox checked={values.LA} onChange={onEquipmentChange("LA", "horseEquipments")} value="LA" />}
+                      <Checkbox checked={values.LA} onChange={onEquipMedicationChange("LA", "horseEquipments")} value="LA" />}
                     label="LA"
                   />
                 </FormGroup>
@@ -267,11 +296,11 @@ const ConfirmationDialogRaw = (props) => {
                 <FormLabel component="legend">Horse Medications</FormLabel>
                 <FormGroup>
                   <FormControlLabel
-                    control={<Checkbox checked={values.L} onChange={onEquipmentChange("L", "horseMedications")} value="L" />}
+                    control={<Checkbox checked={values.L} onChange={onEquipMedicationChange("L", "horseMedications")} value="L" />}
                     label="L"
                   />
                   <FormControlLabel
-                    control={<Checkbox checked={values.B} onChange={onEquipmentChange("B", "horseMedications")} value="B" />}
+                    control={<Checkbox checked={values.B} onChange={onEquipMedicationChange("B", "horseMedications")} value="B" />}
                     label="B"
                   />
                 </FormGroup>
