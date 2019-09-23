@@ -25,7 +25,7 @@ const raceDetailLoader = new DataLoader(raceDetailIds => {
 })
 
 const jockeyLoader = new DataLoader(jockeyIds => {
-  return jockeys(jockeyIds);  
+  return jockeys(jockeyIds);
 })
 const stableLoader = new DataLoader(stableIds => {
   return stables(stableIds);
@@ -49,72 +49,70 @@ const user = async userId => {
   }
 }
 
-const jockey = async jockeyId => {  
+const jockey = async jockeyId => {
   try {
-    const jockey = await jockeyLoader.load(jockeyId);    
+    const jockey = await jockeyLoader.load(jockeyId);
     return transformJockey(jockey)
   } catch (error) {
     throw error
   }
 }
 const jockeys = async jockeyIds => {
-  try{    
-    const results = await Jockey.find({ _id: { $in: jockeyIds } });   
-    return jockeyIds.map((jockeyId) => results.find((jockey) => jockey._id.toString() === jockeyId.toString()))
+  try {
+    const results = await Jockey.find({ _id: { $in: jockeyIds } });
+    return jockeyIds.map((jockeyId) => results.find((jockey) => jockey._id.toString() === jockeyId.toString()));
   }
   catch (error) {
     throw error
   }
-  
 }
 
 const stables = async stableIds => {
   try {
-    const m = { $match : { "_id" : { $in : stableIds } } };
-    const a = { $addFields : { "__order" : { $indexOfArray : [ stableIds, "$_id" ] } } };
-    const s = { $sort : { "__order" : 1 } };
-    const stables = await Stable.aggregate( [ m, a, s ] );
-    
+    const m = { $match: { "_id": { $in: stableIds } } };
+    const a = { $addFields: { "__order": { $indexOfArray: [stableIds, "$_id"] } } };
+    const s = { $sort: { "__order": 1 } };
+    const stables = await Stable.aggregate([m, a, s]);
+
     let updatedStables = [];
-    if(stableIds.length > stables.length){
-      for(var i = 0; i < stableIds.length; i++){
+    if (stableIds.length > stables.length) {
+      for (var i = 0; i < stableIds.length; i++) {
         updatedStables.push(stableIds[i].toString());
-        if(!stables[i]){
-          stables.splice(i, 0, stables[updatedStables.indexOf(updatedStables[i])] )
+        if (!stables[i]) {
+          stables.splice(i, 0, stables[updatedStables.indexOf(updatedStables[i])])
         }
-        else if(stableIds[i].toString() != stables[i]._id.toString()){
-          stables.splice(i, 0, stables[updatedStables.indexOf(updatedStables[i])] )          
+        else if (stableIds[i].toString() != stables[i]._id.toString()) {
+          stables.splice(i, 0, stables[updatedStables.indexOf(updatedStables[i])])
         }
       }
     }
-    
     return stables.map(stable => {
       return transformStable(stable);
-    }) 
+    })
   } catch (error) {
     throw error
   }
 }
-const trainers = async trainerIds => {  
+const trainers = async trainerIds => {
   try {
-    const m = { $match : { "_id" : { $in : trainerIds } } };
-    const a = { $addFields : { "__order" : { $indexOfArray : [ trainerIds, "$_id" ] } } };
-    const s = { $sort : { "__order" : 1 } };
-    const trainers = await Trainer.aggregate( [ m, a, s ] );    
+    const m = { $match: { "_id": { $in: trainerIds } } };
+    const a = { $addFields: { "__order": { $indexOfArray: [trainerIds, "$_id"] } } };
+    const s = { $sort: { "__order": 1 } };
+    const trainers = await Trainer.aggregate([m, a, s]);
     //const trainers = await Trainer.find({ _id: { $in: trainerIds } })
     let updatedTrainers = [];
-    if(trainerIds.length > trainers.length){
-      for(var i = 0; i < trainerIds.length; i++){
+    if (trainerIds.length > trainers.length) {
+      for (var i = 0; i < trainerIds.length; i++) {
         updatedTrainers.push(trainerIds[i].toString());
-        if(!trainers[i]){
-          trainers.splice(i, 0, trainers[updatedTrainers.indexOf(updatedTrainers[i])] )
+        if (!trainers[i]) {
+          trainers.splice(i, 0, trainers[updatedTrainers.indexOf(updatedTrainers[i])])
         }
-        else if(trainerIds[i].toString() != trainers[i]._id.toString()){
-          trainers.splice(i, 0, trainers[updatedTrainers.indexOf(updatedTrainers[i])] )          
+        else if (trainerIds[i].toString() != trainers[i]._id.toString()) {
+          trainers.splice(i, 0, trainers[updatedTrainers.indexOf(updatedTrainers[i])])
         }
       }
     }
-    return trainers.map(trainer => {      
+    return trainers.map(trainer => {
       return transformTrainer(trainer)
     })
   }
@@ -142,7 +140,6 @@ const stable = async stableId => {
 const singleHorse = async horseId => {
   try {
     const horse = await horseLoader.load(horseId.toString());
-    console.log(horse)
     return horse
   }
   catch (err) {
@@ -168,11 +165,10 @@ const races = async raceIds => {
 }
 
 const raceDetails = async raceDetailIds => {
-
   try {
-    const raceDetails = await HorseRaceDetail.find({ _id: { $in: raceDetailIds } }).sort( {date: -1 })
-    return raceDetails.map(raceDetail => {
-      return transformRaceDetail(raceDetail)
+    const results = await HorseRaceDetail.find({ _id: { $in: raceDetailIds } });
+    return raceDetailIds.map((raceDetailId) => results.find((raceDetail) => raceDetail._id.toString() === raceDetailId.toString())).map(raceDetail => {
+      return transformRaceDetail(raceDetail);
     })
   } catch (error) {
     throw error
@@ -180,13 +176,12 @@ const raceDetails = async raceDetailIds => {
 }
 
 const horses = async horseIds => {
-  //console.log(horseIds)
   try {
-    const m = { $match : { "_id" : { $in : horseIds } } };
-    const a = { $addFields : { "__order" : { $indexOfArray : [ horseIds, "$_id" ] } } };
-    const s = { $sort : { "__order" : 1 } };
+    const m = { $match: { "_id": { $in: horseIds } } };
+    const a = { $addFields: { "__order": { $indexOfArray: [horseIds, "$_id"] } } };
+    const s = { $sort: { "__order": 1 } };
     const horses = await Horse.aggregate([m, a, s])//await Horse.find({ _id: { $in: horseIds } });
-    
+
     return horses.map(horse => {
       return transformHorse(horse)
     })
@@ -221,7 +216,7 @@ const transformHorse = horse => {
   }
 }
 
-const transformRaceDetail = raceDetail => {  
+const transformRaceDetail = raceDetail => {
   return {
     ...raceDetail,
     _id: raceDetail.id,
@@ -263,37 +258,39 @@ const transformProgram = program => {
   }
 }
 
-const transformRace = race => ({
-  ...race,
-  _id: race.id,
-  event: race.event,
-  date: race.date,
-  distance: race.distance,
-  claimings: race.claimings,
-  claimingType: race.claimingType,
-  procedences: race.procedences,
-  spec: race.spec,
-  horseAge: race.horseAge,
-  programId: race.programId,
-  purse: race.purse,
-  horses: () => horseLoader.loadMany(race.horses)
-})
+const transformRace = race => {
+  return {
+    ...race,
+    _id: race.id,
+    event: race.event,
+    date: race.date,
+    distance: race.distance,
+    claimings: race.claimings,
+    claimingType: race.claimingType,
+    procedences: race.procedences,
+    spec: race.spec,
+    horseAge: race.horseAge,
+    programId: race.programId,
+    purse: race.purse,
+    horses: horseLoader.loadMany(race.horses)
+  }
+}
 
-const transformJockey = jockey => {  
+const transformJockey = jockey => {
   return {
     ...jockey,
     _id: jockey.id,
     name: jockey.name
   }
 }
-const transformTrainer = trainer => {  
+const transformTrainer = trainer => {
   return {
     ...trainer,
     _id: trainer._id.toString(),
     name: trainer.name
   }
 }
-const transformStable = stable => {  
+const transformStable = stable => {
   return {
     _id: stable._id.toString(),
     name: stable.name,

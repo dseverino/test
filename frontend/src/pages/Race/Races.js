@@ -180,6 +180,7 @@ class Races extends Component {
                   name                  
                 }
                 raceDetails {
+                  _id
                   startingPosition
                   claiming
                   horseMedications

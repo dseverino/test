@@ -8,7 +8,7 @@ const horse = props => {
   const horseRaceDetailsFiltered = props.horse.raceDetails.filter(detail => detail.date <= props.dateSelected.toISOString() );  
   
   return (
-    <Paper className="horse" style={{ margin: "10px 0px" }} className="horse__card">
+    <Paper style={{ margin: "10px 0px" }} className="horse__card">
       <div style={{ display: "flex" }}>
 
         <div style={{ marginRight: "5px" }}>
