@@ -138,7 +138,7 @@ class CreateRacePage extends Component {
   clearValuesHandler = () => {
     let newRrace = {
       ...this.state.race,
-      event: this.events[this.events.indexOf(this.state.race.event) + 1],
+      event: this.state.race.event < 6 ? this.events[this.events.indexOf(this.state.race.event) + 1] : 1,
       distance: 1100,
       procedences: [],
       horseAge: "3 Años y Mayores",
@@ -257,6 +257,7 @@ class CreateRacePage extends Component {
       { label: "75,000 Ganadores de 1 y 2 primeras", value: "75,000 Ganadores de 1 y 2 primeras" },
       { label: "125,000 Libres", value: "125,000 Libres" },
       { label: "125,000 Ganadores de 1 y 2 primeras", value: "125,000 Ganadores de 1 y 2 primeras" },
+      { label: "175,000 Libres", value: "175,000 Libres" },
       { label: "175,000 No Ganadores", value: "175,000 No Ganadores" },
       { label: "225,000 Libres", value: "225,000 Libres" },
       { label: "250,000 Libres", value: "250,000 Libres" },

@@ -17,7 +17,7 @@ class Races extends Component {
   state = {
     isLoading: false,
     programDate: "",
-    selecteRace: 0,
+    selectedRace: 0,
     races: [],
     jockeys: [],
     stables: [],
@@ -39,11 +39,11 @@ class Races extends Component {
   }
 
   handleChange = (event, newValue) => {
-    this.setState({ selecteRace: newValue })
+    this.setState({ selectedRace: newValue })
   }
 
   onProgramDateChange = (e) => {
-    this.setState({ programDate: e.value, isLoading: true, selecteRace: 0 }, () => this.loadProgramRaces());
+    this.setState({ races: [], programDate: e.value, isLoading: true, selectedRace: 0 }, () => this.loadProgramRaces());
   }
 
   fetchJockeys = () => {
@@ -151,7 +151,7 @@ class Races extends Component {
       })
   }
 
-  loadProgramRaces = () => {
+  loadProgramRaces = () => {    
     this.setState({ isLoading: true })
     const requestBody = {
       query: `
@@ -371,7 +371,7 @@ class Races extends Component {
     })
     const RaceTabs = this.state.races.map((race, index) => {
       return (
-        <RaceTabPanel programDate={this.state.programDate} horseaddedtorace={this.addHorseToRace} key={index} race={race} value={this.state.selecteRace} index={index} jockeys={this.state.jockeys} stables={this.state.stables} trainers={this.state.trainers}/>
+        <RaceTabPanel programDate={this.state.programDate} horseaddedtorace={this.addHorseToRace} key={index} race={race} value={this.state.selectedRace} index={index} jockeys={this.state.jockeys} stables={this.state.stables} trainers={this.state.trainers}/>
       )
     })
     return (
@@ -386,7 +386,7 @@ class Races extends Component {
           this.state.races.length > 0 && (
             <React.Fragment>
               <Paper style={{ flexGrow: 1 }}>
-                <Tabs value={this.state.selecteRace} onChange={this.handleChange} indicatorColor="primary" textColor="primary" >
+                <Tabs value={this.state.selectedRace} onChange={this.handleChange} indicatorColor="primary" textColor="primary" >
                   {tabs}
                 </Tabs>
               </Paper>

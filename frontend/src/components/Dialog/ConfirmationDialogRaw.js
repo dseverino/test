@@ -38,13 +38,14 @@ const ConfirmationDialogRaw = (props) => {
     jockeyWeight: "",
     trainer: "",
     stable: "",
-    horseWeight: "",
+    horseWeight: 0,
     startingPosition: props.horsesqty,
     raceNumber: props.racenumber,
     horseEquipments: ["E", "F"],
     horseMedications: ["B"],
     horseAge: 0,
-    distance: props.distance
+    distance: props.distance,
+    claiming: ""
   });
   const [horses, setHorses] = React.useState([]);
   
@@ -182,10 +183,18 @@ const ConfirmationDialogRaw = (props) => {
     }
   }
 
-  const onHorseSelectionChange = (e) => {    
+  const onHorseSelectionChange = (e) => {
+
+    console.log(claimings)
     setValues({ ...values, ["selectedHorse"]: e.value });
-    setHorseRaceDetail({...horseRaceDetail, horseAge: e.value.age});
+    setHorseRaceDetail({...horseRaceDetail, horseAge: e.value.age, stable: e.value.stable._id, trainer: e.value.stable.trainers && e.value.stable.trainers.length === 1 ? e.value.stable.trainers[0]._id : "", claiming: props.claimings.length === 1 ? props.claimings[0] : ""});
   }
+
+  /*React.useEffect(() => {    
+    if(horseRaceDetail.stable && values.selectedHorse.stable.trainers && values.selectedHorse.stable.trainers === 1){
+      setHorseRaceDetail({...horseRaceDetail, trainer: values.selectedHorse.stable.trainers[0]._id});
+    }   
+  }, [horseRaceDetail.stable])*/
 
   React.useEffect(() => {    
     if(values.selectedHorse){

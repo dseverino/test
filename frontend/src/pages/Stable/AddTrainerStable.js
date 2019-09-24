@@ -31,7 +31,7 @@ class StableAddTrainerPage extends Component {
     const requestBody = {
       query: `
         query {
-          stables {
+          stablesWithoutTrainer {
             _id
             name
           }
@@ -54,7 +54,7 @@ class StableAddTrainerPage extends Component {
       })
       .then(resData => {
         if (this.isActive) {
-          this.setState({ stables: resData.data.stables, isLoading: false });
+          this.setState({ stables: resData.data.stablesWithoutTrainer, isLoading: false });
         }
       })
       .catch(error => {

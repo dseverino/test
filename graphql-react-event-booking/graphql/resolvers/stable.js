@@ -26,6 +26,16 @@ module.exports = {
       throw error
     }
   },
+  stablesWithoutTrainer: async () => {
+    try {
+      const stables = await Stable.find({ trainers: { $exists: false }}).sort({ name: 1 });
+      return stables.map(stable => {
+        return transformStable(stable)
+      })
+    } catch (error) {
+      throw error
+    }
+  },
   singleStable: async (args) => {
     try {
 

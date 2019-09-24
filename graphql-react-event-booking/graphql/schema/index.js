@@ -234,6 +234,7 @@ module.exports = buildSchema(`
     login(email: String!, password: String!): AuthData!    
     jockeys: [Jockey!]!
     stables: [Stable!]!
+    stablesWithoutTrainer: [Stable]
     trainers: [Trainer!]!
     horseRaceDetails: [HorseRaceDetail]
   }

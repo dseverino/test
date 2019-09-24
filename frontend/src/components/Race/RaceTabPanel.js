@@ -46,7 +46,9 @@ const raceTab = props => {
         </Button>
       </div>
 
-      {horses}
+      {
+        horses
+      }      
 
       <ConfirmationDialogRaw
         id="add-horse"

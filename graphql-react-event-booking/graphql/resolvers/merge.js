@@ -165,8 +165,12 @@ const races = async raceIds => {
 }
 
 const raceDetails = async raceDetailIds => {
+  console.log(raceDetailIds)
+  //console.log(raceDetailIds)
   try {
     const results = await HorseRaceDetail.find({ _id: { $in: raceDetailIds } });
+    //console.log(results)
+    
     return raceDetailIds.map((raceDetailId) => results.find((raceDetail) => raceDetail._id.toString() === raceDetailId.toString())).map(raceDetail => {
       return transformRaceDetail(raceDetail);
     })
