@@ -69,10 +69,11 @@ const jockeys = async jockeyIds => {
 
 const stables = async stableIds => {
   try {
-    const m = { $match: { "_id": { $in: stableIds } } };
+    /*const m = { $match: { "_id": { $in: stableIds } } };
     const a = { $addFields: { "__order": { $indexOfArray: [stableIds, "$_id"] } } };
     const s = { $sort: { "__order": 1 } };
     const stables = await Stable.aggregate([m, a, s]);
+    
 
     let updatedStables = [];
     if (stableIds.length > stables.length) {
@@ -86,7 +87,10 @@ const stables = async stableIds => {
         }
       }
     }
-    return stables.map(stable => {
+    */
+    const results = await Stable.find({ _id: { $in: stableIds } });
+    const filtered = stableIds.map((stableId) => results.find((stable) => stable._id.toString() === stableId.toString() ));
+    return filtered.map(stable => {
       return transformStable(stable);
     })
   } catch (error) {
@@ -95,6 +99,7 @@ const stables = async stableIds => {
 }
 const trainers = async trainerIds => {
   try {
+    /*
     const m = { $match: { "_id": { $in: trainerIds } } };
     const a = { $addFields: { "__order": { $indexOfArray: [trainerIds, "$_id"] } } };
     const s = { $sort: { "__order": 1 } };
@@ -111,8 +116,10 @@ const trainers = async trainerIds => {
           trainers.splice(i, 0, trainers[updatedTrainers.indexOf(updatedTrainers[i])])
         }
       }
-    }
-    return trainers.map(trainer => {
+    }*/
+    const results = await Trainer.find({ _id: { $in: trainerIds } });
+    const filtered = trainerIds.map((trainerId) => results.find((trainer) => trainer._id.toString() === trainerId.toString() ));
+    return filtered.map(trainer => {
       return transformTrainer(trainer)
     })
   }
@@ -165,12 +172,8 @@ const races = async raceIds => {
 }
 
 const raceDetails = async raceDetailIds => {
-  console.log(raceDetailIds)
-  //console.log(raceDetailIds)
   try {
     const results = await HorseRaceDetail.find({ _id: { $in: raceDetailIds } });
-    //console.log(results)
-    
     return raceDetailIds.map((raceDetailId) => results.find((raceDetail) => raceDetail._id.toString() === raceDetailId.toString())).map(raceDetail => {
       return transformRaceDetail(raceDetail);
     })
@@ -298,7 +301,7 @@ const transformStable = stable => {
   return {
     _id: stable._id.toString(),
     name: stable.name,
-    trainers: stable.trainers ? () => trainerLoader.loadMany(stable.trainers) : [],
+    trainers: () => trainerLoader.loadMany(stable.trainers),
     horses: () => horseLoader.loadMany(stable.horses)
   }
 }
