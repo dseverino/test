@@ -1,27 +1,39 @@
 import React from "react";
 
-import Modal from "../Modal/Modal";
+import "./ConfirmationDialogRaw.css";
 
+import { Fieldset } from 'primereact/fieldset';
 import { Dropdown } from "primereact/dropdown";
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+
+import Icon from '@material-ui/core/Icon';
 import FormLabel from '@material-ui/core/FormLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
-
-
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
 import TextField from '@material-ui/core/TextField';
-import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
 import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import AddIcon from '@material-ui/icons/Add';
+import Typography from "@material-ui/core/Typography"
+
+
 
 const ConfirmationDialogRaw = (props) => {
+
+  const nameRef = React.createRef();
+
+  React.useEffect(() => {
+    if (props.open) {
+      nameRef.current.focus();
+    }
+  }, [props.open])
 
   const { onClose, open, onHorseAdded, raceId, ...other } = props;
 
@@ -166,9 +178,19 @@ const ConfirmationDialogRaw = (props) => {
         return result.json()
       })
       .then(resData => {
-        setHorses(resData.data.horse);
-        setValues({ ...values, "selectedHorse": null });
-        setHorseRaceDetail({ jockey: "", date: props.date, jockeyWeight: "", trainer: "", stable: "", horseWeight: "", startingPosition: props.horsesqty, raceNumber: props.racenumber, horseEquipments: ["E", "F"], horseMedications: ["B"], horseAge: 0, distance: props.distance });
+        if (resData.data.horse && resData.data.horse.length == 1) {
+          setValues({ ...values, "selectedHorse": resData.data.horse[0] });
+          setHorseRaceDetail(
+            {
+              ...horseRaceDetail, horseAge: resData.data.horse[0].age, stable: resData.data.horse[0].stable._id, trainer: resData.data.horse[0].stable.trainers && resData.data.horse[0].stable.trainers.length === 1 ? resData.data.horse[0].stable.trainers[0]._id : "", claiming: props.claimings.length === 1 ? props.claimings[0] : "",
+              horseWeight: resData.data.horse[0].weight || 0
+            });
+        }
+        else {
+          setHorses(resData.data.horse);
+          setValues({ ...values, "selectedHorse": null });
+          setHorseRaceDetail({ jockey: "", date: props.date, jockeyWeight: "", trainer: "", stable: "", horseWeight: "", startingPosition: props.horsesqty, raceNumber: props.racenumber, horseEquipments: ["E", "F"], horseMedications: ["B"], horseAge: 0, distance: props.distance });
+        }
       })
       .catch(error => {
         console.log(error)
@@ -218,119 +240,129 @@ const ConfirmationDialogRaw = (props) => {
       <Dialog
         disableBackdropClick
         disableEscapeKeyDown
-        maxWidth="md"
+        maxWidth="lg"
         aria-labelledby="confirmation-dialog-title"
-        open={false}
+        open={open}
         {...other}
       >
         <DialogTitle id="confirmation-dialog-title">Add Horse</DialogTitle>
         <DialogContent dividers>
-          <div>
-            <TextField
-              id="standard-search"
-              label="Horse Name"
-              type="search"
-              margin="normal"
-              value={values.name}
-              onChange={handleChange('name')}
-              onKeyPress={handleKeyPress}
-            >
-            </TextField>
+          <div>            
+            <InputLabel htmlFor="component-simple">Name</InputLabel>
+            <Input inputRef={nameRef} id="component-simple" value={values.name} onChange={handleChange('name')} onKeyPress={handleKeyPress} />
 
-            <Button variant="outlined" onClick={fetchHorses}>
+            <Button variant="outlined" onClick={fetchHorses} style={{ marginLeft: "15px", marginBottom: "5px" }}>
               Search
             </Button>
+            <span>
+              <Icon color="disabled" fontSize="large" onClick={onAddIconClick}>
+                add_circle
+              </Icon>
+            </span>
           </div>
           <div>
             {
-              horses.length > 0 &&
+              horses.length > 0 && !values.selectedHorse &&
               <DataTable value={horses} selectionMode="single" selection={values.selectedHorse} onSelectionChange={onHorseSelectionChange}>
                 <Column selectionMode="single" style={{ width: '3em' }} />
                 <Column field="name" header="Name" />
                 <Column field="age" header="Age" />
+                <Column field="color" header="Color" />
                 <Column field="sex" header="Sex" />
+                <Column field="stable.name" header="Stable" />
               </DataTable>
             }
             {
               values.selectedHorse &&
               <React.Fragment>
-                <div style={{ display: "flex" }}>
-                  <div style={{ width: "50%" }}>
-                    <div>
-                      Starting Position <strong>{props.horsesqty}</strong>
-                    </div>
-                    <div>
-                      <label>Jockey</label>
-                      <Dropdown options={jockeys} filter={true} value={horseRaceDetail.jockey} onChange={e => setHorseRaceDetail({ ...horseRaceDetail, "jockey": e.value })} />
-                    </div>
-                    <div>
-                      <TextField id="jockeyweight"
-                        label="Jockey Weight" type="number" onChange={e => setHorseRaceDetail({ ...horseRaceDetail, "jockeyWeight": Number(e.target.value) })} keyfilter="pint" value={horseRaceDetail.jockeyWeight} margin="normal" variant="outlined" />
-                    </div>
-                    <div>
-                      <label>Stable</label>
-                      <Dropdown options={stables} filter={true} value={horseRaceDetail.stable} onChange={onStableSelection} />
-                    </div>
-                    <div>
-                      <label>Trainer</label>
-                      <Dropdown options={trainers} filter={true} value={horseRaceDetail.trainer} onChange={e => setHorseRaceDetail({ ...horseRaceDetail, "trainer": e.value })} />
-                      <IconButton aria-label="add" onClick={onAddIconClick}>
-                        <AddIcon />
-                      </IconButton>
-                    </div>
-                  </div>
-                  <div style={{ width: "50%" }}>
-                    <div>
-                      <TextField id="weight"
-                        label="Weight" type="number" onChange={e => setHorseRaceDetail({ ...horseRaceDetail, "horseWeight": Number(e.target.value) })} keyfilter="pint" value={horseRaceDetail.horseWeight} margin="normal" variant="outlined" />
-                    </div>
-                    <div>
-                      <label>Claiming</label>
-                      <Dropdown options={claimings} filter={true} value={horseRaceDetail.claiming} onChange={e => setHorseRaceDetail({ ...horseRaceDetail, "claiming": e.value })} />
-                    </div>
-                    <FormControl component="fieldset">
-                      <FormLabel component="legend">Horse Equipments</FormLabel>
-                      <FormGroup>
-                        <FormControlLabel
-                          control={<Checkbox checked={values.E} onChange={onEquipMedicationChange("E", "horseEquipments")} value="E" />}
-                          label="E"
-                        />
-                        <FormControlLabel
-                          control={<Checkbox checked={values.F} onChange={onEquipMedicationChange("F", "horseEquipments")} value="F" />}
-                          label="F"
-                        />
-                        <FormControlLabel
-                          control={
-                            <Checkbox checked={values.G} onChange={onEquipMedicationChange("G", "horseEquipments")} value="G" />}
-                          label="G"
-                        />
-                        <FormControlLabel
-                          control={
-                            <Checkbox checked={values.Gs} onChange={onEquipMedicationChange("Gs", "horseEquipments")} value="Gs" />}
-                          label="Gs"
-                        />
-                        <FormControlLabel
-                          control={
-                            <Checkbox checked={values.LA} onChange={onEquipMedicationChange("LA", "horseEquipments")} value="LA" />}
-                          label="LA"
-                        />
-                      </FormGroup>
-                    </FormControl>
-                    <FormControl component="fieldset">
-                      <FormLabel component="legend">Horse Medications</FormLabel>
-                      <FormGroup>
-                        <FormControlLabel
-                          control={<Checkbox checked={values.L} onChange={onEquipMedicationChange("L", "horseMedications")} value="L" />}
-                          label="L"
-                        />
-                        <FormControlLabel
-                          control={<Checkbox checked={values.B} onChange={onEquipMedicationChange("B", "horseMedications")} value="B" />}
-                          label="B"
-                        />
-                      </FormGroup>
-                    </FormControl>
-                  </div>
+                <div style={{ display: "flex", margin: "10px", justifyContent: "space-between" }}>
+                  <div><strong>{values.selectedHorse.name}</strong></div>
+                  <div>{values.selectedHorse.age} - {values.selectedHorse.color} - {values.selectedHorse.sex}</div>
+                  <div>{values.selectedHorse.stable.name}</div>
                 </div>
+                <Fieldset legend="Race Details">
+                  <div style={{ display: "flex" }}>
+                    <div style={{ width: "50%" }}>
+                      <div>
+                        Starting Position <strong>{props.horsesqty}</strong>
+                      </div>
+                      <div>
+                        <label>Jockey</label>
+                        <Dropdown options={jockeys} filter={true} value={horseRaceDetail.jockey} onChange={e => setHorseRaceDetail({ ...horseRaceDetail, "jockey": e.value })} />
+                      </div>
+                      <div>
+                        <TextField id="jockeyweight"
+                          label="Jockey Weight" type="number" onChange={e => setHorseRaceDetail({ ...horseRaceDetail, "jockeyWeight": Number(e.target.value) })} keyfilter="pint" value={horseRaceDetail.jockeyWeight} margin="normal" variant="outlined" />
+                      </div>
+                      <div>
+                        <label>Stable</label>
+                        <Dropdown options={stables} filter={true} value={horseRaceDetail.stable} onChange={onStableSelection} />
+                      </div>
+                      <div>
+                        <label>Trainer</label>
+                        <div>
+                          <Dropdown options={trainers} filter={true} value={horseRaceDetail.trainer} onChange={e => setHorseRaceDetail({ ...horseRaceDetail, "trainer": e.value })} />
+                          <span>
+                            <Icon color="disabled" fontSize="large" onClick={onAddIconClick}>
+                              add_circle
+                          </Icon>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div style={{ width: "50%" }}>
+                      <div>
+                        <TextField id="weight"
+                          label="Weight" type="number" onChange={e => setHorseRaceDetail({ ...horseRaceDetail, "horseWeight": Number(e.target.value) })} keyfilter="pint" value={horseRaceDetail.horseWeight} margin="normal" variant="outlined" />
+                      </div>
+                      <div>
+                        <label>Claiming</label>
+                        <Dropdown options={claimings} filter={true} value={horseRaceDetail.claiming} onChange={e => setHorseRaceDetail({ ...horseRaceDetail, "claiming": e.value })} />
+                      </div>
+                      <div>
+                        <FormLabel component="legend">Horse Equipments</FormLabel>
+                        <FormGroup style={{ flexDirection: "row" }}>
+                          <FormControlLabel
+                            control={<Checkbox checked={values.E} onChange={onEquipMedicationChange("E", "horseEquipments")} value="E" />}
+                            label="E"
+                          />
+                          <FormControlLabel
+                            control={<Checkbox checked={values.F} onChange={onEquipMedicationChange("F", "horseEquipments")} value="F" />}
+                            label="F"
+                          />
+                          <FormControlLabel
+                            control={
+                              <Checkbox checked={values.G} onChange={onEquipMedicationChange("G", "horseEquipments")} value="G" />}
+                            label="G"
+                          />
+                          <FormControlLabel
+                            control={
+                              <Checkbox checked={values.Gs} onChange={onEquipMedicationChange("Gs", "horseEquipments")} value="Gs" />}
+                            label="Gs"
+                          />
+                          <FormControlLabel
+                            control={
+                              <Checkbox checked={values.LA} onChange={onEquipMedicationChange("LA", "horseEquipments")} value="LA" />}
+                            label="LA"
+                          />
+                        </FormGroup>
+                      </div>
+                      <div>
+                        <FormLabel component="legend">Horse Medications</FormLabel>
+                        <FormGroup style={{ flexDirection: "row" }}>
+                          <FormControlLabel
+                            control={<Checkbox checked={values.L} onChange={onEquipMedicationChange("L", "horseMedications")} value="L" />}
+                            label="L"
+                          />
+                          <FormControlLabel
+                            control={<Checkbox checked={values.B} onChange={onEquipMedicationChange("B", "horseMedications")} value="B" />}
+                            label="B"
+                          />
+                        </FormGroup>
+                      </div>
+                    </div>
+                  </div>
+                </Fieldset>
               </React.Fragment>
             }
 
@@ -346,7 +378,7 @@ const ConfirmationDialogRaw = (props) => {
         </Button>
         </DialogActions>
       </Dialog>
-      <Dialog open={open} title={"Hello again"}>
+      <Dialog open={false} title={"Hello again"}>
         <h1>kljasdlfjl</h1>
         <Button variant="outlined" onClick={fetchHorses}>
           Search

@@ -4,6 +4,9 @@ import AuthContext from "../../context/auth-context";
 import { Dialog } from 'primereact/dialog';
 import Spinner from "../../components/Spinner/Spinner";
 
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
+
 //import "../pages/Trainers.css";
 
 class CreateTrainerPage extends Component {
@@ -130,18 +133,25 @@ class CreateTrainerPage extends Component {
   render() {
     return (
       <React.Fragment>
-        <form>
-          <div className="col-md-3 mb-3">
-            <label htmlFor="name">Name</label>
-            <input type="text" onBlur={this.validateTrainer} className="form-control" onChange={this.onHandleChange} id="name" value={this.state.trainer.name} />
+        
+        <div>
+          <h3>
+            Create Trainer
+          </h3>
+        </div>
+        <div>
+          <div style={{margin: "20px 0px"}}>
+            <InputLabel htmlFor="name">Name</InputLabel>
+            <Input id="name" onBlur={this.validateTrainer} value={this.state.trainer.name} onChange={this.onHandleChange} />
           </div>
-        </form>
-        <button className="btn btn-secondary">
-          Cancel
-        </button>
-        <button onClick={this.saveHandler} className="btn btn-primary">
-          Save
-        </button>
+
+          <button className="btn btn-secondary">
+            Cancel
+          </button>
+          <button onClick={this.saveHandler} className="btn btn-primary">
+            Save
+          </button>
+        </div>
 
         <Dialog header= "Trainer Exists!" visible={this.state.exist} style={{ width: '50vw' }} modal={true} onHide={this.modalCancelHandler}>
           {this.state.trainer.name} already exists!

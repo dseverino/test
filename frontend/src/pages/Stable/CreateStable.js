@@ -1,8 +1,14 @@
 import React, { Component } from "react";
 
 import AuthContext from "../../context/auth-context";
-import { Dialog } from 'primereact/dialog';
 import Spinner from "../../components/Spinner/Spinner";
+
+import { Panel } from 'primereact/panel';
+import { Dialog } from 'primereact/dialog';
+
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
+import { Fieldset } from 'primereact/fieldset';
 
 //import "../pages/Stables.css";
 
@@ -75,7 +81,7 @@ class CreateStablePage extends Component {
       })
       .then(resData => {
         if (resData && resData.data.singleStable) {
-          this.setState({ exist: true});
+          this.setState({ exist: true });
         }
         this.setState({ isLoading: false });
       })
@@ -122,7 +128,7 @@ class CreateStablePage extends Component {
           return { isLoading: false }
         })
         this.setState({ created: true })
-        
+
       })
       .catch(error => {
         console.log(error);
@@ -131,20 +137,27 @@ class CreateStablePage extends Component {
   render() {
     return (
       <React.Fragment>
-        <form>
-          <div className="col-md-3 mb-3">
-            <label htmlFor="name">Name</label>
-            <input type="text" onBlur={this.validateStable} className="form-control" onChange={this.onHandleChange} id="name" value={this.state.stable.name} />
+        <div>
+          <h3>
+            Create Stable
+          </h3>
+        </div>
+        <div>
+          <div style={{margin: "20px 0px"}}>
+            <InputLabel htmlFor="name">Name</InputLabel>
+            <Input id="name" onBlur={this.validateStable} value={this.state.stable.name} onChange={this.onHandleChange} />
           </div>
-        </form>
-        <button className="btn btn-secondary">
-          Cancel
-        </button>
-        <button onClick={this.saveHandler} className="btn btn-primary">
-          Save
-        </button>
 
-        <Dialog header= "Stable Exists!" visible={this.state.exist} style={{ width: '50vw' }} modal={true} onHide={this.modalCancelHandler}>
+          <button className="btn btn-secondary">
+            Cancel
+          </button>
+          <button onClick={this.saveHandler} className="btn btn-primary">
+            Save
+          </button>
+        </div>
+
+
+        <Dialog header="Stable Exists!" visible={this.state.exist} style={{ width: '50vw' }} modal={true} onHide={this.modalCancelHandler}>
           {this.state.stable.name} already exists!
         </Dialog>
         <Dialog header={this.state.stable.name + " Created!"} visible={this.state.created} style={{ width: '50vw' }} modal={true} onHide={this.modalCancelHandler}>

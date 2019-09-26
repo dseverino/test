@@ -28,7 +28,7 @@ module.exports = {
   },
   stablesWithoutTrainer: async () => {
     try {
-      const stables = await Stable.find({ trainers: { $exists: false }}).sort({ name: 1 });
+      const stables = await Stable.find({ trainers: { $size: 0 }}).sort({ name: 1 });
       return stables.map(stable => {
         return transformStable(stable)
       })

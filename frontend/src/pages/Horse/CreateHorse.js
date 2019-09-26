@@ -1,11 +1,14 @@
 import React, { Component } from "react";
 
 import AuthContext from "../../context/auth-context";
-
-import {Dropdown} from 'primereact/dropdown';
-import { Dialog } from 'primereact/dialog';
 import Spinner from "../../components/Spinner/Spinner";
+import modal from "../../components/Modal/Modal";
 
+import { Dropdown } from 'primereact/dropdown';
+import { Dialog } from 'primereact/dialog';
+import { Fieldset } from 'primereact/fieldset';
+
+import Icon from '@material-ui/core/Icon';
 //import "../pages/Horses.css";
 
 class CreateHorsePage extends Component {
@@ -17,6 +20,7 @@ class CreateHorsePage extends Component {
     isLoading: false,
     exist: false,
     visible: false,
+    createHorse: false,
     created: false,
     selectedStable: null,
     stables: [],
@@ -64,7 +68,7 @@ class CreateHorsePage extends Component {
       })
       .then(resData => {
         if (resData && resData.data.stables) {
-          this.setState({ stables: resData.data.stables, isLoading: false })          
+          this.setState({ stables: resData.data.stables, isLoading: false })
         }
         else {
           this.setState({ isLoading: false })
@@ -151,7 +155,7 @@ class CreateHorsePage extends Component {
       })
       .then(resData => {
         if (resData && resData.data.singleHorse) {
-          this.setState({ exist: true, isLoading: false })          
+          this.setState({ exist: true, isLoading: false })
         }
         else {
           this.setState({ isLoading: false })
@@ -201,73 +205,91 @@ class CreateHorsePage extends Component {
         }
         return result.json()
       })
-      .then(resData => {        
-        this.setState({ created: true, selectedStable: null, isLoading: false })        
+      .then(resData => {
+        this.setState({ created: true, selectedStable: null, isLoading: false })
       })
       .catch(error => {
         console.log(error);
       })
   }
+
+  onAddIconClick = (e) => {
+    this.setState({createHorse: true})
+  }
+
   render() {
     return (
       <React.Fragment>
-        <form>
-          <div className="col-md-3 mb-3">
-            <label htmlFor="name">Name</label>
-            <input type="text" onBlur={this.validateHorse} className="form-control" onChange={this.onHandleChange} id="name" value={this.state.horse.name} />
-          </div>
-          <div className="col-md-3 mb-3">
-            <label htmlFor="weight">Weight</label>
-            <input type="number" className="form-control" onChange={this.onAgeChangeHandler} id="weight" value={this.state.horse.weight} />
-          </div>
-          <div className="col-md-3 mb-3">
-            <label htmlFor="age">Age</label>
-            <select className="form-control" onChange={this.onAgeChangeHandler} id="age" value={this.state.horse.age}>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-              <option value="6">6</option>
-              <option value="7">7</option>
-              <option value="8">8</option>
-              <option value="9">9</option>
-              <option value="10">10</option>
-              <option value="11">11</option>
-              <option value="12">12</option>
-              <option value="13">13</option>
-            </select>
-          </div>
-          <div className="col-md-3 mb-3">
-            <label htmlFor="sex">Color</label>
-            <select className="form-control" onChange={this.onHandleChange} id="color" value={this.state.horse.color}>
-              <option value="Z">Z</option>
-              <option value="Zo">Zo</option>
-              <option value="A">A</option>
-              <option value="R">R</option>
-              <option value="Ro">Ro</option>
-            </select>
-          </div>
-          <div className="col-md-3 mb-3">
-            <label htmlFor="sex">Sex</label>
-            <select className="form-control" id="sex" value={this.state.horse.sex} onChange={this.onHandleChange}>
-              <option value="M">M</option>
-              <option value="Mc">Mc</option>
-              <option value="H">H</option>
-            </select>
-          </div>
-          <div className="col-md-3 mb-3">
-            <label htmlFor="sire">Sire</label>
-            <input type="text" className="form-control" onChange={this.onHandleChange} id="sire" value={this.state.horse.sire} />
-          </div>
-          <div className="col-md-3 mb-3">
-            <label htmlFor="dam">Dam</label>
-            <input type="text" className="form-control" onChange={this.onHandleChange} id="dam" value={this.state.horse.dam} />
-          </div>
-          <div className="col-md-3 mb-3" style={{display: "flex", flexDirection: "column"}}>
-            <label htmlFor="stable">Stable</label>
-            <Dropdown id="stable" optionLabel="name" filter={true} value={this.state.selectedStable} options={this.state.stables} onChange={this.onStableChangeHandler} placeholder="Select a Stable"/>
-          </div>
-        </form>
+        <Fieldset legend="Create Horse">
+          <form style={{ display: "flex" }}>
+            <div>
+              <div>
+                <label htmlFor="name">Name</label>
+                <input type="text" onBlur={this.validateHorse} className="form-control" onChange={this.onHandleChange} id="name" value={this.state.horse.name} />
+              </div>
+              <div>
+                <label htmlFor="weight">Weight</label>
+                <input type="number" className="form-control" onChange={this.onAgeChangeHandler} id="weight" value={this.state.horse.weight} />
+              </div>
+              <div>
+                <label htmlFor="age">Age</label>
+                <select className="form-control" onChange={this.onAgeChangeHandler} id="age" value={this.state.horse.age}>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
+                  <option value="9">9</option>
+                  <option value="10">10</option>
+                  <option value="11">11</option>
+                  <option value="12">12</option>
+                  <option value="13">13</option>
+                </select>
+              </div>
+              <div>
+                <label htmlFor="sex">Color</label>
+                <select className="form-control" onChange={this.onHandleChange} id="color" value={this.state.horse.color}>
+                  <option value="Z">Z</option>
+                  <option value="Zo">Zo</option>
+                  <option value="A">A</option>
+                  <option value="R">R</option>
+                  <option value="Ro">Ro</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <div>
+                <label htmlFor="sex">Sex</label>
+                <select className="form-control" id="sex" value={this.state.horse.sex} onChange={this.onHandleChange}>
+                  <option value="M">M</option>
+                  <option value="Mc">Mc</option>
+                  <option value="H">H</option>
+                </select>
+              </div>
+              <div>
+                <label htmlFor="sire">Sire</label>
+                <input type="text" className="form-control" onChange={this.onHandleChange} id="sire" value={this.state.horse.sire} />
+              </div>
+              <div>
+                <label htmlFor="dam">Dam</label>
+                <input type="text" className="form-control" onChange={this.onHandleChange} id="dam" value={this.state.horse.dam} />
+              </div>
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                <label htmlFor="stable">Stable</label>
+                <div>
+                  <Dropdown id="stable" optionLabel="name" filter={true} value={this.state.selectedStable} options={this.state.stables} onChange={this.onStableChangeHandler} placeholder="Select a Stable" />
+                  <span>
+                    <Icon style={{marginBottom: "-14px"}} color="disabled" fontSize="large" onClick={this.onAddIconClick}>
+                      add_circle
+                    </Icon>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </form>
+        </Fieldset>
         <button onClick={this.onCancelHandler} className="btn btn-secondary">
           Cancel
         </button>
@@ -275,7 +297,7 @@ class CreateHorsePage extends Component {
           Save
         </button>
 
-        <Dialog header= "Horse Exists!" visible={this.state.exist} style={{ width: '50vw' }} modal={true} onHide={this.modalCancelHandler}>
+        <Dialog header="Horse Exists!" visible={this.state.exist} style={{ width: '50vw' }} modal={true} onHide={this.modalCancelHandler}>
           {this.state.horse.name} already exists!
         </Dialog>
         <Dialog header={this.state.horse.name + " Created!"} visible={this.state.created} style={{ width: '50vw' }} modal={true} onHide={this.modalCancelHandler}>
@@ -300,7 +322,13 @@ class CreateHorsePage extends Component {
             </div>
           </div>
         </Dialog>
-
+        {
+          this.state.createHorse &&
+          <modal title="Create Horse">
+            <h1>Horse</h1>
+          </modal>
+        }
+        
         {
           this.state.isLoading && <Spinner />
         }

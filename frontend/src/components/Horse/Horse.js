@@ -28,7 +28,7 @@ const horse = props => {
         <div style={{ border: "1px solid red", flexGrow: 2, margin: "1px 2px 1px 10px" }}>
           <div style={{ display: "flex", border: "1px solid blue", flexGrow: 2, fontSize: 12, fontWeight: "600" }}>
             <div style={{ flexGrow: 1 }}>
-              {props.horse.age}-{props.horse.color}-{props.horse.sex} {props.horse.sire} {props.horse.dam}
+              {props.horse.age}-{props.horse.color}-{props.horse.sex} {props.horse.sire} - {props.horse.dam}
             </div>
             <div style={{ flexGrow: 2 }}>
               {horseRaceDetailsFiltered[0].stable.name}

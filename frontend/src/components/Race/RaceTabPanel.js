@@ -16,14 +16,14 @@ const formatter = new Intl.NumberFormat('en-US', {
 const raceTab = props => {
   const horses = props.race.horses.map(horse => {
     return (
-      <Horse key={horse._id} horse={horse} dateSelected={props.programDate}/>
+      <Horse key={horse._id} horse={horse} dateSelected={props.programDate} />
     )
   })
   const claimings = props.race.claimings.map(claiming => {
     return "Reclamo RD$" + claiming
   })
 
-  const [open, setOpen] = useState(false);  
+  const [open, setOpen] = useState(false);
 
   function handleClickListItem() {
     setOpen(true);
@@ -40,15 +40,19 @@ const raceTab = props => {
 
       </span>
       <div>Premio RD{formatter.format(props.race.purse)}</div>
-      <div>
-        <Button color="primary" onClick={handleClickListItem} aria-controls="add-horse">
-          Add Horse
-        </Button>
-      </div>
+      {
+        !props.race.completed &&
+        <div>
+          <Button color="primary" onClick={handleClickListItem} aria-controls="add-horse">
+            Add Horse
+          </Button>
+        </div>
+      }
+
 
       {
         horses
-      }      
+      }
 
       <ConfirmationDialogRaw
         id="add-horse"
@@ -74,7 +78,7 @@ const raceTab = props => {
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
-  
+
   return (
     <Typography
       component="div"

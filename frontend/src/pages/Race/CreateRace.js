@@ -17,7 +17,9 @@ import { Dialog } from 'primereact/dialog';
 import Spinner from "../../components/Spinner/Spinner";
 import { Dropdown } from 'primereact/dropdown';
 import { Checkbox } from 'primereact/checkbox';
-//import { InputText } from 'primereact/inputtext';
+
+///import NumberFormat from 'react-number-format';
+
 import "./Race.css"
 
 class CreateRacePage extends Component {
@@ -221,7 +223,7 @@ class CreateRacePage extends Component {
         }
         return result.json()
       })
-      .then(resData => {        
+      .then(resData => {
         this.setState({ created: true, isLoading: false });
         this.clearValuesHandler();
       })
@@ -260,6 +262,7 @@ class CreateRacePage extends Component {
       { label: "175,000 Libres", value: "175,000 Libres" },
       { label: "175,000 No Ganadores", value: "175,000 No Ganadores" },
       { label: "225,000 Libres", value: "225,000 Libres" },
+      { label: "225,000 Ganadores de 1 y 2 primeras", value: "225,000 Ganadores de 1 y 2 primeras" },
       { label: "250,000 Libres", value: "250,000 Libres" },
       { label: "250,000 Ganadores de 1 y 2 primeras", value: "250,000 Ganadores de 1 y 2 primeras" },
       { label: "250,000 No Ganadores", value: "250,000 No Ganadores" },
