@@ -3,12 +3,10 @@ import React, { Component } from "react";
 import AuthContext from "../../context/auth-context";
 import Spinner from "../../components/Spinner/Spinner";
 
-import { Panel } from 'primereact/panel';
 import { Dialog } from 'primereact/dialog';
 
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
-import { Fieldset } from 'primereact/fieldset';
 
 //import "../pages/Stables.css";
 
@@ -134,6 +132,7 @@ class CreateStablePage extends Component {
         console.log(error);
       })
   }
+  
   render() {
     return (
       <React.Fragment>

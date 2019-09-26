@@ -9,7 +9,7 @@ import { Column } from 'primereact/column';
 
 import Icon from '@material-ui/core/Icon';
 import FormLabel from '@material-ui/core/FormLabel';
-import FormControl from '@material-ui/core/FormControl';
+
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -21,7 +21,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import Typography from "@material-ui/core/Typography"
+import AddIcon from '@material-ui/icons/Add';
 
 
 
@@ -178,7 +178,7 @@ const ConfirmationDialogRaw = (props) => {
         return result.json()
       })
       .then(resData => {
-        if (resData.data.horse && resData.data.horse.length == 1) {
+        if (resData.data.horse && resData.data.horse.length === 1) {
           setValues({ ...values, "selectedHorse": resData.data.horse[0] });
           setHorseRaceDetail(
             {
@@ -255,9 +255,10 @@ const ConfirmationDialogRaw = (props) => {
               Search
             </Button>
             <span>
-              <Icon color="disabled" fontSize="large" onClick={onAddIconClick}>
+              {/*<Icon color="disabled" fontSize="large" onClick={onAddIconClick}>
                 add_circle
-              </Icon>
+  </Icon>*/}
+              <AddIcon color="secondary"></AddIcon>
             </span>
           </div>
           <div>
@@ -305,7 +306,7 @@ const ConfirmationDialogRaw = (props) => {
                           <span>
                             <Icon color="disabled" fontSize="large" onClick={onAddIconClick}>
                               add_circle
-                          </Icon>
+                            </Icon>
                           </span>
                         </div>
                       </div>
