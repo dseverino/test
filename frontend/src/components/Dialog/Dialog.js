@@ -1,8 +1,8 @@
 import React from "react";
 
-import "../Modal.css";
+import "./Dialog.css";
 
-const modal = props => (
+const dialog = props => (
   <div className="modal">
     <header className="modal__header">
       <h1>{props.title}</h1>
@@ -25,4 +25,4 @@ const modal = props => (
   </div>
 )
 
-export default modal;
+export default dialog;

@@ -2,13 +2,24 @@ import React, { Component } from "react";
 
 import AuthContext from "../../context/auth-context";
 import Spinner from "../../components/Spinner/Spinner";
-import modal from "../../components/Modal/Modal";
+
+import DialogMaterial from '@material-ui/core/Dialog';
+import Slide from '@material-ui/core/Slide';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import Button from '@material-ui/core/Button';
+import DialogActions from '@material-ui/core/DialogActions';
+import AddIcon from '@material-ui/icons/Add';
 
 import { Dropdown } from 'primereact/dropdown';
 import { Dialog } from 'primereact/dialog';
 import { Fieldset } from 'primereact/fieldset';
 
-import Icon from '@material-ui/core/Icon';
+
+
+
+
 //import "../pages/Horses.css";
 
 class CreateHorsePage extends Component {
@@ -20,7 +31,7 @@ class CreateHorsePage extends Component {
     isLoading: false,
     exist: false,
     visible: false,
-    createHorse: false,
+    createStable: false,
     created: false,
     selectedStable: null,
     stables: [],
@@ -109,7 +120,7 @@ class CreateHorsePage extends Component {
   }
   onAgeChangeHandler = (e) => {
     let newHorse = Object.assign({}, this.state.horse)
-    newHorse[e.target.id] = parseInt(e.target.value)
+    newHorse[e.target.id] = parseInt(e.target.value || 0)
     this.setState({ horse: newHorse })
   }
   onStableChangeHandler = (e) => {
@@ -214,8 +225,17 @@ class CreateHorsePage extends Component {
   }
 
   onAddIconClick = (e) => {
-    this.setState({createHorse: true})
+    console.log('hey')
+    this.setState({ createStable: true })
   }
+
+  closeStableDialog = (e) => {
+    this.setState({ createStable: false })
+  }
+
+  Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+  });
 
   render() {
     return (
@@ -281,9 +301,7 @@ class CreateHorsePage extends Component {
                 <div>
                   <Dropdown id="stable" optionLabel="name" filter={true} value={this.state.selectedStable} options={this.state.stables} onChange={this.onStableChangeHandler} placeholder="Select a Stable" />
                   <span>
-                    <Icon style={{marginBottom: "-14px"}} color="disabled" fontSize="large" onClick={this.onAddIconClick}>
-                      add_circle
-                    </Icon>
+                    <AddIcon color="secondary" onClick={this.onAddIconClick}></AddIcon>
                   </span>
                 </div>
               </div>
@@ -322,16 +340,36 @@ class CreateHorsePage extends Component {
             </div>
           </div>
         </Dialog>
-        {
-          this.state.createHorse &&
-          <modal title="Create Horse">
-            <h1>Horse</h1>
-          </modal>
-        }
-        
+
+        <DialogMaterial
+          open={this.state.createStable}
+          TransitionComponent={this.Transition}
+          keepMounted
+          onClose={this.closeStableDialog}
+          aria-labelledby="alert-dialog-slide-title"
+          aria-describedby="alert-dialog-slide-description"
+        >
+          <DialogTitle id="alert-dialog-slide-title">{"Create Stable"}</DialogTitle>
+          <DialogContent>
+            {/*<CreateStablePage />*/}
+            <DialogContentText id="alert-dialog-slide-description">
+              Create Stable
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.closeStableDialog} color="primary">
+              Cancel
+            </Button>
+            <Button onClick={this.closeStableDialog} color="primary">
+              Save
+            </Button>
+          </DialogActions>
+        </DialogMaterial>
+
         {
           this.state.isLoading && <Spinner />
         }
+
       </React.Fragment >
     );
   }

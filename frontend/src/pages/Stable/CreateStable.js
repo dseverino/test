@@ -19,6 +19,7 @@ class CreateStablePage extends Component {
     exist: false,
     visible: false,
     created: false,
+    show: false,
     stable: {
       name: ""
     }
@@ -132,6 +133,10 @@ class CreateStablePage extends Component {
         console.log(error);
       })
   }
+
+  onCancelHandler = (event) => {
+    this.setState({show: true})
+  }
   
   render() {
     return (
@@ -147,14 +152,13 @@ class CreateStablePage extends Component {
             <Input id="name" onBlur={this.validateStable} value={this.state.stable.name} onChange={this.onHandleChange} />
           </div>
 
-          <button className="btn btn-secondary">
+          <button className="btn btn-secondary" onClick={this.onCancelHandler}>
             Cancel
           </button>
           <button onClick={this.saveHandler} className="btn btn-primary">
             Save
           </button>
         </div>
-
 
         <Dialog header="Stable Exists!" visible={this.state.exist} style={{ width: '50vw' }} modal={true} onHide={this.modalCancelHandler}>
           {this.state.stable.name} already exists!
@@ -170,6 +174,7 @@ class CreateStablePage extends Component {
         {
           this.state.isLoading && <Spinner />
         }
+        
       </React.Fragment >
     );
   }

@@ -235,6 +235,17 @@ const ConfirmationDialogRaw = (props) => {
     console.log('add clicked!!!')
   }
 
+  function onHorseWeightChange(e) {
+    setHorseRaceDetail({ ...horseRaceDetail, "horseWeight": Number(e.target.value) || 0 })
+    /*console.log(e.target.value.length)
+    
+    console.log(values.selectedHorse)
+    if(values.selectedHorse.weight > 0 && e.target.value.length >= 3 && values.selectedHorse.weight != e.target.value){
+      console.log('different')
+      //si el peso viejo 980 - el actual peso 960 
+    }*/
+  }
+
   return (
     <React.Fragment>
       <Dialog
@@ -254,10 +265,7 @@ const ConfirmationDialogRaw = (props) => {
             <Button variant="outlined" onClick={fetchHorses} style={{ marginLeft: "15px", marginBottom: "5px" }}>
               Search
             </Button>
-            <span>
-              {/*<Icon color="disabled" fontSize="large" onClick={onAddIconClick}>
-                add_circle
-  </Icon>*/}
+            <span>              
               <AddIcon color="secondary"></AddIcon>
             </span>
           </div>
@@ -285,7 +293,7 @@ const ConfirmationDialogRaw = (props) => {
                   <div style={{ display: "flex" }}>
                     <div style={{ width: "50%" }}>
                       <div>
-                        Starting Position <strong>{props.horsesqty}</strong>
+                        Starting Position <strong>{horseRaceDetail.startingPosition}</strong>
                       </div>
                       <div>
                         <label>Jockey</label>
@@ -314,7 +322,7 @@ const ConfirmationDialogRaw = (props) => {
                     <div style={{ width: "50%" }}>
                       <div>
                         <TextField id="weight"
-                          label="Weight" type="number" onChange={e => setHorseRaceDetail({ ...horseRaceDetail, "horseWeight": Number(e.target.value) })} keyfilter="pint" value={horseRaceDetail.horseWeight} margin="normal" variant="outlined" />
+                          label="Weight" type="number" onChange={onHorseWeightChange} keyfilter="pint" value={horseRaceDetail.horseWeight} margin="normal" variant="outlined" />
                       </div>
                       <div>
                         <label>Claiming</label>
