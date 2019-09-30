@@ -2,6 +2,8 @@ import React, { Component } from "react";
 
 import AuthContext from "../../context/auth-context";
 import Spinner from "../../components/Spinner/Spinner";
+import SnackbarSuccess from "../../components/SnackBar/SnackBarSuccess";
+import Backdrop from "../../components/Backdrop/Backdrop";
 
 import DialogMaterial from '@material-ui/core/Dialog';
 import Slide from '@material-ui/core/Slide';
@@ -11,6 +13,8 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import Button from '@material-ui/core/Button';
 import DialogActions from '@material-ui/core/DialogActions';
 import AddIcon from '@material-ui/icons/Add';
+import CircularProgress from '@material-ui/core/CircularProgress';
+
 
 import { Dropdown } from 'primereact/dropdown';
 import { Dialog } from 'primereact/dialog';
@@ -29,6 +33,7 @@ class CreateHorsePage extends Component {
     visible: false,
     createStable: false,
     created: false,
+    saved: false,
     selectedStable: null,
     stables: [],
     horse: {
@@ -42,6 +47,7 @@ class CreateHorsePage extends Component {
       stable: ""
     }
   }
+
   isActive = true;
 
   componentDidMount() {
@@ -91,7 +97,7 @@ class CreateHorsePage extends Component {
   }
 
   onCancelHandler = (event) => {
-    console.log(this.state.horse)
+    this.setState({ saved: true });
   }
 
   modalCancelHandler = (event) => {
@@ -213,7 +219,7 @@ class CreateHorsePage extends Component {
         return result.json()
       })
       .then(resData => {
-        this.setState({ created: true, selectedStable: null, isLoading: false })
+        this.setState({ created: true, selectedStable: null, isLoading: false, saved: true })
       })
       .catch(error => {
         console.log(error);
@@ -232,6 +238,15 @@ class CreateHorsePage extends Component {
   Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
   });
+
+
+  handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }    
+    this.setState({ saved: false });
+    this.modalCancelHandler()
+  };
 
   render() {
     return (
@@ -314,28 +329,14 @@ class CreateHorsePage extends Component {
         <Dialog header="Horse Exists!" visible={this.state.exist} style={{ width: '50vw' }} modal={true} onHide={this.modalCancelHandler}>
           {this.state.horse.name} already exists!
         </Dialog>
-        <Dialog header={this.state.horse.name + " Created!"} visible={this.state.created} style={{ width: '50vw' }} modal={true} onHide={this.modalCancelHandler}>
-          <div>
-            <div>
-              Name: {this.state.horse.name}
-            </div>
-            <div>
-              Age: {this.state.horse.age}
-            </div>
-            <div>
-              Color: {this.state.horse.color}
-            </div>
-            <div>
-              Sex: {this.state.horse.sex}
-            </div>
-            <div>
-              Sire: {this.state.horse.sire}
-            </div>
-            <div>
-              Dam: {this.state.horse.dam}
-            </div>
-          </div>
-        </Dialog>
+
+        <div>
+          <SnackbarSuccess            
+            open={this.state.saved}            
+            onClose={this.handleClose}
+          >
+          </SnackbarSuccess>
+        </div>
 
         <DialogMaterial
           open={this.state.createStable}
@@ -361,6 +362,8 @@ class CreateHorsePage extends Component {
             </Button>
           </DialogActions>
         </DialogMaterial>
+        <Backdrop />
+        <Spinner />
 
         {
           this.state.isLoading && <Spinner />

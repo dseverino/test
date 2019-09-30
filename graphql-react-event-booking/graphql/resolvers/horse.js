@@ -8,7 +8,8 @@ module.exports = {
     try {
 
       //Horse.remove().then()
-      const horse = await Horse.findOne({ name: args.name });
+      const name = new RegExp(".*" + args.name + ".*", "i");
+      const horse = await Horse.findOne({ name: { $regex: name } });
 
       if (horse) {
         return transformHorse(horse);
