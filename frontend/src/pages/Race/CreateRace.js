@@ -1,10 +1,7 @@
 import React, { Component } from "react";
 
 import AuthContext from "../../context/auth-context";
-//import Backdrop from "../components/Backdrop/Backdrop";
-//import TestModal from "../components/Modal/Modal";
-//import Modal from "react-bootstrap-modal";
-import Button from '@material-ui/core/Button';
+
 import TextField from '@material-ui/core/TextField';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -12,6 +9,8 @@ import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import { Calendar } from 'primereact/calendar';
+
+import NumberFormat from 'react-number-format';
 
 import { Dialog } from 'primereact/dialog';
 import Spinner from "../../components/Spinner/Spinner";
@@ -241,6 +240,20 @@ class CreateRacePage extends Component {
     this.setState({ race: newRace });
   }
 
+  NumberFormatCustom = (props) => {
+    const { inputRef, onChange, ...other } = props;
+
+    return (
+      <NumberFormat
+        {...other}
+        getInputRef={inputRef}
+
+        thousandSeparator
+        prefix="$"
+      />
+    );
+  }
+
   render() {
     const distances = [
       { label: "1,000 Metros", value: 1000 },
@@ -260,6 +273,7 @@ class CreateRacePage extends Component {
       { label: "125,000 Libres", value: "125,000 Libres" },
       { label: "125,000 Ganadores de 1 y 2 primeras", value: "125,000 Ganadores de 1 y 2 primeras" },
       { label: "175,000 Libres", value: "175,000 Libres" },
+      { label: "175,000 Ganadores de 1 y 2 primeras", value: "175,000 Ganadores de 1 y 2 primeras" },
       { label: "175,000 No Ganadores", value: "175,000 No Ganadores" },
       { label: "225,000 Libres", value: "225,000 Libres" },
       { label: "225,000 Ganadores de 1 y 2 primeras", value: "225,000 Ganadores de 1 y 2 primeras" },
@@ -281,34 +295,30 @@ class CreateRacePage extends Component {
 
     return (
       <React.Fragment>
-        <div style={{ width: "60%" }}>
-          <form>
-            <div className="col-md-3 mb-3">
+
+        <div style={{ border: "1px solid red", display: "flex" }}>
+
+          <div style={{ border: "1px solid blue", width: "50%" }}>
+            <div>
               <label htmlFor="date">Program Date</label>
               <Calendar dateFormat="dd/mm/yy" id="date" value={this.state.race.date} onChange={this.onProgramDateChange}></Calendar>
             </div>
-            <div className="col-md-3 mb-3">
-              <TextField id="programId"
-                label="Program" disabled={true} keyfilter="pint" value={this.state.race.programId} margin="normal" variant="outlined" />
-            </div>
 
-            <div className="col-md-3 mb-3">
-              <FormControl disabled={true} variant="outlined" style={{ width: "85%" }}>
-                <InputLabel htmlFor="event">
-                  Event
+            <FormControl disabled={true} variant="outlined" style={{ width: "200px" }}>
+              <InputLabel htmlFor="event">
+                Event
                 </InputLabel>
-                <Select value={this.state.race.event} input={<OutlinedInput labelWidth={65} />} name="event" id="event" >
-                  <MenuItem key={"1ra Carrera"} value={1}>1ra Carrera</MenuItem>
-                  <MenuItem key={"2da Carrera"} value={2}>2da Carrera</MenuItem>
-                  <MenuItem key={"3ra Carrera"} value={3}>3ra Carrera</MenuItem>
-                  <MenuItem key={"4ta Carrera"} value={4}>4ta Carrera</MenuItem>
-                  <MenuItem key={"5ta Carrera"} value={5}>5ta Carrera</MenuItem>
-                  <MenuItem key={"6ta Carrera"} value={6}>6ta Carrera</MenuItem>
-                </Select>
-              </FormControl>
-            </div>
+              <Select value={this.state.race.event} input={<OutlinedInput labelWidth={65} />} name="event" id="event" >
+                <MenuItem key={"1ra Carrera"} value={1}>1ra Carrera</MenuItem>
+                <MenuItem key={"2da Carrera"} value={2}>2da Carrera</MenuItem>
+                <MenuItem key={"3ra Carrera"} value={3}>3ra Carrera</MenuItem>
+                <MenuItem key={"4ta Carrera"} value={4}>4ta Carrera</MenuItem>
+                <MenuItem key={"5ta Carrera"} value={5}>5ta Carrera</MenuItem>
+                <MenuItem key={"6ta Carrera"} value={6}>6ta Carrera</MenuItem>
+              </Select>
+            </FormControl>
 
-            <FormControl disabled={!this.state.programExist} className="col-md-3 mb-4" variant="outlined" >
+            <FormControl disabled={!this.state.programExist} variant="outlined" style={{ width: "200px" }}>
               <InputLabel htmlFor="distance">
                 Distance
               </InputLabel>
@@ -320,8 +330,7 @@ class CreateRacePage extends Component {
                 }
               </Select>
             </FormControl>
-
-            <div className="col-md-3 mb-4">
+            <div>
               <label htmlFor="procedences">procedences</label>
               <div style={{ display: "flex" }}>
                 <div style={{ width: "100px" }}>
@@ -334,19 +343,7 @@ class CreateRacePage extends Component {
                 </div>
               </div>
             </div>
-
-            <div style={{ display: "flex" }}>
-              <div className="col-md-3 mb-3">
-                <label htmlFor="claimingPrice">Claiming 1</label>
-                <Dropdown className="claiming-dropdown" disabled={!this.state.programExist} id="0" value={this.state.claiming1} options={claimings} onChange={this.onClaiming1Change} />
-              </div>
-              <div className="col-md-3 mb-3">
-                <label htmlFor="claimingType">Claiming 2</label>
-                <Dropdown className="claiming-dropdown" disabled={!this.state.programExist || !this.state.claiming1} id="1" value={this.state.claiming2} options={claimings} onChange={this.onClaiming2Change} />
-              </div>
-            </div>
-
-            <FormControl disabled={!this.state.programExist} className="col-md-3 mb-4" variant="outlined" >
+            <FormControl disabled={!this.state.programExist} variant="outlined" >
               <InputLabel htmlFor="horseAge">
                 Age
               </InputLabel>
@@ -358,16 +355,36 @@ class CreateRacePage extends Component {
                 }
               </Select>
             </FormControl>
+            <div style={{ display: "flex" }}>
+              <div>
+                <label htmlFor="claimingPrice">Claiming 1</label>
+                <Dropdown className="claiming-dropdown" disabled={!this.state.programExist} id="0" value={this.state.claiming1} options={claimings} onChange={this.onClaiming1Change} />
+              </div>
+              <div>
+                <label htmlFor="claimingType">Claiming 2</label>
+                <Dropdown className="claiming-dropdown" disabled={!this.state.programExist || !this.state.claiming1} id="1" value={this.state.claiming2} options={claimings} onChange={this.onClaiming2Change} />
+              </div>
+            </div>
 
+          </div>
+
+          <div style={{ display: "flex", border: "1px solid blue", width: "50%", flexDirection: "column" }}>
+            <div>
+              <TextField id="programId"
+                label="Program" disabled={true} keyfilter="pint" value={this.state.race.programId} margin="normal" variant="outlined" />
+            </div>
             <div className="col-md-3 mb-3">
               <TextField label="Spec" disabled={!this.state.programExist} type="text" margin="normal" variant="outlined" onChange={this.onHandleChange} id="spec" value={this.state.race.spec} />
             </div>
-
             <div className="col-md-3 mb-3">
               <TextField id="purse" disabled={!this.state.programExist} label="Purse" keyfilter="pint"
-                onChange={this.onNumberChangeHandler} value={this.state.race.purse} margin="normal" variant="outlined" />
+                onChange={this.onNumberChangeHandler} value={this.state.race.purse} margin="normal" variant="outlined"
+                InputProps={{
+                  inputComponent: this.NumberFormatCustom,
+                }} />
             </div>
-          </form>
+          </div>
+
         </div>
 
         <button disabled={!this.state.programExist} className="btn btn-secondary">
@@ -376,9 +393,7 @@ class CreateRacePage extends Component {
         <button disabled={!this.state.programExist} onClick={this.saveHandler} className="btn btn-primary">
           Save
         </button>
-        <Button variant="outlined" color="primary">
-          Hello World
-        </Button>
+
         <Dialog header="Not exists!" visible={this.state.programNotExist} style={{ width: '50vw' }} modal={true} onHide={this.notExistHandler}>
           Program {this.state.race.prorgramId} does not exist!
         </Dialog>

@@ -16,10 +16,6 @@ import { Dropdown } from 'primereact/dropdown';
 import { Dialog } from 'primereact/dialog';
 import { Fieldset } from 'primereact/fieldset';
 
-
-
-
-
 //import "../pages/Horses.css";
 
 class CreateHorsePage extends Component {

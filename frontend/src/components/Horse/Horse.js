@@ -6,6 +6,7 @@ import HorseRaceDetail from "../HorseRaceDetail/HorseRaceDetail";
 import Paper from '@material-ui/core/Paper';
 
 const horse = props => {
+  const dateFormmater = new Intl.DateTimeFormat('en-GB', { year: '2-digit', month: 'short', day: '2-digit' });
 
   const horseRaceDetailsFiltered = props.horse.raceDetails.sort((a, b) => (a.date < b.date) ? 1 : ((b.date < a.date) ? -1 : 0)).filter(detail => {      
       return detail.date <= props.dateSelected.toISOString()
@@ -39,7 +40,7 @@ const horse = props => {
           </div>
           {
             horseRaceDetailsFiltered.map((detail, index) => {
-              return <HorseRaceDetail details={detail} key={index} />
+              return <HorseRaceDetail details={detail} key={index} date={dateFormmater.format(new Date(detail.date))}/>
             })
           }
         </div>
