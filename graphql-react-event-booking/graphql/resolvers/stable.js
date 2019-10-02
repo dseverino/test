@@ -4,29 +4,26 @@ const { transformStable } = require("../resolvers/merge")
 module.exports = {
 
   createStable: async (args) => {
-    const name = new RegExp(".^" + args.name + ".&", "i");
-    Stable.findOne({ name: { $regex: name } }, (err, stable) => {
-      if (err) {
-        console.log(err)
+    const name = new RegExp("^" + args.name + "$", "i");
+    const stable = await Stable.findOne({ name: { $regex: name } });
+
+    if(stable){
+      return 'Stable exists'
+    }
+    else {
+      const newStable = new Stable({
+        name: args.stableInput.name
+      })
+      try {
+        const result = await newStable.save()
+        if (result) {
+          return transformStable(result)
+        }
+      } catch (error) {
         throw error
       }
-      if (stable) {
-        console.log(stable)
-        return "Stable exists"
-      }
-    })
-
-    const stable = new Stable({
-      name: args.stableInput.name
-    })
-    try {
-      const result = await stable.save()
-      if (result) {
-        return transformStable(result)
-      }
-    } catch (error) {
-      throw error
     }
+    
   },
   stables: async (args) => {
     try {

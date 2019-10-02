@@ -1,7 +1,8 @@
 import React from "react"
 
+import Button from '@material-ui/core/Button';
 
-function saveHandler (event) {
+function saveHandler(event) {
 
   console.log("button pressed")
 
@@ -50,9 +51,9 @@ function saveHandler (event) {
 
 const SaveStableButton = props => {
   return (
-    <button onClick={saveHandler} className="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary" style={{marginLeft: 0}}>
+    <Button onClick={saveHandler} color="primary" >
       Save
-    </button>
+    </Button>
   )
 }
 
