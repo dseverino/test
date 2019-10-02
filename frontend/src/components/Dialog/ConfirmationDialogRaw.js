@@ -2,6 +2,9 @@ import React from "react";
 
 import "./ConfirmationDialogRaw.css";
 
+import Backdrop from "../../components/Backdrop/Backdrop";
+import Spinner from "../../components/Spinner/Spinner";
+
 import { Fieldset } from 'primereact/fieldset';
 import { Dropdown } from "primereact/dropdown";
 import { DataTable } from 'primereact/datatable';
@@ -9,7 +12,6 @@ import { Column } from 'primereact/column';
 
 import Icon from '@material-ui/core/Icon';
 import FormLabel from '@material-ui/core/FormLabel';
-
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -22,8 +24,6 @@ import DialogActions from '@material-ui/core/DialogActions';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import AddIcon from '@material-ui/icons/Add';
-
-
 
 const ConfirmationDialogRaw = (props) => {
 
@@ -78,7 +78,7 @@ const ConfirmationDialogRaw = (props) => {
     return { label: claiming, value: claiming }
   })
 
-  //const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
 
   function handleCancel() {
     clearValues()
@@ -92,13 +92,13 @@ const ConfirmationDialogRaw = (props) => {
   }
 
   function handleAdd() {
-    //setLoading(true);
+    setLoading(true);
     const requestBody = {
       query: `
         mutation CreateHorseRaceDetail($horseRaceDetail: HorseRaceDetailInput, $horseId: ID){
           createHorseRaceDetail(horseRaceDetail: $horseRaceDetail, horseId: $horseId){
             _id
-            startingPosition          
+            startingPosition
           }  
         }          
       `,
@@ -121,6 +121,7 @@ const ConfirmationDialogRaw = (props) => {
         return result.json()
       })
       .then(resData => {
+        setLoading(false);
         onHorseAdded(props.index, raceId, values.selectedHorse);
         handleCancel();
       })
@@ -258,14 +259,14 @@ const ConfirmationDialogRaw = (props) => {
       >
         <DialogTitle id="confirmation-dialog-title">Add Horse</DialogTitle>
         <DialogContent dividers>
-          <div>            
+          <div>
             <InputLabel htmlFor="component-simple">Name</InputLabel>
             <Input inputRef={nameRef} id="component-simple" value={values.name} onChange={handleChange('name')} onKeyPress={handleKeyPress} />
 
             <Button variant="outlined" onClick={fetchHorses} style={{ marginLeft: "15px", marginBottom: "5px" }}>
               Search
             </Button>
-            <span>              
+            <span>
               <AddIcon color="secondary"></AddIcon>
             </span>
           </div>
@@ -387,12 +388,14 @@ const ConfirmationDialogRaw = (props) => {
         </Button>
         </DialogActions>
       </Dialog>
-      <Dialog open={false} title={"Hello again"}>
-        <h1>kljasdlfjl</h1>
-        <Button variant="outlined" onClick={fetchHorses}>
-          Search
-        </Button>
-      </Dialog>
+      {
+        loading &&
+        <React.Fragment>
+          <Spinner />
+          <Backdrop />
+        </React.Fragment>
+      }
+
     </React.Fragment>
 
   )

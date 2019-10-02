@@ -4,6 +4,18 @@ const { transformStable } = require("../resolvers/merge")
 module.exports = {
 
   createStable: async (args) => {
+    const name = new RegExp(".^" + args.name + ".&", "i");
+    Stable.findOne({ name: { $regex: name } }, (err, stable) => {
+      if (err) {
+        console.log(err)
+        throw error
+      }
+      if (stable) {
+        console.log(stable)
+        return "Stable exists"
+      }
+    })
+
     const stable = new Stable({
       name: args.stableInput.name
     })
@@ -28,7 +40,7 @@ module.exports = {
   },
   stablesWithoutTrainer: async () => {
     try {
-      const stables = await Stable.find({ trainers: { $size: 0 }}).sort({ name: 1 });
+      const stables = await Stable.find({ trainers: { $size: 0 } }).sort({ name: 1 });
       return stables.map(stable => {
         return transformStable(stable)
       })
@@ -38,9 +50,8 @@ module.exports = {
   },
   singleStable: async (args) => {
     try {
-
-      //Horse.remove().then()
-      const result = await Stable.findOne({ name: args.name });
+      const name = new RegExp("^" + args.name + "$", "i");      
+      const result = await Stable.findOne({ name: { $regex: name } });
 
       if (result) {
         return transformStable(result)

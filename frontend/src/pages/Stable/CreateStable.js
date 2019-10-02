@@ -2,6 +2,7 @@ import React, { Component } from "react";
 
 import AuthContext from "../../context/auth-context";
 import Spinner from "../../components/Spinner/Spinner";
+import SaveStableButton from "../../components/Buttons/SaveStableButton";
 
 import { Dialog } from 'primereact/dialog';
 
@@ -158,6 +159,7 @@ class CreateStablePage extends Component {
           <button onClick={this.saveHandler} className="btn btn-primary">
             Save
           </button>
+          <SaveStableButton></SaveStableButton>
         </div>
 
         <Dialog header="Stable Exists!" visible={this.state.exist} style={{ width: '50vw' }} modal={true} onHide={this.modalCancelHandler}>

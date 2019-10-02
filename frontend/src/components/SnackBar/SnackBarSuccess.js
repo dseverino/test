@@ -93,7 +93,7 @@ const SnackBarSuccess = (props) => {
         <MySnackbarContentWrapper
           onClose={props.onClose}
           variant="success"
-          message="Horse created!"
+          message={props.message}
         />
       </Snackbar>
     </React.Fragment>

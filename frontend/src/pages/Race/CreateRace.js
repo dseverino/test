@@ -2,6 +2,8 @@ import React, { Component } from "react";
 
 import AuthContext from "../../context/auth-context";
 
+import SnackbarSuccess from "../../components/SnackBar/SnackBarSuccess";
+
 import TextField from '@material-ui/core/TextField';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -178,9 +180,8 @@ class CreateRacePage extends Component {
   }
 
   onNumberChangeHandler = (e) => {
-
     let newRace = Object.assign({}, this.state.race);
-    newRace[e.target.id] = parseInt(e.target.value);
+    newRace["purse"] = parseInt(e.target.value);
     this.setState({ race: newRace });
   }
 
@@ -240,6 +241,10 @@ class CreateRacePage extends Component {
     this.setState({ race: newRace });
   }
 
+  handleClose = (event, reason) => {   
+    this.setState({ created: false });    
+  };
+
   NumberFormatCustom = (props) => {
     const { inputRef, onChange, ...other } = props;
 
@@ -247,7 +252,13 @@ class CreateRacePage extends Component {
       <NumberFormat
         {...other}
         getInputRef={inputRef}
-
+        onValueChange={values => {
+          onChange({
+            target: {
+              value: values.value,
+            },
+          });
+        }}
         thousandSeparator
         prefix="$"
       />
@@ -397,13 +408,13 @@ class CreateRacePage extends Component {
         <Dialog header="Not exists!" visible={this.state.programNotExist} style={{ width: '50vw' }} modal={true} onHide={this.notExistHandler}>
           Program {this.state.race.prorgramId} does not exist!
         </Dialog>
-
-        <Dialog header={"Race Created!"} visible={this.state.created} style={{ width: '50vw' }} modal={true} onHide={() => this.setState({ created: false })}>
-          <div>
-            Race created
-          </div>
-        </Dialog>
-
+        
+        <SnackbarSuccess
+          open={this.state.created}
+          onClose={this.handleClose}
+          message="Race Created"
+        >
+        </SnackbarSuccess>
         {
           this.state.isLoading && <Spinner />
         }

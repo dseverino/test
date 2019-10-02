@@ -36,9 +36,7 @@ const raceTab = props => {
   return (
     <TabPanel value={props.value} index={props.index}>
       <div>{props.race.distance}. {props.race.procedences} {props.race.horseAge}, {claimings.toString()}. {props.race.spec}</div>
-      <span>
-
-      </span>
+      
       <div>Premio RD{formatter.format(props.race.purse)}</div>
       {
         !props.race.completed &&

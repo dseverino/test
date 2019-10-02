@@ -4,17 +4,17 @@ import AuthContext from "../../context/auth-context";
 import Spinner from "../../components/Spinner/Spinner";
 import SnackbarSuccess from "../../components/SnackBar/SnackBarSuccess";
 import Backdrop from "../../components/Backdrop/Backdrop";
+import SaveStableButton from "../../components/Buttons/SaveStableButton";
 
 import DialogMaterial from '@material-ui/core/Dialog';
 import Slide from '@material-ui/core/Slide';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import Button from '@material-ui/core/Button';
 import DialogActions from '@material-ui/core/DialogActions';
 import AddIcon from '@material-ui/icons/Add';
-import CircularProgress from '@material-ui/core/CircularProgress';
-
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
 
 import { Dropdown } from 'primereact/dropdown';
 import { Dialog } from 'primereact/dialog';
@@ -97,7 +97,7 @@ class CreateHorsePage extends Component {
   }
 
   onCancelHandler = (event) => {
-    this.setState({ saved: true });
+    this.setState({ isLoading: true });
   }
 
   modalCancelHandler = (event) => {
@@ -227,12 +227,11 @@ class CreateHorsePage extends Component {
   }
 
   onAddIconClick = (e) => {
-    console.log('hey')
     this.setState({ createStable: true })
   }
 
   closeStableDialog = (e) => {
-    this.setState({ createStable: false })
+    this.setState({ createStable: false });    
   }
 
   Transition = React.forwardRef(function Transition(props, ref) {
@@ -243,7 +242,7 @@ class CreateHorsePage extends Component {
   handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
-    }    
+    }
     this.setState({ saved: false });
     this.modalCancelHandler()
   };
@@ -330,17 +329,20 @@ class CreateHorsePage extends Component {
           {this.state.horse.name} already exists!
         </Dialog>
 
-        <div>
-          <SnackbarSuccess            
-            open={this.state.saved}            
-            onClose={this.handleClose}
-          >
-          </SnackbarSuccess>
-        </div>
+
+        <SnackbarSuccess
+          open={this.state.saved}
+          onClose={this.handleClose}
+          message="Horse Created!"
+        >
+        </SnackbarSuccess>
+
 
         <DialogMaterial
           open={this.state.createStable}
           TransitionComponent={this.Transition}
+          disableBackdropClick
+          disableEscapeKeyDown
           keepMounted
           onClose={this.closeStableDialog}
           aria-labelledby="alert-dialog-slide-title"
@@ -348,10 +350,10 @@ class CreateHorsePage extends Component {
         >
           <DialogTitle id="alert-dialog-slide-title">{"Create Stable"}</DialogTitle>
           <DialogContent>
-            {/*<CreateStablePage />*/}
-            <DialogContentText id="alert-dialog-slide-description">
-              Create Stable
-            </DialogContentText>
+            <div style={{ margin: "20px 0px" }}>
+              <InputLabel htmlFor="name">Name</InputLabel>
+              <Input id="name" />
+            </div>
           </DialogContent>
           <DialogActions>
             <Button onClick={this.closeStableDialog} color="primary">
@@ -360,13 +362,18 @@ class CreateHorsePage extends Component {
             <Button onClick={this.closeStableDialog} color="primary">
               Save
             </Button>
+            <SaveStableButton />
           </DialogActions>
         </DialogMaterial>
-        <Backdrop />
-        <Spinner />
 
         {
-          this.state.isLoading && <Spinner />
+          this.state.isLoading &&
+          (
+            <React.Fragment>
+              <Spinner />
+              <Backdrop />
+            </React.Fragment>
+          )
         }
 
       </React.Fragment >

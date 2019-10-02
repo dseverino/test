@@ -10,6 +10,7 @@ import Tab from '@material-ui/core/Tab';
 import Paper from '@material-ui/core/Paper';
 
 import RaceTabPanel from '../../components/Race/RaceTabPanel'
+import Backdrop from "../../components/Backdrop/Backdrop";
 
 class Races extends Component {
   static contextType = AuthContext
@@ -151,7 +152,7 @@ class Races extends Component {
       })
   }
 
-  loadProgramRaces = () => {    
+  loadProgramRaces = () => {
     this.setState({ isLoading: true })
     const requestBody = {
       query: `
@@ -259,6 +260,7 @@ class Races extends Component {
   }
 
   addHorseToRace = (raceIndex, raceId, selectedHorse) => {
+    this.setState({isLoading: true});
     const requestBody = {
       query: `
         mutation AddHorse($raceId: ID, $horseId: ID) {
@@ -350,12 +352,13 @@ class Races extends Component {
         }
         return result.json()
       })
-      .then(resData => {        
+      .then(resData => {
         this.setState((prevState) => {
           const races = prevState.races;
           races[raceIndex] = resData.data.addHorse;
-          return {...prevState, races: races, isLoading: false }
+          return { ...prevState, races: races, isLoading: false }
         })
+        this.setState({isLoading: false})
       })
       .catch(error => {
         console.log(error)
@@ -371,7 +374,7 @@ class Races extends Component {
     })
     const RaceTabs = this.state.races.map((race, index) => {
       return (
-        <RaceTabPanel programDate={this.state.programDate} horseaddedtorace={this.addHorseToRace} key={index} race={race} value={this.state.selectedRace} index={index} jockeys={this.state.jockeys} stables={this.state.stables} trainers={this.state.trainers}/>
+        <RaceTabPanel programDate={this.state.programDate} horseaddedtorace={this.addHorseToRace} key={index} race={race} value={this.state.selectedRace} index={index} jockeys={this.state.jockeys} stables={this.state.stables} trainers={this.state.trainers} />
       )
     })
     return (
@@ -396,7 +399,11 @@ class Races extends Component {
         }
 
         {
-          this.state.isLoading && <Spinner />
+          this.state.isLoading &&
+          <React.Fragment>
+            <Backdrop />
+            <Spinner />
+          </React.Fragment>
         }
       </React.Fragment>
     );
