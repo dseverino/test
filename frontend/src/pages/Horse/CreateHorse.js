@@ -1,10 +1,12 @@
 import React, { Component } from "react";
 
 import AuthContext from "../../context/auth-context";
-import Spinner from "../../components/Spinner/Spinner";
+
 import SnackbarSuccess from "../../components/SnackBar/SnackBarSuccess";
 import Backdrop from "../../components/Backdrop/Backdrop";
+import Spinner from "../../components/Spinner/Spinner";
 import SaveStableButton from "../../components/Buttons/SaveStableButton";
+import StableInput from "../../components/TextFields/StableNameInput";
 
 import DialogMaterial from '@material-ui/core/Dialog';
 import Slide from '@material-ui/core/Slide';
@@ -36,6 +38,10 @@ class CreateHorsePage extends Component {
     saved: false,
     selectedStable: null,
     stables: [],
+    stableSaved: false,
+    stable: {
+      name: ""
+    },
     horse: {
       name: "",
       weight: "",
@@ -97,7 +103,8 @@ class CreateHorsePage extends Component {
   }
 
   onCancelHandler = (event) => {
-    this.setState({ isLoading: true });
+    
+    //this.setState({ isLoading: true });
   }
 
   modalCancelHandler = (event) => {
@@ -110,7 +117,8 @@ class CreateHorsePage extends Component {
         color: "Z",
         sex: "M",
         sire: "",
-        dam: ""
+        dam: "",
+        stable: null
       }
     })
     document.getElementById("name").focus();
@@ -125,7 +133,7 @@ class CreateHorsePage extends Component {
     newHorse[e.target.id] = parseInt(e.target.value || 0)
     this.setState({ horse: newHorse })
   }
-  onStableChangeHandler = (e) => {
+  onStableChangeHandler = (e) => {    
     let newHorse = Object.assign({}, this.state.horse)
     newHorse[e.target.id] = e.target.value._id
     this.setState({ selectedStable: e.target.value, horse: newHorse });
@@ -231,13 +239,12 @@ class CreateHorsePage extends Component {
   }
 
   closeStableDialog = (e) => {
-    this.setState({ createStable: false });    
+    this.setState({ createStable: false });
   }
 
   Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
   });
-
 
   handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -246,6 +253,34 @@ class CreateHorsePage extends Component {
     this.setState({ saved: false });
     this.modalCancelHandler()
   };
+
+  savedStable = (stable) => {
+    if(stable){
+      this.setState(prevState => {
+        let horse = prevState.horse
+        let stables = prevState.stables;
+        stables.push(stable)        
+        horse.stable = stable._id        
+        return {...prevState, stableSaved: true, createStable: false, horse: horse, stables: stables, selectedStable: stable}
+      });       
+    }   
+  }
+
+  onValidateStable = (stable) => {
+    if(stable){
+      this.setState({stable: {name: ""}})
+    }
+  }
+
+  onStableHandlerChange = (value) => {
+    //let newStable = Object.assign({}, this.state.stable)
+    //newStable["name"] = value
+    this.setState({ stable: {name: value} })
+  }
+
+  handleSnackBarStableClose = () => {
+    this.setState({ stableSaved: false, stable: {name: ""} });
+  }
 
   render() {
     return (
@@ -329,11 +364,19 @@ class CreateHorsePage extends Component {
           {this.state.horse.name} already exists!
         </Dialog>
 
-
         <SnackbarSuccess
           open={this.state.saved}
           onClose={this.handleClose}
+          variant={"success"}
           message="Horse Created!"
+        >
+        </SnackbarSuccess>
+
+        <SnackbarSuccess
+          open={this.state.stableSaved}
+          onClose={this.handleSnackBarStableClose}
+          variant={"success"}
+          message="Stable Created!"
         >
         </SnackbarSuccess>
 
@@ -350,19 +393,14 @@ class CreateHorsePage extends Component {
         >
           <DialogTitle id="alert-dialog-slide-title">{"Create Stable"}</DialogTitle>
           <DialogContent>
-            <div style={{ margin: "20px 0px" }}>
-              <InputLabel htmlFor="name">Name</InputLabel>
-              <Input id="name" />
-            </div>
+            <StableInput id="name" validateStable={this.onValidateStable} change={this.onStableHandlerChange} name={this.state.stable.name}/>
           </DialogContent>
           <DialogActions>
-            <Button onClick={this.closeStableDialog} color="primary">
+            <Button onClick={this.closeStableDialog} >
               Cancel
             </Button>
-            <Button onClick={this.closeStableDialog} color="primary">
-              Save
-            </Button>
-            <SaveStableButton />
+
+            <SaveStableButton stable={this.state.stable} savedStable={this.savedStable}></SaveStableButton>
           </DialogActions>
         </DialogMaterial>
 

@@ -413,6 +413,7 @@ class CreateRacePage extends Component {
           open={this.state.created}
           onClose={this.handleClose}
           message="Race Created"
+          variant="success"
         >
         </SnackbarSuccess>
         {

@@ -4,6 +4,8 @@ import "./ConfirmationDialogRaw.css";
 
 import Backdrop from "../../components/Backdrop/Backdrop";
 import Spinner from "../../components/Spinner/Spinner";
+import SaveStableButton from "../../components/Buttons/SaveStableButton";
+import StableInput from "../../components/TextFields/StableNameInput";
 
 import { Fieldset } from 'primereact/fieldset';
 import { Dropdown } from "primereact/dropdown";
@@ -24,6 +26,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import AddIcon from '@material-ui/icons/Add';
+import DialogMaterial from '@material-ui/core/Dialog';
 
 const ConfirmationDialogRaw = (props) => {
 
@@ -46,7 +49,8 @@ const ConfirmationDialogRaw = (props) => {
     Gs: false,
     LA: false,
     B: true,
-    L: false
+    L: false,
+    createHorse: false
   });
   const [horseRaceDetail, setHorseRaceDetail] = React.useState({
     jockey: "",
@@ -232,7 +236,7 @@ const ConfirmationDialogRaw = (props) => {
     }
   }
 
-  function onAddIconClick(event) {
+  function onAddTrainerIconClick(event) {
     console.log('add clicked!!!')
   }
 
@@ -245,6 +249,14 @@ const ConfirmationDialogRaw = (props) => {
       console.log('different')
       //si el peso viejo 980 - el actual peso 960 
     }*/
+  }
+
+  function onAddHoseIconClick() {
+    console.log("add horse")
+  }
+
+  function closeHorseDialog(){
+    setValues({...values, createHorse: false})
   }
 
   return (
@@ -267,7 +279,7 @@ const ConfirmationDialogRaw = (props) => {
               Search
             </Button>
             <span>
-              <AddIcon color="secondary"></AddIcon>
+              <AddIcon color="secondary" onClick={onAddHoseIconClick}></AddIcon>
             </span>
           </div>
           <div>
@@ -313,7 +325,7 @@ const ConfirmationDialogRaw = (props) => {
                         <div>
                           <Dropdown options={trainers} filter={true} value={horseRaceDetail.trainer} onChange={e => setHorseRaceDetail({ ...horseRaceDetail, "trainer": e.value })} />
                           <span>
-                            <Icon color="disabled" fontSize="large" onClick={onAddIconClick}>
+                            <Icon color="disabled" fontSize="large" onClick={onAddTrainerIconClick}>
                               add_circle
                             </Icon>
                           </span>
@@ -395,6 +407,29 @@ const ConfirmationDialogRaw = (props) => {
           <Backdrop />
         </React.Fragment>
       }
+
+      <DialogMaterial
+        open={values.createHorse}
+        TransitionComponent={this.Transition}
+        disableBackdropClick
+        disableEscapeKeyDown
+        keepMounted
+        onClose={this.closeHorseDialog}
+        aria-labelledby="alert-dialog-slide-title"
+        aria-describedby="alert-dialog-slide-description"
+      >
+        <DialogTitle id="alert-dialog-slide-title">{"Create Stable"}</DialogTitle>
+        <DialogContent>
+          <StableInput id="name" validateStable={this.onValidateStable} change={this.onStableHandlerChange} name={this.state.stable.name} />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={this.closeStableDialog} >
+            Cancel
+            </Button>
+
+          <SaveStableButton stable={this.state.stable} savedStable={this.savedStable}></SaveStableButton>
+        </DialogActions>
+      </DialogMaterial>
 
     </React.Fragment>
 

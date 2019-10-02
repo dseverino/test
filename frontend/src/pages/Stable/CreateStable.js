@@ -3,11 +3,14 @@ import React, { Component } from "react";
 import AuthContext from "../../context/auth-context";
 import Spinner from "../../components/Spinner/Spinner";
 import SaveStableButton from "../../components/Buttons/SaveStableButton";
+import StableInput from "../../components/TextFields/StableNameInput";
+import SnackbarSuccess from "../../components/SnackBar/SnackBarSuccess";
 
 import { Dialog } from 'primereact/dialog';
 
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
+import Button from '@material-ui/core/Button';
 
 //import "../pages/Stables.css";
 
@@ -31,7 +34,7 @@ class CreateStablePage extends Component {
     this.setState({ exist: true })
   }
   modalCancelHandler = (event) => {
-    this.setState({ creating: false, exist: false, created: false })
+    //this.setState({ creating: false, exist: false, created: false })
     this.setState({
       stable: {
         name: ""
@@ -39,16 +42,13 @@ class CreateStablePage extends Component {
     })
     document.getElementById("name").focus();
   }
-  onHandleChange = (e) => {
+  
+  onHandleChange = (value) => {
     let newStable = Object.assign({}, this.state.stable)
-    newStable[e.target.id] = e.target.value
+    newStable["name"] = value
     this.setState({ stable: newStable })
   }
-  onAgeChangeHandler = (e) => {
-    let newStable = Object.assign({}, this.state.stable)
-    newStable[e.target.id] = parseInt(e.target.value)
-    this.setState({ stable: newStable })
-  }
+
   validateStable = () => {
     if (!this.state.stable.name) {
       return false;
@@ -90,6 +90,7 @@ class CreateStablePage extends Component {
         this.setState({ isLoading: false });
       })
   }
+
   saveHandler = (event) => {
 
     this.setState({ isLoading: true })
@@ -123,12 +124,8 @@ class CreateStablePage extends Component {
         }
         return result.json()
       })
-      .then(resData => {
-        this.setState((prevState) => {
-          return { isLoading: false }
-        })
-        this.setState({ created: true })
-
+      .then(resData => {        
+        this.setState({ created: true, isLoading: false })
       })
       .catch(error => {
         console.log(error);
@@ -136,9 +133,28 @@ class CreateStablePage extends Component {
   }
 
   onCancelHandler = (event) => {
-    this.setState({show: true})
+    this.setState(prevState => {
+      return {...prevState, stable: {name: ""} }
+    })
   }
-  
+
+  savedStable =(stable) => {
+    this.setState({ created: true });
+  }
+
+  onValidateStable = (stable) => {
+    if(stable){
+      this.setState({stable: {name: ""}})
+    }
+  }
+
+  onSnackBarClose = (e, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    //this.setState({ created: true, stable: { name: "" } });
+  }
+
   render() {
     return (
       <React.Fragment>
@@ -148,31 +164,27 @@ class CreateStablePage extends Component {
           </h3>
         </div>
         <div>
-          <div style={{margin: "20px 0px"}}>
+          {/*<div style={{margin: "4px 0px"}}>
             <InputLabel htmlFor="name">Name</InputLabel>
             <Input id="name" onBlur={this.validateStable} value={this.state.stable.name} onChange={this.onHandleChange} />
-          </div>
+          </div>*/}
+          <StableInput id="name" validateStable={this.onValidateStable} change={this.onHandleChange} name={this.state.stable.name}/>
 
-          <button className="btn btn-secondary" onClick={this.onCancelHandler}>
+          <Button onClick={this.onCancelHandler}>
             Cancel
-          </button>
-          <button onClick={this.saveHandler} className="btn btn-primary">
-            Save
-          </button>
-          <SaveStableButton></SaveStableButton>
+          </Button>
+          
+          <SaveStableButton stable={this.state.stable} savedStable={this.savedStable}></SaveStableButton>
         </div>
-
-        <Dialog header="Stable Exists!" visible={this.state.exist} style={{ width: '50vw' }} modal={true} onHide={this.modalCancelHandler}>
-          {this.state.stable.name} already exists!
-        </Dialog>
-        <Dialog header={this.state.stable.name + " Created!"} visible={this.state.created} style={{ width: '50vw' }} modal={true} onHide={this.modalCancelHandler}>
-          <div>
-            <div>
-              Name: {this.state.stable.name}
-            </div>
-          </div>
-        </Dialog>
-
+        
+        <SnackbarSuccess
+          open={this.state.created}
+          onClose={this.onSnackBarClose}
+          message="Stable Created!"
+          variant={"success"}
+        >
+        </SnackbarSuccess>
+        
         {
           this.state.isLoading && <Spinner />
         }

@@ -92,7 +92,7 @@ const SnackBarSuccess = (props) => {
       >
         <MySnackbarContentWrapper
           onClose={props.onClose}
-          variant="success"
+          variant={props.variant}
           message={props.message}
         />
       </Snackbar>
