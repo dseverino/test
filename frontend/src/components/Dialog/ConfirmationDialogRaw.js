@@ -27,6 +27,7 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import AddIcon from '@material-ui/icons/Add';
 import DialogMaterial from '@material-ui/core/Dialog';
+import Slide from '@material-ui/core/Slide';
 
 const ConfirmationDialogRaw = (props) => {
 
@@ -49,9 +50,10 @@ const ConfirmationDialogRaw = (props) => {
     Gs: false,
     LA: false,
     B: true,
-    L: false,
-    createHorse: false
+    L: false
   });
+  const [horseDialog, setHorseDialog] = React.useState(false);
+
   const [horseRaceDetail, setHorseRaceDetail] = React.useState({
     jockey: "",
     date: props.date,
@@ -252,12 +254,26 @@ const ConfirmationDialogRaw = (props) => {
   }
 
   function onAddHoseIconClick() {
-    console.log("add horse")
+    setHorseDialog(true)
   }
 
   function closeHorseDialog(){
-    setValues({...values, createHorse: false})
+    setHorseDialog(false)
   }
+
+  function onValidateStable (stable) {
+    if(stable){
+      this.setState({stable: {name: ""}})
+    }
+  }
+
+  function onCloseHorseDialog () {
+    setHorseDialog(false)
+  }
+
+  const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+  });
 
   return (
     <React.Fragment>
@@ -409,25 +425,25 @@ const ConfirmationDialogRaw = (props) => {
       }
 
       <DialogMaterial
-        open={values.createHorse}
-        TransitionComponent={this.Transition}
+        open={horseDialog}
+        TransitionComponent={Transition}
         disableBackdropClick
         disableEscapeKeyDown
         keepMounted
-        onClose={this.closeHorseDialog}
+        onClose={onCloseHorseDialog}
         aria-labelledby="alert-dialog-slide-title"
         aria-describedby="alert-dialog-slide-description"
+        style={!horseDialog ? {display: "none"} : {}}
       >
-        <DialogTitle id="alert-dialog-slide-title">{"Create Stable"}</DialogTitle>
+        <DialogTitle id="alert-dialog-slide-title">{"Create Horse"}</DialogTitle>
         <DialogContent>
-          <StableInput id="name" validateStable={this.onValidateStable} change={this.onStableHandlerChange} name={this.state.stable.name} />
+          {/*<StableInput id="name" validateStable={onValidateStable} change={this.onStableHandlerChange} name={this.state.stable.name} />*/}
         </DialogContent>
         <DialogActions>
-          <Button onClick={this.closeStableDialog} >
+          <Button onClick={closeHorseDialog} >
             Cancel
-            </Button>
-
-          <SaveStableButton stable={this.state.stable} savedStable={this.savedStable}></SaveStableButton>
+          </Button>
+          {/*<SaveStableButton stable={this.state.stable} savedStable={this.savedStable}></SaveStableButton>*/}
         </DialogActions>
       </DialogMaterial>
 

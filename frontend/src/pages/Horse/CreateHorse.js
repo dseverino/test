@@ -15,8 +15,6 @@ import DialogContent from '@material-ui/core/DialogContent';
 import Button from '@material-ui/core/Button';
 import DialogActions from '@material-ui/core/DialogActions';
 import AddIcon from '@material-ui/icons/Add';
-import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
 
 import { Dropdown } from 'primereact/dropdown';
 import { Dialog } from 'primereact/dialog';
@@ -399,8 +397,7 @@ class CreateHorsePage extends Component {
             <Button onClick={this.closeStableDialog} >
               Cancel
             </Button>
-
-            <SaveStableButton stable={this.state.stable} savedStable={this.savedStable}></SaveStableButton>
+            <SaveStableButton stable={this.state.stable} savedStable={this.savedStable} />
           </DialogActions>
         </DialogMaterial>
 
