@@ -48,7 +48,7 @@ class CreateStablePage extends Component {
     if (reason === 'clickaway') {
       return;
     }
-    //this.setState({ created: true, stable: { name: "" } });
+    this.setState({ created: false, stable: { name: "" } });
   }
 
   render() {

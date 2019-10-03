@@ -4,8 +4,9 @@ import "./ConfirmationDialogRaw.css";
 
 import Backdrop from "../../components/Backdrop/Backdrop";
 import Spinner from "../../components/Spinner/Spinner";
-import SaveStableButton from "../../components/Buttons/SaveStableButton";
-import StableInput from "../../components/TextFields/StableNameInput";
+import HorseNameInput from "../../components/TextFields/HorseNameInput";
+import SaveHorseButton from "../../components/Buttons/SaveHorseButton";
+import SnackbarSuccess from "../../components/SnackBar/SnackBarSuccess";
 
 import { Fieldset } from 'primereact/fieldset';
 import { Dropdown } from "primereact/dropdown";
@@ -28,11 +29,17 @@ import Button from '@material-ui/core/Button';
 import AddIcon from '@material-ui/icons/Add';
 import DialogMaterial from '@material-ui/core/Dialog';
 import Slide from '@material-ui/core/Slide';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import FormControl from '@material-ui/core/FormControl';
+import { makeStyles } from '@material-ui/core/styles';
+import Select from '@material-ui/core/Select';
+import OutlinedInput from '@material-ui/core/OutlinedInput';
+import MenuItem from '@material-ui/core/MenuItem';
 
 const ConfirmationDialogRaw = (props) => {
 
   const nameRef = React.createRef();
-
+  
   React.useEffect(() => {
     if (props.open) {
       nameRef.current.focus();
@@ -40,10 +47,12 @@ const ConfirmationDialogRaw = (props) => {
   }, [props.open])
 
   const { onClose, open, onHorseAdded, raceId, ...other } = props;
+  const [saved, setSaved] = React.useState(false)
+  const [horseNotFound, setHorseNotFound] = React.useState(false);
 
   const [values, setValues] = React.useState({
-    name: "",
     selectedHorse: null,
+    selectedStable: { _id: "", name: "" },
     E: true,
     F: true,
     G: false,
@@ -71,6 +80,8 @@ const ConfirmationDialogRaw = (props) => {
   });
   const [horses, setHorses] = React.useState([]);
 
+  const [horse, setHorse] = React.useState({ name: "" })
+
   const jockeys = props.jockeys.map(jockey => {
     return { label: jockey.name, value: jockey._id }
   })
@@ -92,9 +103,10 @@ const ConfirmationDialogRaw = (props) => {
   }
 
   function clearValues() {
-    setValues({ name: "", selectedHorse: null, E: true, F: true, G: false, Gs: false, LA: false, B: true, L: false })
+    setValues({ selectedHorse: null, E: true, F: true, G: false, Gs: false, LA: false, B: true, L: false })
     setHorseRaceDetail({ jockey: "", date: props.date, jockeyWeight: "", trainer: "", stable: "", horseWeight: "", startingPosition: props.horsesqty, raceNumber: props.racenumber, horseEquipments: ["E", "F"], horseMedications: ["B"], horseAge: 0, distance: props.distance });
     setHorses([])
+    setHorse({ name: "" })
   }
 
   function handleAdd() {
@@ -137,8 +149,8 @@ const ConfirmationDialogRaw = (props) => {
       })
   }
 
-  const handleChange = name => event => {
-    setValues({ ...values, [name]: event.target.value });
+  const handleChange = e => {
+    setHorse({...horse, [e.target.id]: e.target.value})
   }
 
   function fetchHorses() {
@@ -167,7 +179,7 @@ const ConfirmationDialogRaw = (props) => {
         }
       `,
       variables: {
-        name: values.name
+        name: horse.name
       }
     }
 
@@ -191,12 +203,17 @@ const ConfirmationDialogRaw = (props) => {
             {
               ...horseRaceDetail, horseAge: resData.data.horse[0].age, stable: resData.data.horse[0].stable._id, trainer: resData.data.horse[0].stable.trainers && resData.data.horse[0].stable.trainers.length === 1 ? resData.data.horse[0].stable.trainers[0]._id : "", claiming: props.claimings.length === 1 ? props.claimings[0] : "",
               horseWeight: resData.data.horse[0].weight || 0
-            });
+            }
+          );
         }
-        else {
+        else if (resData.data.horse.length > 1) {
           setHorses(resData.data.horse);
           setValues({ ...values, "selectedHorse": null });
+
           setHorseRaceDetail({ jockey: "", date: props.date, jockeyWeight: "", trainer: "", stable: "", horseWeight: "", startingPosition: props.horsesqty, raceNumber: props.racenumber, horseEquipments: ["E", "F"], horseMedications: ["B"], horseAge: 0, distance: props.distance });
+        }
+        else {
+          setHorseNotFound(true);
         }
       })
       .catch(error => {
@@ -257,23 +274,77 @@ const ConfirmationDialogRaw = (props) => {
     setHorseDialog(true)
   }
 
-  function closeHorseDialog(){
+  function closeHorseDialog() {
     setHorseDialog(false)
+    setHorse({ name: horse.name })
   }
 
-  function onValidateStable (stable) {
-    if(stable){
-      this.setState({stable: {name: ""}})
+  function onValidateStable(stable) {
+    if (stable) {
+      this.setState({ stable: { name: "" } })
     }
   }
 
-  function onCloseHorseDialog () {
+  function onCloseHorseDialog() {
     setHorseDialog(false)
+  }
+
+  function onHorseAgeChangeHandler(e) {
+    horse[e.target.id] = parseInt(e.target.value || 0)
+  }
+
+  function onHorseChangeHandler(e) {
+    horse[e.target.id] = e.target.value;
+  }
+
+  function savedHorse(horse) {
+    setSaved(true);
+    setValues({ ...values, selectedHorse: horse })
   }
 
   const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
   });
+
+  function onValidateHorse(horse) {
+    if (horse) {
+      setHorse(
+        {
+          name: "",
+          weight: 0,
+          age: 3,
+          color: "Z",
+          sex: "M",
+          sire: "",
+          dam: "",
+          stable: ""
+
+        }
+      )
+    }
+  }
+
+  function onHorseSnackBarClose(e, reason) {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setSaved(false);
+    this.setState({ selectedStable: {} })
+    this.modalCancelHandler()
+  }
+
+  function onHorseNotFoundSnackBarClose() {
+    setHorseNotFound(false);
+    setHorseDialog(true);
+  }
+  function onHorseStableChangeHandler(e) {
+    setValues({ ...values, selectedStable: e.target.value })
+    setHorse({ ...horse, stable: e.target.value._id })
+  }
+
+  function onAddStableIconClick() {
+    this.setState({ createStable: true })
+  }
 
   return (
     <React.Fragment>
@@ -289,7 +360,7 @@ const ConfirmationDialogRaw = (props) => {
         <DialogContent dividers>
           <div>
             <InputLabel htmlFor="component-simple">Name</InputLabel>
-            <Input inputRef={nameRef} id="component-simple" value={values.name} onChange={handleChange('name')} onKeyPress={handleKeyPress} />
+            <Input inputRef={nameRef} id="name" value={horse.name} onChange={handleChange} onKeyPress={handleKeyPress} />
 
             <Button variant="outlined" onClick={fetchHorses} style={{ marginLeft: "15px", marginBottom: "5px" }}>
               Search
@@ -424,6 +495,9 @@ const ConfirmationDialogRaw = (props) => {
         </React.Fragment>
       }
 
+
+
+
       <DialogMaterial
         open={horseDialog}
         TransitionComponent={Transition}
@@ -433,19 +507,110 @@ const ConfirmationDialogRaw = (props) => {
         onClose={onCloseHorseDialog}
         aria-labelledby="alert-dialog-slide-title"
         aria-describedby="alert-dialog-slide-description"
-        style={!horseDialog ? {display: "none"} : {}}
+        style={!horseDialog ? { display: "none" } : {}}
       >
         <DialogTitle id="alert-dialog-slide-title">{"Create Horse"}</DialogTitle>
-        <DialogContent>
-          {/*<StableInput id="name" validateStable={onValidateStable} change={this.onStableHandlerChange} name={this.state.stable.name} />*/}
+        <DialogContent style={{ display: "flex" }}>
+          <div style={{ margin: "0px 10px" }}>
+            <div >
+              <HorseNameInput validateHorse={onValidateHorse} change={handleChange} name={horse.name} />
+            </div>
+            <div>
+              <TextField
+                id="outlined-adornment-weight"
+                type="number"
+                variant="outlined"
+                label="Weight"
+                value={horse.weight}
+                onChange={onHorseAgeChangeHandler}
+                InputProps={{
+                  endAdornment: <InputAdornment position="end">Lbs</InputAdornment>,
+                }}
+              />
+            </div>
+            <div>
+              <label htmlFor="age">Age</label>
+              <select className="form-control" onChange={onHorseAgeChangeHandler} id="age" value={horse.age}>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+                <option value="13">13</option>
+              </select>
+            </div>
+            <div>
+              <label htmlFor="sex">Color</label>
+              <select className="form-control" onChange={onHorseChangeHandler} id="color" value={horse.color}>
+                <option value="Z">Z</option>
+                <option value="Zo">Zo</option>
+                <option value="A">A</option>
+                <option value="R">R</option>
+                <option value="Ro">Ro</option>
+              </select>
+            </div>
+          </div>
+          <div style={{ margin: "0px 10px" }}>
+            <div>
+              <div>
+                <label htmlFor="sex">Sex</label>
+                <select className="form-control" id="sex" value={horse.sex} onChange={onHorseChangeHandler}>
+                  <option value="M">M</option>
+                  <option value="Mc">Mc</option>
+                  <option value="H">H</option>
+                </select>
+              </div>
+              <div>
+                <label htmlFor="sire">Sire</label>
+                <input type="text" className="form-control" onChange={onHorseChangeHandler} id="sire" value={horse.sire} />
+              </div>
+              <div>
+                <label htmlFor="dam">Dam</label>
+                <input type="text" className="form-control" onChange={onHorseChangeHandler} id="dam" value={horse.dam} />
+              </div>
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                <label htmlFor="stable">Stable</label>
+                <div>
+                  <Dropdown id="stable" filter={true} value={values.selectedStable} options={stables} onChange={onHorseStableChangeHandler} placeholder="Select a Stable" />
+                  <span>
+                    <AddIcon color="secondary" ></AddIcon>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+          </div>
         </DialogContent>
         <DialogActions>
           <Button onClick={closeHorseDialog} >
             Cancel
           </Button>
-          {/*<SaveStableButton stable={this.state.stable} savedStable={this.savedStable}></SaveStableButton>*/}
+          <SaveHorseButton horse={horse} savedHorse={savedHorse}></SaveHorseButton>
         </DialogActions>
       </DialogMaterial>
+
+      <SnackbarSuccess
+        open={saved}
+        onClose={onHorseSnackBarClose}
+        variant={"success"}
+        message="Horse Created!"
+      >
+      </SnackbarSuccess>
+
+      <SnackbarSuccess
+        open={horseNotFound}
+        onClose={onHorseNotFoundSnackBarClose}
+        variant={"warning"}
+        message="Horse not found!"
+        autoHideDuration={1000}
+      >
+      </SnackbarSuccess>
 
     </React.Fragment>
 

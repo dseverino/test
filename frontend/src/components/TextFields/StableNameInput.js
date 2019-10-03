@@ -87,7 +87,7 @@ const StableInput = props => {
       <SnackbarSuccess
         open={exist}
         onClose={onSnackBarClose}
-        message={`${stable} Stable Exists!`}
+        message={`Stable ${stable} Exists!`}
         variant="warning"
       >
       </SnackbarSuccess>

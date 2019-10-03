@@ -87,7 +87,7 @@ const SnackBarSuccess = (props) => {
           vertical: 'bottom',
           horizontal: 'left'
         }}
-        autoHideDuration={3000}
+        autoHideDuration={props.autoHideDuration}
         onClose={props.onClose}
       >
         <MySnackbarContentWrapper
@@ -98,6 +98,10 @@ const SnackBarSuccess = (props) => {
       </Snackbar>
     </React.Fragment>
   )
+}
+
+SnackBarSuccess.defaultProps = {
+  autoHideDuration: 3000
 }
 
 export default SnackBarSuccess;

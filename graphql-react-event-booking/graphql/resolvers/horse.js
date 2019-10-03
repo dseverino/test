@@ -5,11 +5,8 @@ const { transformHorse } = require("./merge");
 
 module.exports = {
   singleHorse: async (args) => {
-    try {
-
-      //Horse.remove().then()
-      const name = new RegExp(".*" + args.name + ".*", "i");
-      const horse = await Horse.findOne({ name: { $regex: name } });
+    try {      
+      const horse = await Horse.findOne({ name: args.name }).collation({locale: "en", strength: 1});
 
       if (horse) {
         return transformHorse(horse);

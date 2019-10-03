@@ -1,7 +1,6 @@
 import React from "react"
 
-import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
+import TextField from '@material-ui/core/TextField';
 
 import Backdrop from "../Backdrop/Backdrop";
 import Spinner from "../Spinner/Spinner";
@@ -9,12 +8,12 @@ import SnackbarSuccess from "../SnackBar/SnackBarSuccess";
 
 const HorseNameInput = props => {
   const [isLoading, setIsLoading] = React.useState(false);
-  const [stable, setStable] = React.useState({ name: "" })
+  const [horse, setHorse] = React.useState({ name: "" })
   const [exist, setExist] = React.useState(false);
 
   function onHandleChange(e) {
-    //setStable({ name: e.target.value })
-    props.change(e.target.value)
+    //setHorse({ name: e.target.value })
+    props.change(e)
   }
 
   function onSnackBarClose(e, reason) {
@@ -31,9 +30,15 @@ const HorseNameInput = props => {
     setIsLoading(true)
     const requestBody = {
       query: `
-        query SingleStable($name: String!) {
-          singleStable(name: $name) {
+        query SingleHorse($name: String!) {
+          singleHorse(name: $name) {
             name
+            weight
+            age
+            color
+            sex
+            sire
+            dam
           }
         }
       `,
@@ -55,9 +60,9 @@ const HorseNameInput = props => {
         return result.json()
       })
       .then(resData => {
-        if (resData && resData.data.singleStable) {
-          props.validateStable(resData.data.singleStable)
-          setStable( resData.data.singleStable.name )
+        if (resData && resData.data.singleHorse) {
+          props.validateHorse(resData.data.singleHorse)
+          setHorse( resData.data.singleHorse.name )
           document.getElementById("name").focus();
           setExist(true)
         }
@@ -71,9 +76,8 @@ const HorseNameInput = props => {
 
   return (
     <React.Fragment>
-      <div style={{ margin: "20px 0px" }}>
-        <InputLabel htmlFor="name">Name</InputLabel>
-        <Input id="name" onBlur={validateHorse} value={props.name} onChange={onHandleChange} />
+      <div style={{ margin: "20px 0px" }}>        
+        <TextField style={{width: "100%"}} id="name" label="Name" variant="outlined" onBlur={validateHorse} value={props.name} onChange={onHandleChange} />
       </div>
       {
         isLoading &&
@@ -87,7 +91,7 @@ const HorseNameInput = props => {
       <SnackbarSuccess
         open={exist}
         onClose={onSnackBarClose}
-        message={`${stable} Stable Exists!`}
+        message={`Horse ${horse} Exists!`}
         variant="warning"
       >
       </SnackbarSuccess>
