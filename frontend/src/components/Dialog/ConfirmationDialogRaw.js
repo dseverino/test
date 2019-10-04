@@ -27,7 +27,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import AddIcon from '@material-ui/icons/Add';
-import DialogMaterial from '@material-ui/core/Dialog';
+import CreateHorseDialogMaterial from '@material-ui/core/Dialog';
 import Slide from '@material-ui/core/Slide';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import FormControl from '@material-ui/core/FormControl';
@@ -61,6 +61,7 @@ const ConfirmationDialogRaw = (props) => {
     B: true,
     L: false
   });
+
   const [horseDialog, setHorseDialog] = React.useState(false);
 
   const [horseRaceDetail, setHorseRaceDetail] = React.useState({
@@ -78,6 +79,7 @@ const ConfirmationDialogRaw = (props) => {
     distance: props.distance,
     claiming: ""
   });
+  
   const [horses, setHorses] = React.useState([]);
 
   const [horse, setHorse] = React.useState({ name: "" })
@@ -149,8 +151,11 @@ const ConfirmationDialogRaw = (props) => {
       })
   }
 
-  const handleChange = e => {
-    setHorse({...horse, [e.target.id]: e.target.value})
+  const onHorseHandleChange = e => {
+    let newHorse = Object.assign({}, horse)
+    newHorse[e.target.id] = e.target.value 
+
+    setHorse(newHorse)
   }
 
   function fetchHorses() {
@@ -338,8 +343,12 @@ const ConfirmationDialogRaw = (props) => {
     setHorseDialog(true);
   }
   function onHorseStableChangeHandler(e) {
-    setValues({ ...values, selectedStable: e.target.value })
-    setHorse({ ...horse, stable: e.target.value._id })
+    let newHorse = Object.assign({}, horse)
+    newHorse[e.target.id] = e.target.value._id 
+
+    setHorse(newHorse)
+    //setValues({ ...values, selectedStable: e.target.value })
+    //setHorse({ stable: e.target.value._id })
   }
 
   function onAddStableIconClick() {
@@ -360,7 +369,7 @@ const ConfirmationDialogRaw = (props) => {
         <DialogContent dividers>
           <div>
             <InputLabel htmlFor="component-simple">Name</InputLabel>
-            <Input inputRef={nameRef} id="name" value={horse.name} onChange={handleChange} onKeyPress={handleKeyPress} />
+            <Input inputRef={nameRef} id="name" value={horse.name} onChange={onHorseHandleChange} onKeyPress={handleKeyPress} />
 
             <Button variant="outlined" onClick={fetchHorses} style={{ marginLeft: "15px", marginBottom: "5px" }}>
               Search
@@ -496,9 +505,7 @@ const ConfirmationDialogRaw = (props) => {
       }
 
 
-
-
-      <DialogMaterial
+      <CreateHorseDialogMaterial
         open={horseDialog}
         TransitionComponent={Transition}
         disableBackdropClick
@@ -513,7 +520,7 @@ const ConfirmationDialogRaw = (props) => {
         <DialogContent style={{ display: "flex" }}>
           <div style={{ margin: "0px 10px" }}>
             <div >
-              <HorseNameInput validateHorse={onValidateHorse} change={handleChange} name={horse.name} />
+              <HorseNameInput validateHorse={onValidateHorse} change={onHorseHandleChange} name={horse.name} />
             </div>
             <div>
               <TextField
@@ -546,7 +553,7 @@ const ConfirmationDialogRaw = (props) => {
               </select>
             </div>
             <div>
-              <label htmlFor="sex">Color</label>
+              <label htmlFor="color">Color</label>
               <select className="form-control" onChange={onHorseChangeHandler} id="color" value={horse.color}>
                 <option value="Z">Z</option>
                 <option value="Zo">Zo</option>
@@ -593,7 +600,7 @@ const ConfirmationDialogRaw = (props) => {
           </Button>
           <SaveHorseButton horse={horse} savedHorse={savedHorse}></SaveHorseButton>
         </DialogActions>
-      </DialogMaterial>
+      </CreateHorseDialogMaterial>
 
       <SnackbarSuccess
         open={saved}
