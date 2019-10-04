@@ -101,7 +101,7 @@ class CreateHorsePage extends Component {
   }
 
   onCancelHandler = (event) => {
-
+    console.log(this.state.horse)
     //this.setState({ isLoading: true });
   }
 
@@ -121,16 +121,19 @@ class CreateHorsePage extends Component {
     })
     document.getElementById("name").focus();
   }
+
   onHandleChange = (e) => {
     let newHorse = Object.assign({}, this.state.horse)
     newHorse[e.target.id] = e.target.value
     this.setState({ horse: newHorse })
   }
+
   onAgeChangeHandler = (e) => {
     let newHorse = Object.assign({}, this.state.horse)
     newHorse[e.target.id] = parseInt(e.target.value || 0)
     this.setState({ horse: newHorse })
   }
+
   onStableChangeHandler = (e) => {
     let newHorse = Object.assign({}, this.state.horse)
     newHorse[e.target.id] = e.target.value._id
@@ -309,7 +312,7 @@ class CreateHorsePage extends Component {
             </div>
 
             <div>
-              <TextField style={{ width: "100%" }} id="outlined-adornment-weight" type="number" variant="outlined" label="Weight" value={this.state.horse.weight} onChange={this.onAgeChangeHandler}
+              <TextField style={{ width: "100%" }} id="weight" type="number" variant="outlined" label="Weight" value={this.state.horse.weight} onChange={this.onAgeChangeHandler}
                 InputProps={{
                   endAdornment: <InputAdornment position="end">Lbs</InputAdornment>,
                 }}

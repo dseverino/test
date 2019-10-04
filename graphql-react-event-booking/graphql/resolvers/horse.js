@@ -51,9 +51,9 @@ module.exports = {
     try {
       const result = await newHorse.save();
       let createdHorse = transformHorse(result);
-      const stable = await Stable.findById(args.horseInput.stable, function (err, doc) {
-        doc.horses = [...doc.horses, createdHorse._id]
-        doc.save();
+      const st = await Stable.findById(args.horseInput.stable, function (err, stable) {
+        stable.horses = [...stable.horses, createdHorse._id];
+        stable.save();
       })
       return createdHorse;
     }

@@ -8,12 +8,12 @@ import SnackbarSuccess from "../SnackBar/SnackBarSuccess";
 
 const HorseNameInput = props => {
   const [isLoading, setIsLoading] = React.useState(false);
-  const [horse, setHorse] = React.useState({ name: "" })
+  const [horse, setHorse] = React.useState( "" );
   const [exist, setExist] = React.useState(false);
-
+  
   function onHandleChange(e) {
-    setHorse({ name: e.target.value })
-    //props.change(e)
+    setHorse(e.target.value)
+    props.change(e)    
   }
 
   function onSnackBarClose(e, reason) {
@@ -77,7 +77,7 @@ const HorseNameInput = props => {
   return (
     <React.Fragment>
       <div style={{ margin: "20px 0px" }}>        
-        <TextField style={{width: "100%"}} id="name" label="Name" variant="outlined" onBlur={validateHorse} value={horse.name} onChange={onHandleChange} />
+        <TextField style={{width: "100%"}} id="name" label="Name" variant="outlined" onBlur={validateHorse} value={props.name} onChange={onHandleChange} />
       </div>
       {
         isLoading &&

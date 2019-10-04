@@ -23,6 +23,14 @@ const SaveHorseButton = props => {
             sex
             sire
             dam
+            stable {
+              _id
+              name
+              trainers {
+                _id
+                name
+              }
+            }
           }
         }
       `,
