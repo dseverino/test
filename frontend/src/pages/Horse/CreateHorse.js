@@ -240,7 +240,7 @@ class CreateHorsePage extends Component {
   }
 
   closeStableDialog = (e) => {
-    this.setState({ createStable: false });
+    this.setState({ stable: {name: ""}, createStable: false });
   }
 
   Transition = React.forwardRef(function Transition(props, ref) {

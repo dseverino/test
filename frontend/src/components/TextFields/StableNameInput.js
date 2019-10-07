@@ -13,7 +13,7 @@ const StableInput = props => {
   const [exist, setExist] = React.useState(false);
 
   function onHandleChange(e) {
-    //setStable({ name: e.target.value })
+    setStable({ name: e.target.value })
     props.change(e.target.value)
   }
 

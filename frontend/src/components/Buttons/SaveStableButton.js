@@ -17,6 +17,10 @@ const SaveStableButton = props => {
           createStable(stableInput: $stable) {
             _id
             name
+            trainers {
+              _id
+              name
+            }
           }
         }
       `,
