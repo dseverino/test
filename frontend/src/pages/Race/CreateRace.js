@@ -149,7 +149,7 @@ class CreateRacePage extends Component {
       purse: "",
       spec: ""
     }
-    this.setState({ race: newRrace, claiming1: "", claiming2: "" })
+    this.setState({ race: newRrace, claiming1: "", claiming2: "", claiming3: "" })
   }
 
   notExistHandler = () => {
@@ -177,6 +177,13 @@ class CreateRacePage extends Component {
 
     this.setState({ race: newRace });
     this.setState({ claiming2: e.value });
+  }
+  onClaiming3Change = (e) => {
+    let newRace = Object.assign({}, this.state.race);
+    newRace.claimings[2] = e.value;
+
+    this.setState({ race: newRace });
+    this.setState({ claiming3: e.value });
   }
 
   onNumberChangeHandler = (e) => {
@@ -309,7 +316,7 @@ class CreateRacePage extends Component {
 
         <div style={{ border: "1px solid red", display: "flex" }}>
 
-          <div style={{ border: "1px solid blue", width: "50%" }}>
+          <div style={{ border: "1px solid blue", width: "50%", height: "400px" }}>
             <div>
               <label htmlFor="date">Program Date</label>
               <Calendar dateFormat="dd/mm/yy" id="date" value={this.state.race.date} onChange={this.onProgramDateChange}></Calendar>
@@ -366,7 +373,7 @@ class CreateRacePage extends Component {
                 }
               </Select>
             </FormControl>
-            <div style={{ display: "flex" }}>
+            <div style={{ display: "flex", flexDirection: "column", height: "100px" }}>
               <div>
                 <label htmlFor="claimingPrice">Claiming 1</label>
                 <Dropdown className="claiming-dropdown" disabled={!this.state.programExist} id="0" value={this.state.claiming1} options={claimings} onChange={this.onClaiming1Change} />
@@ -374,6 +381,10 @@ class CreateRacePage extends Component {
               <div>
                 <label htmlFor="claimingType">Claiming 2</label>
                 <Dropdown className="claiming-dropdown" disabled={!this.state.programExist || !this.state.claiming1} id="1" value={this.state.claiming2} options={claimings} onChange={this.onClaiming2Change} />
+              </div>
+              <div>
+                <label htmlFor="claimingType">Claiming 3</label>
+                <Dropdown className="claiming-dropdown" disabled={!this.state.programExist || !this.state.claiming2} id="2" value={this.state.claiming3} options={claimings} onChange={this.onClaiming3Change} />
               </div>
             </div>
 

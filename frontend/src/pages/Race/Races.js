@@ -376,7 +376,8 @@ class Races extends Component {
       return (
         <RaceTabPanel programDate={this.state.programDate} horseaddedtorace={this.addHorseToRace} key={index} race={race} value={this.state.selectedRace} index={index} jockeys={this.state.jockeys} stables={this.state.stables} trainers={this.state.trainers} />
       )
-    })
+    });
+    
     return (
       <React.Fragment>
         <div>
