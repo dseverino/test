@@ -28,8 +28,8 @@ module.exports = {
   singleTrainer: async (args) => {
     try {
       
-      //Horse.remove().then()
-      const result = await Trainer.findOne({ name: args.name });
+      const name = new RegExp("^" + args.name + "$", "i");      
+      const result = await Trainer.findOne({ name: { $regex: name } });
       
       if(result){        
         return transformTrainer(result)

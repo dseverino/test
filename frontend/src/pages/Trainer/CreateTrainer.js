@@ -3,31 +3,21 @@ import React, { Component } from "react";
 import AuthContext from "../../context/auth-context";
 import { Dialog } from 'primereact/dialog';
 import Spinner from "../../components/Spinner/Spinner";
-
-import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
-
-//import "../pages/Trainers.css";
+import TrainerInput from "../../components/TextFields/TrainerNameInput"
 
 class CreateTrainerPage extends Component {
   static contextType = AuthContext
 
   state = {
-    creating: false,
     isLoading: false,
-    exist: false,
-    visible: false,
     created: false,
     trainer: {
       name: ""
     }
   }
 
-  startCreateTrainer = () => {
-    this.setState({ exist: true })
-  }
   modalCancelHandler = (event) => {
-    this.setState({ creating: false, exist: false, created: false })
+    this.setState({ created: false })
     this.setState({
       trainer: {
         name: ""
@@ -35,57 +25,13 @@ class CreateTrainerPage extends Component {
     })
     document.getElementById("name").focus();
   }
-  onHandleChange = (e) => {
+  
+  onHandleChange = (value) => {
     let newTrainer = Object.assign({}, this.state.trainer)
-    newTrainer[e.target.id] = e.target.value
+    newTrainer["name"] = value
     this.setState({ trainer: newTrainer })
   }
-  onAgeChangeHandler = (e) => {
-    let newTrainer = Object.assign({}, this.state.trainer)
-    newTrainer[e.target.id] = parseInt(e.target.value)
-    this.setState({ trainer: newTrainer })
-  }
-  validateTrainer = () => {
-    if (!this.state.trainer.name) {
-      return false;
-    }
-    this.setState({ isLoading: true })
-    const requestBody = {
-      query: `
-        query SingleTrainer($name: String!) {
-          singleTrainer(name: $name) {
-            name
-          }
-        }
-      `,
-      variables: {
-        name: this.state.trainer.name
-      }
-    }
-    fetch("http://localhost:3000/graphql", {
-      method: 'POST',
-      body: JSON.stringify(requestBody),
-      headers: {
-        "Content-Type": "application/json"
-      }
-    })
-      .then(result => {
-        if (result.status !== 200 && result.status !== 201) {
-          throw new Error("Failed")
-        }
-        return result.json()
-      })
-      .then(resData => {
-        if (resData && resData.data.singleTrainer) {
-          this.setState({ exist: true});
-        }
-        this.setState({ isLoading: false });
-      })
-      .catch(error => {
-        console.log(error);
-        this.setState({ isLoading: false });
-      })
-  }
+
   saveHandler = (event) => {
 
     this.setState({ isLoading: true })
@@ -130,6 +76,14 @@ class CreateTrainerPage extends Component {
         console.log(error);
       })
   }
+
+  onValidateTrainer = (trainer) => {
+    if (trainer) {
+      this.setState({ trainer: { name: "" } })
+    }
+  }
+
+
   render() {
     return (
       <React.Fragment>
@@ -141,8 +95,7 @@ class CreateTrainerPage extends Component {
         </div>
         <div>
           <div style={{margin: "20px 0px"}}>
-            <InputLabel htmlFor="name">Name</InputLabel>
-            <Input id="name" onBlur={this.validateTrainer} value={this.state.trainer.name} onChange={this.onHandleChange} />
+            <TrainerInput id="name" validateTrainer={this.onValidateTrainer} change={this.onHandleChange} name={this.state.trainer.name} />
           </div>
 
           <button className="btn btn-secondary">
@@ -167,6 +120,7 @@ class CreateTrainerPage extends Component {
         {
           this.state.isLoading && <Spinner />
         }
+
       </React.Fragment >
     );
   }

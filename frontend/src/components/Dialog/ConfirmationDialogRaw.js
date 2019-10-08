@@ -9,6 +9,7 @@ import SaveHorseButton from "../../components/Buttons/SaveHorseButton";
 import SnackbarSuccess from "../../components/SnackBar/SnackBarSuccess";
 import SaveStableButton from "../../components/Buttons/SaveStableButton";
 import StableInput from "../../components/TextFields/StableNameInput";
+import TrainerInput from ".././TextFields/TrainerNameInput"
 
 import { Fieldset } from 'primereact/fieldset';
 import { Dropdown } from "primereact/dropdown";
@@ -651,7 +652,7 @@ const ConfirmationDialogRaw = (props) => {
         <DialogTitle id="confirmation-dialog-title">Create Trainer</DialogTitle>
         <DialogContent dividers style={{ display: "flex" }}>
           <div style={{ margin: "0px 10px" }}>
-            <StableInput id="name" validateStable={onValidateStable} change={onStableNameHandlerChange} name={stable.name} />
+            <TrainerInput id="name" validateTrainer={this.onValidateTrainer} change={this.onHandleChange} name={this.state.trainer.name} />
 
           </div>
         </DialogContent>
