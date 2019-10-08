@@ -1,9 +1,12 @@
 import React, { Component } from "react";
 
 import AuthContext from "../../context/auth-context";
-import { Dialog } from 'primereact/dialog';
+import SnackbarSuccess from "../../components/SnackBar/SnackBarSuccess";
 import Spinner from "../../components/Spinner/Spinner";
-import TrainerInput from "../../components/TextFields/TrainerNameInput"
+import TrainerInput from "../../components/TextFields/TrainerNameInput";
+import SaveTrainerButton from "../../components/Buttons/SaveTrainerButton";
+
+import Button from '@material-ui/core/Button';
 
 class CreateTrainerPage extends Component {
   static contextType = AuthContext
@@ -25,7 +28,13 @@ class CreateTrainerPage extends Component {
     })
     document.getElementById("name").focus();
   }
-  
+
+  onCancelHandler = (event) => {
+    this.setState(prevState => {
+      return { ...prevState, trainer: { name: "" } }
+    })
+  }
+
   onHandleChange = (value) => {
     let newTrainer = Object.assign({}, this.state.trainer)
     newTrainer["name"] = value
@@ -70,7 +79,7 @@ class CreateTrainerPage extends Component {
           return { isLoading: false }
         })
         this.setState({ created: true })
-        
+
       })
       .catch(error => {
         console.log(error);
@@ -83,39 +92,41 @@ class CreateTrainerPage extends Component {
     }
   }
 
+  savedTrainer = (trainer) => {
+    this.setState({ created: true });
+  }
+
+  onSnackBarClose = (e, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    this.setState({ created: false, trainer: { name: "" } });
+  }
+
 
   render() {
     return (
       <React.Fragment>
-        
         <div>
           <h3>
             Create Trainer
           </h3>
         </div>
         <div>
-          <div style={{margin: "20px 0px"}}>
-            <TrainerInput id="name" validateTrainer={this.onValidateTrainer} change={this.onHandleChange} name={this.state.trainer.name} />
-          </div>
-
-          <button className="btn btn-secondary">
+          <TrainerInput id="name" validateTrainer={this.onValidateTrainer} change={this.onHandleChange} name={this.state.trainer.name} />
+          <Button onClick={this.onCancelHandler}>
             Cancel
-          </button>
-          <button onClick={this.saveHandler} className="btn btn-primary">
-            Save
-          </button>
+          </Button>
+          <SaveTrainerButton trainer={this.state.trainer} savedTrainer={this.savedTrainer} />
         </div>
 
-        <Dialog header= "Trainer Exists!" visible={this.state.exist} style={{ width: '50vw' }} modal={true} onHide={this.modalCancelHandler}>
-          {this.state.trainer.name} already exists!
-        </Dialog>
-        <Dialog header={this.state.trainer.name + " Created!"} visible={this.state.created} style={{ width: '50vw' }} modal={true} onHide={this.modalCancelHandler}>
-          <div>
-            <div>
-              Name: {this.state.trainer.name}
-            </div>
-          </div>
-        </Dialog>
+        <SnackbarSuccess
+          open={this.state.created}
+          onClose={this.onSnackBarClose}
+          message="Trainer Created!"
+          variant={"success"}
+        >
+        </SnackbarSuccess>
 
         {
           this.state.isLoading && <Spinner />

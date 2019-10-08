@@ -61,11 +61,9 @@ class CreateStablePage extends Component {
         </div>
         <div>
           <StableInput id="name" validateStable={this.onValidateStable} change={this.onHandleChange} name={this.state.stable.name} />
-
           <Button onClick={this.onCancelHandler}>
             Cancel
           </Button>
-
           <SaveStableButton stable={this.state.stable} savedStable={this.savedStable}></SaveStableButton>
         </div>
 

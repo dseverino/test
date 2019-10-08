@@ -10,13 +10,13 @@ import SnackbarSuccess from "../../components/SnackBar/SnackBarSuccess";
 import SaveStableButton from "../../components/Buttons/SaveStableButton";
 import StableInput from "../../components/TextFields/StableNameInput";
 import TrainerInput from ".././TextFields/TrainerNameInput"
+import SaveTrainerButton from ".././Buttons/SaveTrainerButton";
 
 import { Fieldset } from 'primereact/fieldset';
 import { Dropdown } from "primereact/dropdown";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 
-import Icon from '@material-ui/core/Icon';
 import FormLabel from '@material-ui/core/FormLabel';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -43,12 +43,15 @@ const ConfirmationDialogRaw = (props) => {
   }, [props.open])
 
   const { onClose, open, onHorseAdded, raceId, horsesqty, ...other } = props;
+
   const [saved, setSaved] = React.useState(false)
   const [horseNotFound, setHorseNotFound] = React.useState(false);
   const [createStable, setCreateStable] = React.useState(false);
   const [createTrainer, setCreateTrainer] = React.useState(false);
   const [stable, setStable] = React.useState({ name: "" })
-  const [stableCreated, setStableCreated] = React.useState(false)
+  const [trainer, setTrainer] = React.useState({ name: "" })
+  const [stableCreated, setStableCreated] = React.useState(false);
+  const [trainerCreated, setTrainerCreated] = React.useState(false);
 
   const [values, setValues] = React.useState({
     selectedHorse: null,
@@ -71,7 +74,7 @@ const ConfirmationDialogRaw = (props) => {
     trainer: "",
     stable: "",
     horseWeight: 0,
-    startingPosition: props.horsesqty,
+    startingPosition: horsesqty,
     raceNumber: props.racenumber,
     horseEquipments: ["E", "F"],
     horseMedications: ["B"],
@@ -79,6 +82,11 @@ const ConfirmationDialogRaw = (props) => {
     distance: props.distance,
     claiming: ""
   });
+  React.useEffect(() => {
+    if (horsesqty) {      
+      setHorseRaceDetail({...horseRaceDetail, startingPosition: horsesqty});
+    }
+  }, [horsesqty, horseRaceDetail.horseWeight])
 
   const [horses, setHorses] = React.useState([]);
 
@@ -91,9 +99,9 @@ const ConfirmationDialogRaw = (props) => {
     return { label: stable.name, value: stable._id }
   }));
 
-  const trainers = props.trainers.map(trainer => {
+  const [trainers, setTrainers] = React.useState(props.trainers.map(trainer => {
     return { label: trainer.name, value: trainer._id }
-  })
+  }))
   const claimings = props.claimings.map(claiming => {
     return { label: claiming, value: claiming }
   })
@@ -108,7 +116,7 @@ const ConfirmationDialogRaw = (props) => {
   function clearValues() {
     setHorse({ name: "", age: 2, color: "Z", sex: "M", stable: "", sire: "", dam: "", weight: "" })
     setValues({ selectedHorse: null, E: true, F: true, G: false, Gs: false, LA: false, B: true, L: false })
-    setHorseRaceDetail({ jockey: "", date: props.date, jockeyWeight: "", trainer: "", stable: "", horseWeight: "", startingPosition: props.horsesqty, raceNumber: props.racenumber, horseEquipments: ["E", "F"], horseMedications: ["B"], horseAge: 0, distance: props.distance });
+    setHorseRaceDetail({ jockey: "", date: props.date, jockeyWeight: "", trainer: "", stable: "", horseWeight: "", startingPosition: horsesqty, raceNumber: props.racenumber, horseEquipments: ["E", "F"], horseMedications: ["B"], horseAge: 0, distance: props.distance });
     setHorses([])
   }
 
@@ -348,14 +356,27 @@ const ConfirmationDialogRaw = (props) => {
     setCreateStable(false);
     setStable({ name: "" })
   }
+  function onCloseCreateTrainerDialog() {
+    setCreateTrainer(false);
+    setTrainer({ name: "" })
+  }
 
   function onStableNameHandlerChange(value) {
     setStable({ name: value })
+  }
+  function onTrainerNameHandlerChange(value) {
+    setTrainer({ name: value })
   }
 
   function onValidateStable(stable) {
     if (stable) {
       setStable({ name: "" })
+    }
+  }
+
+  function onValidateTrainer(trainer) {
+    if (trainer) {
+      setTrainer({ name: "" })
     }
   }
 
@@ -374,10 +395,22 @@ const ConfirmationDialogRaw = (props) => {
       setStables([...stables, { label: stable.name, value: stable._id }]);
     }
   }
+  function savedTrainer(trainer) {
+    if (trainer) {
+      setCreateTrainer(false);
+      setTrainerCreated(true);            
+      setTrainers([...trainers, { label: trainer.name, value: trainer._id }]);
+      setHorseRaceDetail({ ...horseRaceDetail, "trainer": trainer._id })
+    }
+  }
 
   function onStableSnackBarClose() {
     setStableCreated(false);
     setStable({ name: "" })
+  }
+  function onTrainerSnackBarClose() {
+    setTrainerCreated(false);
+    setTrainer({ name: "" })
   }
 
   return (
@@ -628,7 +661,6 @@ const ConfirmationDialogRaw = (props) => {
         <DialogContent dividers style={{ display: "flex" }}>
           <div style={{ margin: "0px 10px" }}>
             <StableInput id="name" validateStable={onValidateStable} change={onStableNameHandlerChange} name={stable.name} />
-
           </div>
         </DialogContent>
         <DialogActions>
@@ -652,15 +684,14 @@ const ConfirmationDialogRaw = (props) => {
         <DialogTitle id="confirmation-dialog-title">Create Trainer</DialogTitle>
         <DialogContent dividers style={{ display: "flex" }}>
           <div style={{ margin: "0px 10px" }}>
-            <TrainerInput id="name" validateTrainer={this.onValidateTrainer} change={this.onHandleChange} name={this.state.trainer.name} />
-
+            <TrainerInput id="name" validateTrainer={onValidateTrainer} change={onTrainerNameHandlerChange} name={trainer.name} />
           </div>
         </DialogContent>
         <DialogActions>
-          <Button onClick={onCloseCreateStableDialog} >
+          <Button onClick={onCloseCreateTrainerDialog} >
             Cancel
           </Button>
-          <SaveStableButton stable={stable} savedStable={savedStable} />
+          <SaveTrainerButton trainer={trainer} savedTrainer={savedTrainer} />
         </DialogActions>
       </AddHorseDialog>
 
@@ -695,11 +726,19 @@ const ConfirmationDialogRaw = (props) => {
       >
       </SnackbarSuccess>
 
+      {/*Trainer Created Snackbar*/}
+      <SnackbarSuccess
+        open={trainerCreated}
+        onClose={onTrainerSnackBarClose}
+        variant={"success"}
+        message={`Trainer ${trainer.name} created!`}
+        autoHideDuration={3000}
+      >
+      </SnackbarSuccess>
+
 
       {/* Loader and Spinner*/}
-      {
-        loading &&
-        <React.Fragment>
+      { loading && <React.Fragment>
           <Spinner />
           <Backdrop />
         </React.Fragment>
