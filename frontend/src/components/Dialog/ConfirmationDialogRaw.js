@@ -80,11 +80,12 @@ const ConfirmationDialogRaw = (props) => {
     horseMedications: ["B"],
     horseAge: 0,
     distance: props.distance,
-    claiming: ""
+    claiming: "",
+    discarded: false
   });
   React.useEffect(() => {
-    if (horsesqty) {      
-      setHorseRaceDetail({...horseRaceDetail, startingPosition: horsesqty});
+    if (horsesqty) {
+      setHorseRaceDetail({ ...horseRaceDetail, startingPosition: horsesqty });
     }
   }, [horsesqty, horseRaceDetail.horseWeight])
 
@@ -116,7 +117,7 @@ const ConfirmationDialogRaw = (props) => {
   function clearValues() {
     setHorse({ name: "", age: 2, color: "Z", sex: "M", stable: "", sire: "", dam: "", weight: "" })
     setValues({ selectedHorse: null, E: true, F: true, G: false, Gs: false, LA: false, B: true, L: false })
-    setHorseRaceDetail({ jockey: "", date: props.date, jockeyWeight: "", trainer: "", stable: "", horseWeight: "", startingPosition: horsesqty, raceNumber: props.racenumber, horseEquipments: ["E", "F"], horseMedications: ["B"], horseAge: 0, distance: props.distance });
+    setHorseRaceDetail({ jockey: "", date: props.date, jockeyWeight: "", trainer: "", stable: "", horseWeight: "", startingPosition: horsesqty, raceNumber: props.racenumber, horseEquipments: ["E", "F"], horseMedications: ["B"], horseAge: 0, distance: props.distance, discarded: false });
     setHorses([])
   }
 
@@ -398,7 +399,7 @@ const ConfirmationDialogRaw = (props) => {
   function savedTrainer(trainer) {
     if (trainer) {
       setCreateTrainer(false);
-      setTrainerCreated(true);            
+      setTrainerCreated(true);
       setTrainers([...trainers, { label: trainer.name, value: trainer._id }]);
       setHorseRaceDetail({ ...horseRaceDetail, "trainer": trainer._id })
     }
@@ -483,6 +484,14 @@ const ConfirmationDialogRaw = (props) => {
                             <AddIcon color="secondary" onClick={onAddTrainerIconClick}></AddIcon>
                           </span>
                         </div>
+                      </div>
+                      <div>
+
+                        <FormControlLabel
+                          control={<Checkbox checked={horseRaceDetail.discarded} onChange={e => setHorseRaceDetail({ ...horseRaceDetail, "discarded": e.target.checked })} value="true" />}
+                          label="Discarded" labelPlacement="start"
+                        />
+
                       </div>
                     </div>
                     <div style={{ width: "50%" }}>
@@ -738,10 +747,10 @@ const ConfirmationDialogRaw = (props) => {
 
 
       {/* Loader and Spinner*/}
-      { loading && <React.Fragment>
-          <Spinner />
-          <Backdrop />
-        </React.Fragment>
+      {loading && <React.Fragment>
+        <Spinner />
+        <Backdrop />
+      </React.Fragment>
       }
 
     </React.Fragment>

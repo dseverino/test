@@ -248,8 +248,8 @@ class CreateRacePage extends Component {
     this.setState({ race: newRace });
   }
 
-  handleClose = (event, reason) => {   
-    this.setState({ created: false });    
+  handleClose = (event, reason) => {
+    this.setState({ created: false });
   };
 
   NumberFormatCustom = (props) => {
@@ -290,6 +290,7 @@ class CreateRacePage extends Component {
       { label: "75,000 Ganadores de 1 y 2 primeras", value: "75,000 Ganadores de 1 y 2 primeras" },
       { label: "125,000 Libres", value: "125,000 Libres" },
       { label: "125,000 Ganadores de 1 y 2 primeras", value: "125,000 Ganadores de 1 y 2 primeras" },
+      { label: "125,000 No Ganadores", value: "125,000 No Ganadores" },
       { label: "175,000 Libres", value: "175,000 Libres" },
       { label: "175,000 Ganadores de 1 y 2 primeras", value: "175,000 Ganadores de 1 y 2 primeras" },
       { label: "175,000 No Ganadores", value: "175,000 No Ganadores" },
@@ -316,7 +317,7 @@ class CreateRacePage extends Component {
 
         <div style={{ border: "1px solid red", display: "flex" }}>
 
-          <div style={{ border: "1px solid blue", width: "50%", height: "400px" }}>
+          <div style={{ border: "1px solid blue", width: "50%", height: "600px", display: "flex", flexDirection: "column", justifyContent: "space-evenly" }}>
             <div>
               <label htmlFor="date">Program Date</label>
               <Calendar dateFormat="dd/mm/yy" id="date" value={this.state.race.date} onChange={this.onProgramDateChange}></Calendar>
@@ -373,6 +374,15 @@ class CreateRacePage extends Component {
                 }
               </Select>
             </FormControl>
+
+          </div>
+
+          <div style={{ display: "flex", border: "1px solid blue", width: "50%", flexDirection: "column" }}>
+            <div>
+              <TextField id="programId"
+                label="Program" disabled={true} keyfilter="pint" value={this.state.race.programId} margin="normal" variant="outlined" />
+            </div>
+
             <div style={{ display: "flex", flexDirection: "column", height: "100px" }}>
               <div>
                 <label htmlFor="claimingPrice">Claiming 1</label>
@@ -388,17 +398,10 @@ class CreateRacePage extends Component {
               </div>
             </div>
 
-          </div>
-
-          <div style={{ display: "flex", border: "1px solid blue", width: "50%", flexDirection: "column" }}>
             <div>
-              <TextField id="programId"
-                label="Program" disabled={true} keyfilter="pint" value={this.state.race.programId} margin="normal" variant="outlined" />
-            </div>
-            <div className="col-md-3 mb-3">
               <TextField label="Spec" disabled={!this.state.programExist} type="text" margin="normal" variant="outlined" onChange={this.onHandleChange} id="spec" value={this.state.race.spec} />
             </div>
-            <div className="col-md-3 mb-3">
+            <div >
               <TextField id="purse" disabled={!this.state.programExist} label="Purse" keyfilter="pint"
                 onChange={this.onNumberChangeHandler} value={this.state.race.purse} margin="normal" variant="outlined"
                 InputProps={{
@@ -419,7 +422,7 @@ class CreateRacePage extends Component {
         <Dialog header="Not exists!" visible={this.state.programNotExist} style={{ width: '50vw' }} modal={true} onHide={this.notExistHandler}>
           Program {this.state.race.prorgramId} does not exist!
         </Dialog>
-        
+
         <SnackbarSuccess
           open={this.state.created}
           onClose={this.handleClose}
