@@ -10,8 +10,7 @@ const horse = props => {
 
   const horseRaceDetailsFiltered = props.horse.raceDetails.sort((a, b) => (a.date < b.date) ? 1 : ((b.date < a.date) ? -1 : 0)).filter(detail => {
     return detail.date <= props.dateSelected.toISOString()
-  }
-  )
+  })
 
   return (
     <Paper style={{ margin: "10px 0px" }} className="horse__card">
@@ -36,7 +35,15 @@ const horse = props => {
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
               <div style={{ display: "flex" }}>
-                <div style={{ fontSize: "19px", width: "33%" }}><strong><span style={{ marginRight: "25px" }}>{props.horse.name}</span><span>({horseRaceDetailsFiltered[0].horseMedications.join(",")})</span></strong></div>
+                <div style={{ fontSize: "19px", width: "33%" }}>
+                  <strong>
+                    <span style={{ marginRight: "25px" }}>{props.horse.name}
+                    </span>
+                    <span>
+                      ({horseRaceDetailsFiltered[0].horseMedications.join(",")})
+                    </span>
+                  </strong>
+                </div>
                 <div><span style={{ fontWeight: 500, marginRight: 8 }}>{horseRaceDetailsFiltered[0].jockeyWeight}</span> <span>{horseRaceDetailsFiltered[0].horseEquipments.join("")}</span></div>
               </div>
               <div style={{ display: "flex", fontSize: 11 }}>
@@ -56,7 +63,8 @@ const horse = props => {
       <div >
         {
           horseRaceDetailsFiltered.map((detail, index) => {
-            return <HorseRaceDetail details={detail} key={index} date={dateFormmater.format(new Date(detail.date))} />
+            const days = horseRaceDetailsFiltered[index + 1] ? (new Date(detail.date) - new Date(horseRaceDetailsFiltered[index + 1].date)) / (1000 * 3600 * 24) : 0            
+            return <HorseRaceDetail details={detail} key={index} days={days} date={dateFormmater.format(new Date(detail.date))} />
           })
         }
       </div>

@@ -23,6 +23,7 @@ const SaveHorseButton = props => {
             sex
             sire
             dam
+            procedence
             stable {
               _id
               name

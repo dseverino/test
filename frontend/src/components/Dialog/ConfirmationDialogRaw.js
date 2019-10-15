@@ -31,6 +31,8 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import AddIcon from '@material-ui/icons/Add';
 import InputAdornment from '@material-ui/core/InputAdornment';
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
 
 const ConfirmationDialogRaw = (props) => {
 
@@ -91,7 +93,7 @@ const ConfirmationDialogRaw = (props) => {
 
   const [horses, setHorses] = React.useState([]);
 
-  const [horse, setHorse] = React.useState({ name: "", age: 2, color: "Z", sex: "M", stable: "", sire: "", dam: "", weight: "" });
+  const [horse, setHorse] = React.useState({ name: "", age: 2, color: "Z", sex: "M", stable: "", sire: "", dam: "", weight: "", procedence: "native" });
 
   const jockeys = props.jockeys.map(jockey => {
     return { label: jockey.name, value: jockey._id }
@@ -115,7 +117,7 @@ const ConfirmationDialogRaw = (props) => {
   }
 
   function clearValues() {
-    setHorse({ name: "", age: 2, color: "Z", sex: "M", stable: "", sire: "", dam: "", weight: "" })
+    setHorse({ name: "", age: 2, color: "Z", sex: "M", stable: "", sire: "", dam: "", weight: "", procedence: "native" })
     setValues({ selectedHorse: null, E: true, F: true, G: false, Gs: false, LA: false, B: true, L: false })
     setHorseRaceDetail({ jockey: "", date: props.date, jockeyWeight: "", trainer: "", stable: "", horseWeight: "", startingPosition: horsesqty, raceNumber: props.racenumber, horseEquipments: ["E", "F"], horseMedications: ["B"], horseAge: 0, distance: props.distance, discarded: false });
     setHorses([])
@@ -291,7 +293,7 @@ const ConfirmationDialogRaw = (props) => {
 
   function closeHorseDialog() {
     setHorseDialog(false)
-    setHorse({ name: "", weight: "", age: 2, color: "Z", sex: "M", stable: "", sire: "", dam: "" });
+    setHorse({ name: "", weight: "", age: 2, color: "Z", sex: "M", stable: "", sire: "", dam: "", procedence: "native" });
     setValues({ ...values, selectedStable: {} })
   }
 
@@ -308,8 +310,8 @@ const ConfirmationDialogRaw = (props) => {
   function savedHorse(horse) {
     setSaved(true);
     setHorseDialog(false);
-    setHorse({ name: "", age: 2, color: "Z", sex: "M", stable: "", sire: "", dam: "", weight: "" })
-    setValues({ ...values, selectedHorse: horse });
+    setHorse({ name: "", age: 2, color: "Z", sex: "M", stable: "", sire: "", dam: "", weight: "", procedence: "native" })
+    setValues({ ...values, selectedHorse: horse, selectedStable: "" });
     setHorseRaceDetail({ ...horseRaceDetail, horseWeight: horse.weight, horseAge: horse.age, stable: horse.stable._id, trainer: horse.stable.trainers && horse.stable.trainers.length === 1 ? horse.stable.trainers[0]._id : "", claiming: props.claimings.length === 1 ? props.claimings[0] : "" });
   }
 
@@ -336,7 +338,7 @@ const ConfirmationDialogRaw = (props) => {
       return;
     }
     setSaved(false);
-    setHorse({ name: "", weight: "", age: 2, color: "Z", sex: "M", stable: "", sire: "", dam: "" });
+    setHorse({ name: "", weight: "", age: 2, color: "Z", sex: "M", stable: "", sire: "", dam: "", procedence: "native" });
     setValues({ ...values, selectedStable: {} })
   }
 
@@ -414,6 +416,10 @@ const ConfirmationDialogRaw = (props) => {
     setTrainer({ name: "" })
   }
 
+  function handleChangeHorseProcedence(e) {
+    setHorse({ ...horse, procedence: e.target.value })
+  }
+
   return (
     <React.Fragment>
       {/* Add Horse Dialog*/}
@@ -486,12 +492,10 @@ const ConfirmationDialogRaw = (props) => {
                         </div>
                       </div>
                       <div>
-
                         <FormControlLabel
                           control={<Checkbox checked={horseRaceDetail.discarded} onChange={e => setHorseRaceDetail({ ...horseRaceDetail, "discarded": e.target.checked })} value="true" />}
                           label="Discarded" labelPlacement="start"
                         />
-
                       </div>
                     </div>
                     <div style={{ width: "50%" }}>
@@ -618,6 +622,25 @@ const ConfirmationDialogRaw = (props) => {
                 <option value="R">R</option>
                 <option value="Ro">Ro</option>
               </select>
+            </div>
+            <div>
+              <RadioGroup
+                aria-label="procedence"
+                name="procedence"
+                value={horse.procedence}
+                onChange={handleChangeHorseProcedence}
+              >
+                <FormControlLabel
+                  value="native"
+                  control={<Radio color="primary" />}
+                  label="Native"                  
+                />
+                <FormControlLabel
+                  value="imported"
+                  control={<Radio color="primary" />}
+                  label="Imported"                  
+                />
+              </RadioGroup>
             </div>
           </div>
           <div style={{ margin: "0px 10px" }}>

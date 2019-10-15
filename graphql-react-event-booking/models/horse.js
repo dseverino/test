@@ -25,6 +25,7 @@ const horseSchema = new Schema({
         type: String,
         required: true
     },
+    procedence: String,
     raceDetails: [
         {
             type: mongoose.Schema.Types.ObjectId

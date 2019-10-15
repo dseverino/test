@@ -41,6 +41,7 @@ const horseRaceDetailSchema = new Schema({
   bet: String,
   horseEquipments: [String],
   totalHorses: Number,
+  discarded: Boolean,
   horseAge: Number,
   claiming: String,
   trackCondition: String,

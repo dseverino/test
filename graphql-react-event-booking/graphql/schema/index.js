@@ -42,6 +42,7 @@ module.exports = buildSchema(`
     sex: String!
     sire: String!
     dam: String!
+    procedence: String!
     raceDetails: [HorseRaceDetail]
     stable: Stable
   }
@@ -71,6 +72,7 @@ module.exports = buildSchema(`
     retired: Boolean
     retiredDetails: String
     totalHorses: Int
+    discarded: Boolean
     horseAge: Int
     comments: String
   }
@@ -169,6 +171,7 @@ module.exports = buildSchema(`
     sex: String!
     sire: String!
     dam: String!
+    procedence: String!
     stable: ID
   }
 
@@ -195,6 +198,7 @@ module.exports = buildSchema(`
     horseEquipments: [String] 
     horseMedications: [String]
     totalHorses: Int 
+    discarded: Boolean
     horseAge: Int
     distance: Int
     comments: String

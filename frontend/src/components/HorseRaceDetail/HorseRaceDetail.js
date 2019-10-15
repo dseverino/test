@@ -5,7 +5,7 @@ import "./HorseRaceDetail.css"
 const horseRaceDetail = props => { 
   return (
     <div style={{fontSize: 12}}>
-      {props.date.replace(/\s+/g, '')} Hvc{props.details.raceNumber} {props.details.distance}
+      {props.date.replace(/\s+/g, '')} {props.days} Hvc{props.details.raceNumber} {props.details.distance}
       ***********
       {props.details.claiming}
       -

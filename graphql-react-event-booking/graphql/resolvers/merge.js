@@ -208,6 +208,7 @@ const transformUser = (user) => {
 }
 
 const transformHorse = horse => {
+  console.log(horse)
   return {
     ...horse,
     _id: horse._id.toString(),
@@ -218,6 +219,7 @@ const transformHorse = horse => {
     sex: horse.sex,
     sire: horse.sire,
     dam: horse.dam,
+    procedence: horse.procedence,
     stable: () => stableLoader.load(horse.stable),
     raceDetails: () => raceDetailLoader.loadMany(horse.raceDetails)
   }
@@ -250,6 +252,7 @@ const transformRaceDetail = raceDetail => {
     bet: raceDetail.bet,
     horseEquipments: raceDetail.horseEquipments.sort(),
     totalHorses: raceDetail.totalHorses,
+    discarded: raceDetail.discarded,
     horseAge: raceDetail.horseAge,
     distance: raceDetail.distance
   }
