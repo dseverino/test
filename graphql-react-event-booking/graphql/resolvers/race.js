@@ -43,6 +43,20 @@ module.exports = {
       throw err
     }
   },
+  completeRace: async (args) => {
+    try {
+      const race = await Race.findById(args.raceId)
+      console.log(args.raceId)
+      if (race) {
+        race.completed = true
+        await race.save();
+        return transformRace(race);
+      }
+    }
+    catch (err) {
+      throw err
+    }
+  },
 
   deleteRace: async (args) => {
     const result = await Race.findByIdAndRemove(args.raceId)

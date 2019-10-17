@@ -165,6 +165,7 @@ class Races extends Component {
               claimings
               procedences
               horseAge
+              completed
               spec
               purse
               horses {

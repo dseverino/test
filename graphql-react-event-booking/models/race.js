@@ -41,6 +41,7 @@ const raceSchema = new Schema(
       type: Number,
       required: true
     },
+    completed: Boolean,
     horses: [
       {
         type: Schema.Types.ObjectId,

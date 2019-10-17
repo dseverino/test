@@ -19,6 +19,7 @@ module.exports = buildSchema(`
     horseAge: String!
     spec: String
     purse: String
+    completed: Boolean
     horses: [Horse]
   }
   input RaceInput {
@@ -248,6 +249,7 @@ module.exports = buildSchema(`
     createUser(userInput: UserInput) : User
     createProgram(programInput: ProgramInput): Program!
     createRace(raceInput: RaceInput): Race!
+    completeRace(raceId: ID): Race!
     deleteRace(raceId: String): Race!
     addRace(programId: String, raceId: String): Program!
     addHorse(raceId: ID, horseId: ID): Race!

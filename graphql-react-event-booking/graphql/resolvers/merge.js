@@ -207,8 +207,7 @@ const transformUser = (user) => {
   }
 }
 
-const transformHorse = horse => {
-  console.log(horse)
+const transformHorse = async horse => {
   return {
     ...horse,
     _id: horse._id.toString(),
@@ -221,7 +220,11 @@ const transformHorse = horse => {
     dam: horse.dam,
     procedence: horse.procedence,
     stable: () => stableLoader.load(horse.stable),
-    raceDetails: () => raceDetailLoader.loadMany(horse.raceDetails)
+    raceDetails: async () => {
+      var ar = await raceDetailLoader.loadMany(horse.raceDetails)
+      console.log(ar);
+      return ar
+    } 
   }
 }
 
@@ -282,6 +285,7 @@ const transformRace = race => {
     horseAge: race.horseAge,
     programId: race.programId,
     purse: race.purse,
+    completed: race.completed,
     horses: horseLoader.loadMany(race.horses)
   }
 }
