@@ -38,7 +38,7 @@ const raceTab = props => {
 
   });
 
-  const [horse, setHorse] = useState({})
+  const [selectedHorse, setSelectedHorse] = useState("")
   const horses = props.race.horses.map(horse => {
     return (
       <Horse key={horse._id} horse={horse} dateSelected={props.programDate} />
@@ -114,8 +114,8 @@ const raceTab = props => {
   function handleOpenRaceDetails() {
     setOpenRaceDetails(true)
   }
-  function handleHorseChange(e) {
-    console.log(e.target.value)
+  function handleHorseChange(e) {    
+    setSelectedHorse(e.target.value)
   }
 
   function handleChangeQuater() {
@@ -137,6 +137,49 @@ const raceTab = props => {
     );
   }
 
+  function saveRaceDetailsHandler() {
+    console.log(selectedHorse)
+    console.log(raceDetails)
+    //setLoading(true);
+    const requestBody = {
+      query: `
+        mutation UpdateHorseRaceDetail($horseRaceDetail: HorseRaceDetailInput, $horseId: ID){
+          updateHorseRaceDetail(raceDetailId: $raceDetailId, raceDetails: $raceDetails){
+            _id
+            startingPosition
+          }  
+        }          
+      `,
+      variables: {
+        raceDetailId: selectedHorse,
+        raceDetails: raceDetails
+      }
+    }
+
+    fetch("http://localhost:3000/graphql", {
+      method: 'POST',
+      body: JSON.stringify(requestBody),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+      .then(result => {
+        if (result.status !== 200 && result.status !== 201) {
+          throw new Error("Failed")
+        }
+        return result.json()
+      })
+      .then(resData => {
+        //setLoading(false);
+        //onHorseAdded(props.index, raceId, values.selectedHorse);
+        //handleCancel();
+      })
+      .catch(error => {
+        console.log(error)
+        //setLoading(false);
+      })
+  }
+
   return (
     <TabPanel value={props.value} index={props.index}>
       <div>{props.race.distance}. {props.race.procedences} {props.race.horseAge}, {claimings.toString()}. {props.race.spec}</div>
@@ -145,16 +188,15 @@ const raceTab = props => {
 
 
       <div>
-        <Button disabled={completed} color="primary" onClick={handleClickListItem} aria-controls="add-horse">
+        <Button disabled={completed} color="primary" onClick={handleClickListItem} >
           Add Horse
           <AddIcon />
         </Button>
-
-        <Button disabled={completed} color="primary" onClick={handleCompleteRace} aria-controls="add-horse">
+        <Button disabled={completed} color="primary" onClick={handleCompleteRace} >
           Complete Race
           <CheckIcon />
         </Button>
-        <Button disabled={!completed} color="primary" onClick={handleOpenRaceDetails} aria-controls="add-horse">
+        <Button disabled={!completed} color="primary" onClick={handleOpenRaceDetails} >
           Add Race Details
         </Button>
       </div>
@@ -182,6 +224,7 @@ const raceTab = props => {
         index={props.index}
       />
 
+      {/* RACE DETAILS DIALOG*/}
       <Dialog
         open={openRaceDetails}
         keepMounted
@@ -192,7 +235,7 @@ const raceTab = props => {
             <FormControl style={{ marginTop: 2, minWidth: 120 }}>
               <InputLabel htmlFor="max-width">Select Horse</InputLabel>
               <Select
-                value={horse}
+                value={selectedHorse}
                 onChange={handleHorseChange}
                 inputProps={{
                   name: 'max-width',
@@ -201,21 +244,26 @@ const raceTab = props => {
               >
                 {
                   props.race.horses.map(horse => {
-                    return <MenuItem key={horse._id} value={horse.raceDetails[0]._id}>{horse.name}</MenuItem>
+                    const value = horse.raceDetails.find(detail => props.programDate.toISOString() === detail.date);
+                    return <MenuItem key={horse._id} value={value._id}>{horse.name}</MenuItem>
                   })
                 }
               </Select>
 
             </FormControl>
-            <FormControl>
-              <InputLabel htmlFor="formatted-text-mask-input">1/4</InputLabel>
-              <Input
-                value={raceDetails.times.quarterMile}
-                onChange={handleChangeQuater('textmask')}
-                id="formatted-text-mask-input"
-                inputComponent={TextMaskCustom}
-              />
-            </FormControl>
+            {
+              selectedHorse &&
+              <FormControl>
+                <InputLabel htmlFor="formatted-text-mask-input">1/4</InputLabel>
+                <Input
+                  value={raceDetails.times.quarterMile}
+                  onChange={handleChangeQuater('textmask')}
+                  id="formatted-text-mask-input"
+                  inputComponent={TextMaskCustom}
+                />
+              </FormControl>
+            }
+
 
           </form>
         </DialogContent>
@@ -223,12 +271,13 @@ const raceTab = props => {
           <Button onClick={() => setOpenRaceDetails(false)} >
             Close
           </Button>
-          <Button color="primary">
+          <Button color="primary" onClick={saveRaceDetailsHandler}>
             Save
           </Button>
         </DialogActions>
 
       </Dialog>
+
 
 
       {/* Loader and Spinner*/}

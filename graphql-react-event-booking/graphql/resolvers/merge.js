@@ -220,11 +220,7 @@ const transformHorse = async horse => {
     dam: horse.dam,
     procedence: horse.procedence,
     stable: () => stableLoader.load(horse.stable),
-    raceDetails: async () => {
-      var ar = await raceDetailLoader.loadMany(horse.raceDetails)
-      console.log(ar);
-      return ar
-    } 
+    raceDetails: () => raceDetailLoader.loadMany(horse.raceDetails)    
   }
 }
 

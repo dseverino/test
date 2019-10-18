@@ -37,6 +37,21 @@ module.exports = {
     } catch (error) {
       throw error
     }
-  }
+  },
+
+  updateHorseRaceDetail: async () => {
+    //raceDetails: HorseRaceDetailInput): HorseRaceDetail
+    try {
+      const raceDetail = await HorseRaceDetail.findById(args.raceDetailId)
+      if (raceDetail) {
+        raceDetail.raceDetails = [...horse.raceDetails, args.raceDetailId]
+        const result = await horse.save()
+        return transformHorse(result)
+      }
+    } catch (error) {
+      throw error
+    }
+  }  
+    
 
 }
