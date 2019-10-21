@@ -184,6 +184,11 @@ const ConfirmationDialogRaw = (props) => {
             sex
             sire
             dam
+            raceDetails{
+              date
+              horseEquipments
+              horseMedications
+            }
             stable {         
               _id
               name
@@ -216,9 +221,16 @@ const ConfirmationDialogRaw = (props) => {
       .then(resData => {
         if (resData.data.horse && resData.data.horse.length === 1) {
           setValues({ ...values, "selectedHorse": resData.data.horse[0] });
+          if(resData.data.horse.raceDetails){
+
+          }
           setHorseRaceDetail(
             {
-              ...horseRaceDetail, horseAge: resData.data.horse[0].age, stable: resData.data.horse[0].stable._id, trainer: resData.data.horse[0].stable.trainers && resData.data.horse[0].stable.trainers.length === 1 ? resData.data.horse[0].stable.trainers[0]._id : "", claiming: props.claimings.length === 1 ? props.claimings[0] : "",
+              ...horseRaceDetail, 
+              horseAge: resData.data.horse[0].age, 
+              stable: resData.data.horse[0].stable._id, 
+              trainer: resData.data.horse[0].stable.trainers && resData.data.horse[0].stable.trainers.length === 1 ? resData.data.horse[0].stable.trainers[0]._id : "", 
+              claiming: props.claimings.length === 1 ? props.claimings[0] : "",
               horseWeight: resData.data.horse[0].weight || 0
             }
           );
@@ -263,6 +275,7 @@ const ConfirmationDialogRaw = (props) => {
 
   const onStableSelection = (e) => {
     const trainers = values.selectedHorse.stable.trainers;
+    
     setHorseRaceDetail({ ...horseRaceDetail, "stable": e.value, "trainer": trainers.length === 1 ? trainers[0]._id : "" });
   }
 

@@ -12,7 +12,9 @@ const horseRaceDetail = props => {
       {props.details.horseMedications}
       -
       {props.details.horseEquipments}
-      -
+      ***********
+      {props.details.horseWeight}
+      ***********
       {props.details.startingPosition}
       ***********
       {props.details.jockey.name}

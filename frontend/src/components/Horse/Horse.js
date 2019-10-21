@@ -7,10 +7,12 @@ import Paper from '@material-ui/core/Paper';
 
 const horse = props => {
   const dateFormmater = new Intl.DateTimeFormat('en-GB', { year: '2-digit', month: 'short', day: '2-digit' });
+  
 
   const horseRaceDetailsFiltered = props.horse.raceDetails.sort((a, b) => (a.date < b.date) ? 1 : ((b.date < a.date) ? -1 : 0)).filter(detail => {
     return detail.date <= props.dateSelected.toISOString()
   })
+  const overweight = horseRaceDetailsFiltered[0] ? props.horse.weight > horseRaceDetailsFiltered[0].horseWeight ? 'green' : 'red' : '0'
 
   return (
     <Paper style={{ margin: "10px 0px" }} className="horse__card">
@@ -39,15 +41,25 @@ const horse = props => {
                   <strong>
                     <span style={{ marginRight: "25px" }}>{props.horse.name}
                     </span>
-                    <span>
-                      ({horseRaceDetailsFiltered[0].horseMedications.join(",")})
-                    </span>
+                    {
+                      horseRaceDetailsFiltered[0].horseMedications.length > 0 &&
+                      <span>
+                        ({horseRaceDetailsFiltered[0].horseMedications.join(",")})
+                      </span>
+                    }
                   </strong>
                 </div>
-                <div><span style={{ fontWeight: 500, marginRight: 8 }}>{horseRaceDetailsFiltered[0].jockeyWeight}</span> <span>{horseRaceDetailsFiltered[0].horseEquipments.join("")}</span></div>
+                <div>
+                  <span style={{ fontWeight: 500, marginRight: 8 }}>
+                    {horseRaceDetailsFiltered[0].jockeyWeight}
+                  </span>
+                  <span>
+                    {horseRaceDetailsFiltered[0].horseEquipments.join("")}
+                  </span>
+                </div>
               </div>
               <div style={{ display: "flex", fontSize: 11 }}>
-                {props.horse.age}-{props.horse.color}-{props.horse.sex} {props.horse.sire} - {props.horse.dam}
+                {props.horse.age}-{props.horse.color}-{props.horse.sex} {props.horse.sire} - {props.horse.dam} <span style={{color: overweight}}> {props.horse.weight} </span>
               </div>
             </div>
             <div style={{ display: "flex" }}>
@@ -63,7 +75,7 @@ const horse = props => {
       <div >
         {
           horseRaceDetailsFiltered.map((detail, index) => {
-            const days = horseRaceDetailsFiltered[index + 1] ? (new Date(detail.date) - new Date(horseRaceDetailsFiltered[index + 1].date)) / (1000 * 3600 * 24) : 0            
+            const days = horseRaceDetailsFiltered[index + 1] ? (new Date(detail.date) - new Date(horseRaceDetailsFiltered[index + 1].date)) / (1000 * 3600 * 24) : 0
             return <HorseRaceDetail details={detail} key={index} days={days} date={dateFormmater.format(new Date(detail.date))} />
           })
         }
