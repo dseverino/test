@@ -14,6 +14,9 @@ import DialogActions from '@material-ui/core/DialogActions';
 import Input from '@material-ui/core/Input';
 import AddIcon from '@material-ui/icons/Add';
 import CheckIcon from '@material-ui/icons/Check';
+import Checkbox from '@material-ui/core/Checkbox';
+import ListItemText from '@material-ui/core/ListItemText';
+import Chip from '@material-ui/core/Chip';
 
 import MaskedInput from 'react-text-mask';
 
@@ -30,6 +33,14 @@ const formatter = new Intl.NumberFormat('en-US', {
 });
 
 const raceTab = props => {
+  const horseRaceDetails = props.race.horses.map(horse => {
+    let detail = horse.raceDetails.find(detail => props.programDate.toISOString() === detail.date);
+    return {
+      name: horse.name,
+      id: detail._id
+    }
+  });
+
   const [completed, setCompleted] = useState(props.race.completed)
   const [raceDetails, setraceDetails] = useState({
     times: {
@@ -39,6 +50,7 @@ const raceTab = props => {
   });
 
   const [selectedHorse, setSelectedHorse] = useState("")
+  const [selectedRetiredHorses, setSelectedRetiredHorses] = useState([])
   const horses = props.race.horses.map(horse => {
     return (
       <Horse key={horse._id} horse={horse} dateSelected={props.programDate} />
@@ -60,7 +72,7 @@ const raceTab = props => {
     setOpen(false);
   }
 
-  function handleCompleteRace() {
+  function handleCloseRace() {
     setLoading(true);
     const requestBody = {
       query: `
@@ -114,7 +126,10 @@ const raceTab = props => {
   function handleOpenRaceDetails() {
     setOpenRaceDetails(true)
   }
-  function handleHorseChange(e) {    
+  function handleRetirementChange(e) {
+    setSelectedRetiredHorses(e.target.value)
+  }
+  function handleHorseChange(e) {
     setSelectedHorse(e.target.value)
   }
 
@@ -192,8 +207,8 @@ const raceTab = props => {
           Add Horse
           <AddIcon />
         </Button>
-        <Button disabled={completed} color="primary" onClick={handleCompleteRace} >
-          Complete Race
+        <Button disabled={completed} color="primary" onClick={handleCloseRace} >
+          Close Race
           <CheckIcon />
         </Button>
         <Button disabled={!completed} color="primary" onClick={handleOpenRaceDetails} >
@@ -224,9 +239,75 @@ const raceTab = props => {
         index={props.index}
       />
 
+
+
       {/* RACE DETAILS DIALOG*/}
       <Dialog
         open={openRaceDetails}
+        keepMounted
+        onClose={handleCloseRaceDetails}>
+        <DialogTitle >Race Details</DialogTitle>
+        <DialogContent>
+          <form style={{ display: "flex", flexDirection: "column", margin: "auto", width: 'fit-content' }}>
+            <FormControl style={{ marginTop: 2, minWidth: 200 }}>
+              <InputLabel htmlFor="select-multiple-checkbox">Select Retired Horses</InputLabel>
+              <Select
+                multiple
+                value={selectedRetiredHorses}
+                onChange={handleRetirementChange}
+                input={<Input id="select-multiple-checkbox" />}
+                renderValue={selected => (
+                  <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                    {selected.map(value => (
+                      <Chip key={value} label={value} style={{ display: 'flex', flexWrap: 'wrap' }} />
+                    ))}
+                  </div>
+                )}
+              >
+                {
+                  horseRaceDetails.map(horse => {
+                    return <MenuItem key={horse.id} value={horse.id}>
+                      <Checkbox checked={selectedRetiredHorses.indexOf(horse.id) > -1} />
+                      <ListItemText primary={horse.name} />
+                    </MenuItem>
+                  })
+                }
+              </Select>
+
+            </FormControl>
+            {
+              selectedHorse &&
+              <FormControl>
+                <InputLabel htmlFor="formatted-text-mask-input">1/4</InputLabel>
+                <Input
+                  value={raceDetails.times.quarterMile}
+                  onChange={handleChangeQuater('textmask')}
+                  id="formatted-text-mask-input"
+                  inputComponent={TextMaskCustom}
+                />
+              </FormControl>
+            }
+
+          </form>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenRaceDetails(false)} >
+            Close
+          </Button>
+          <Button color="primary" onClick={saveRaceDetailsHandler}>
+            Save
+          </Button>
+        </DialogActions>
+
+      </Dialog>
+      {/* RACE DETAILS DIALOG ENDING*/}
+
+
+
+
+      {/* HORSE RACE DETAILS DIALOG*/}
+      <Dialog
+        open={false}
         keepMounted
         onClose={handleCloseRaceDetails}>
         <DialogTitle >Race Details</DialogTitle>
@@ -277,6 +358,7 @@ const raceTab = props => {
         </DialogActions>
 
       </Dialog>
+      {/* HORSE RACE DETAILS DIALOG ENDING*/}
 
 
 

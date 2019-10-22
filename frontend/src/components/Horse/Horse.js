@@ -12,8 +12,7 @@ const horse = props => {
   const horseRaceDetailsFiltered = props.horse.raceDetails.sort((a, b) => (a.date < b.date) ? 1 : ((b.date < a.date) ? -1 : 0)).filter(detail => {
     return detail.date <= props.dateSelected.toISOString()
   })
-  const overweight = horseRaceDetailsFiltered[0] ? props.horse.weight > horseRaceDetailsFiltered[0].horseWeight ? 'green' : 'red' : '0'
-
+  
   return (
     <Paper style={{ margin: "10px 0px" }} className="horse__card">
 
@@ -59,7 +58,7 @@ const horse = props => {
                 </div>
               </div>
               <div style={{ display: "flex", fontSize: 11 }}>
-                {props.horse.age}-{props.horse.color}-{props.horse.sex} {props.horse.sire} - {props.horse.dam} <span style={{color: overweight}}> {props.horse.weight} </span>
+                {props.horse.age}-{props.horse.color}-{props.horse.sex} {props.horse.sire} - {props.horse.dam}
               </div>
             </div>
             <div style={{ display: "flex" }}>
