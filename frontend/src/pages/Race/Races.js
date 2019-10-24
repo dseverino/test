@@ -152,6 +152,10 @@ class Races extends Component {
       })
   }
 
+  loading = (value) => {
+    this.setState({isLoading: value})
+  }
+
   loadProgramRaces = () => {
     this.setState({ isLoading: true })
     const requestBody = {
@@ -168,6 +172,13 @@ class Races extends Component {
               completed
               spec
               purse
+              times {
+                quarterMile
+                halfMile
+                finish
+              }
+              totalHorses
+              hasRaceDetails
               horses {
                 _id
                 name
@@ -367,6 +378,14 @@ class Races extends Component {
       })
   }
 
+  hasRaceDetails = (raceIndex) => {    
+    this.setState((prevState) => {
+      const races = prevState.races;
+      races[raceIndex]['hasRaceDetails'] = true;
+      return { ...prevState, races: races, isLoading: false }
+    })
+  }
+
   render() {
     const tabs = this.state.races.map(race => {
       return (
@@ -375,7 +394,7 @@ class Races extends Component {
     })
     const RaceTabs = this.state.races.map((race, index) => {
       return (
-        <RaceTabPanel programDate={this.state.programDate} horseaddedtorace={this.addHorseToRace} key={index} race={race} value={this.state.selectedRace} index={index} jockeys={this.state.jockeys} stables={this.state.stables} trainers={this.state.trainers} />
+        <RaceTabPanel hasRaceDetails={this.hasRaceDetails} loading={this.loading} programDate={this.state.programDate} horseaddedtorace={this.addHorseToRace} key={index} race={race} value={this.state.selectedRace} index={index} jockeys={this.state.jockeys} stables={this.state.stables} trainers={this.state.trainers} />
       )
     });
     

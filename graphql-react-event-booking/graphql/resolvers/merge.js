@@ -282,7 +282,10 @@ const transformRace = race => {
     programId: race.programId,
     purse: race.purse,
     completed: race.completed,
-    horses: horseLoader.loadMany(race.horses)
+    horses: horseLoader.loadMany(race.horses),
+    times: race.times,
+    totalHorses: race.totalHorses,
+    hasRaceDetails: race.hasRaceDetails
   }
 }
 

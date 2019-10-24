@@ -47,7 +47,10 @@ const raceSchema = new Schema(
         type: Schema.Types.ObjectId,
         ref: "Horse"
       }
-    ]
+    ],
+    times: Object,
+    totalHorses: Number,
+    hasRaceDetails: Boolean
   }
 )
 

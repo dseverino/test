@@ -76,6 +76,19 @@ module.exports = {
     catch (err) {
       throw err
     }
+  },
+
+  updateRaceDetails: async (args) => {
+    try {
+      const race = await Race.update({_id: args.raceId}, args.raceDetails)
+      
+      if (race && race.ok) {       
+        return args.raceDetails;
+      }
+    }
+    catch (err) {
+      throw err
+    }
   }
 
 }

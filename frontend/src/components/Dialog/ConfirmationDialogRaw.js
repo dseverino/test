@@ -97,17 +97,17 @@ const ConfirmationDialogRaw = (props) => {
 
   const jockeys = props.jockeys.map(jockey => {
     return { label: jockey.name, value: jockey._id }
-  })
+  });
   const [stables, setStables] = React.useState(props.stables.map(stable => {
     return { label: stable.name, value: stable._id }
   }));
 
   const [trainers, setTrainers] = React.useState(props.trainers.map(trainer => {
     return { label: trainer.name, value: trainer._id }
-  }))
+  }));
   const claimings = props.claimings.map(claiming => {
     return { label: claiming, value: claiming }
-  })
+  });
 
   const [loading, setLoading] = React.useState(false);
 

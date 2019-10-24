@@ -21,6 +21,9 @@ module.exports = buildSchema(`
     purse: String
     completed: Boolean
     horses: [Horse]
+    times: Time
+    totalHorses: Int
+    hasRaceDetails: Boolean
   }
   input RaceInput {
     programId: Int
@@ -32,6 +35,15 @@ module.exports = buildSchema(`
     horseAge: String!
     spec: String
     purse: Int!
+    times: TimeInput
+    totalHorses: Int
+    hasRaceDetails: Boolean
+  }
+
+  input RaceDetailsInput {
+    times: TimeInput
+    totalHorses: Int
+    hasRaceDetails: Boolean
   }
 
   type Horse {
@@ -101,6 +113,7 @@ module.exports = buildSchema(`
     mile: String
     finish: String
   }
+
   type TrainingTime {
     date: String
     time: String
@@ -252,6 +265,7 @@ module.exports = buildSchema(`
     completeRace(raceId: ID): Race!
     deleteRace(raceId: String): Race!
     addRace(programId: String, raceId: String): Program!
+    updateRaceDetails(raceId: ID, raceDetails: RaceDetailsInput): Race
     addHorse(raceId: ID, horseId: ID): Race!
     addHorseStable(horseId: ID, stableId: ID): Horse
     addTrainerStable(stableId: ID, trainerId: ID): Stable
