@@ -57,7 +57,7 @@ const horseRaceDetail = props => {
         Positions
       </span>
       <span style={{float: "right"}}>
-        7
+        {props.details.totalHorses}
       </span>
 
     </div>
