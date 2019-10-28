@@ -41,7 +41,7 @@ const raceTab = props => {
 
   const horseRaceDetailsIds = props.race.horses.map(horse => {
     let detail = horse.raceDetails.find(detail => props.programDate.toISOString() === detail.date);
-    
+     
     return {
       name: horse.name,
       id: detail._id,
@@ -168,8 +168,16 @@ const raceTab = props => {
   }
   function handleHorseChange(e) {
     setSelectedHorse(e.target.value)
-    console.log(horseRaceDetailsIds)
+    //console.log(horseRaceDetailsIds)
   }
+  useEffect(() => {
+    if(selectedHorse){
+      console.log(selectedHorse)
+      console.log(horseRaceDetailsIds)
+    }
+    
+    //setraceDetails({ ...raceDetails, totalHorses: props.race.horses.length - selectedRetiredHorses.length })
+  }, [selectedHorse])
 
   const handleChangeQuater = name => event => {
     var times = raceDetails.times;
