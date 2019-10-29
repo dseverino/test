@@ -45,6 +45,9 @@ const ConfirmationDialogRaw = (props) => {
   }, [props.open])
 
   const { onClose, open, onHorseAdded, raceId, horsesqty, ...other } = props;
+  const jockeys = props.jockeys.map(jockey => {
+    return { label: jockey.name, value: jockey._id }
+  });
 
   const [saved, setSaved] = React.useState(false)
   const [horseNotFound, setHorseNotFound] = React.useState(false);
@@ -57,14 +60,7 @@ const ConfirmationDialogRaw = (props) => {
 
   const [values, setValues] = React.useState({
     selectedHorse: null,
-    selectedStable: { _id: "" },
-    E: true,
-    F: true,
-    G: false,
-    Gs: false,
-    LA: false,
-    B: true,
-    L: false
+    selectedStable: { _id: "" }
   });
 
   const [horseDialog, setHorseDialog] = React.useState(false);
@@ -85,6 +81,7 @@ const ConfirmationDialogRaw = (props) => {
     claiming: "",
     discarded: false
   });
+  
   React.useEffect(() => {
     if (horsesqty) {
       setHorseRaceDetail({ ...horseRaceDetail, startingPosition: horsesqty });
@@ -95,9 +92,6 @@ const ConfirmationDialogRaw = (props) => {
 
   const [horse, setHorse] = React.useState({ name: "", age: 2, color: "Z", sex: "M", stable: "", sire: "", dam: "", weight: "", procedence: "native" });
 
-  const jockeys = props.jockeys.map(jockey => {
-    return { label: jockey.name, value: jockey._id }
-  });
   const [stables, setStables] = React.useState(props.stables.map(stable => {
     return { label: stable.name, value: stable._id }
   }));
@@ -252,13 +246,14 @@ const ConfirmationDialogRaw = (props) => {
   }
 
   const onEquipMedicationChange = (name, col) => event => {
+    var ar = horseRaceDetail[col];
     if (event.target.checked) {
-      horseRaceDetail[col].push(name);
-      setValues({ ...values, [name]: true });
+      ar.push(name);
+      setHorseRaceDetail( {...horseRaceDetail, [col]: ar} )      
     }
     else {
-      horseRaceDetail[col].splice(horseRaceDetail[col].indexOf(name), 1);
-      setValues({ ...values, [name]: false });
+      ar.splice(horseRaceDetail[col].indexOf(name), 1)
+      setHorseRaceDetail( {...horseRaceDetail, [col]: ar} )
     }
   }
 
@@ -524,26 +519,25 @@ const ConfirmationDialogRaw = (props) => {
                         <FormLabel component="legend">Horse Equipments</FormLabel>
                         <FormGroup style={{ flexDirection: "row" }}>
                           <FormControlLabel
-                            control={<Checkbox checked={values.E} onChange={onEquipMedicationChange("E", "horseEquipments")} value="E" />}
+                            control={<Checkbox checked={horseRaceDetail.horseEquipments.indexOf("E") > -1} onChange={onEquipMedicationChange("E", "horseEquipments")} value="E" />}
                             label="E"
                           />
                           <FormControlLabel
-                            control={<Checkbox checked={values.F} onChange={onEquipMedicationChange("F", "horseEquipments")} value="F" />}
+                            control={<Checkbox checked={horseRaceDetail.horseEquipments.indexOf("F") > -1} onChange={onEquipMedicationChange("F", "horseEquipments")} value="F" />}
                             label="F"
                           />
                           <FormControlLabel
-                            control={
-                              <Checkbox checked={values.G} onChange={onEquipMedicationChange("G", "horseEquipments")} value="G" />}
+                            control={<Checkbox checked={horseRaceDetail.horseEquipments.indexOf("G") > -1} onChange={onEquipMedicationChange("G", "horseEquipments")} value="G" />}
                             label="G"
                           />
                           <FormControlLabel
                             control={
-                              <Checkbox checked={values.Gs} onChange={onEquipMedicationChange("Gs", "horseEquipments")} value="Gs" />}
+                              <Checkbox checked={horseRaceDetail.horseEquipments.indexOf("Gs") > -1} onChange={onEquipMedicationChange("Gs", "horseEquipments")} value="Gs" />}
                             label="Gs"
                           />
                           <FormControlLabel
                             control={
-                              <Checkbox checked={values.LA} onChange={onEquipMedicationChange("LA", "horseEquipments")} value="LA" />}
+                              <Checkbox checked={horseRaceDetail.horseEquipments.indexOf("LA") > -1} onChange={onEquipMedicationChange("LA", "horseEquipments")} value="LA" />}
                             label="LA"
                           />
                         </FormGroup>
@@ -552,11 +546,11 @@ const ConfirmationDialogRaw = (props) => {
                         <FormLabel component="legend">Horse Medications</FormLabel>
                         <FormGroup style={{ flexDirection: "row" }}>
                           <FormControlLabel
-                            control={<Checkbox checked={values.L} onChange={onEquipMedicationChange("L", "horseMedications")} value="L" />}
+                            control={<Checkbox checked={horseRaceDetail.horseEquipments.indexOf("L") > -1} onChange={onEquipMedicationChange("L", "horseMedications")} value="L" />}
                             label="L"
                           />
                           <FormControlLabel
-                            control={<Checkbox checked={values.B} onChange={onEquipMedicationChange("B", "horseMedications")} value="B" />}
+                            control={<Checkbox checked={horseRaceDetail.horseEquipments.indexOf("B") > -1} onChange={onEquipMedicationChange("B", "horseMedications")} value="B" />}
                             label="B"
                           />
                         </FormGroup>

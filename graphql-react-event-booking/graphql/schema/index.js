@@ -24,6 +24,7 @@ module.exports = buildSchema(`
     times: Time
     totalHorses: Int
     hasRaceDetails: Boolean
+    trackCondition: String
   }
   input RaceInput {
     programId: Int
@@ -38,6 +39,7 @@ module.exports = buildSchema(`
     times: TimeInput
     totalHorses: Int
     hasRaceDetails: Boolean
+    trackCondition: String
   }
 
   input RaceDetailsInput {

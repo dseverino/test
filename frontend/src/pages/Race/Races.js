@@ -179,6 +179,7 @@ class Races extends Component {
               }
               totalHorses
               hasRaceDetails
+              trackCondition
               horses {
                 _id
                 name
@@ -199,14 +200,17 @@ class Races extends Component {
                   horseMedications
                   horseEquipments
                   jockey{
+                    _id
                     name
                   } 
                   jockeyWeight
                   stable {
                     name
+                    _id
                   }
                   trainer {
                     name
+                    _id
                   }
                   date
                   raceNumber

@@ -22,6 +22,7 @@ import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 import MaskedInput from 'react-text-mask';
+import { Dropdown } from "primereact/dropdown";
 
 import Horse from '../../components/Horse/Horse';
 import ConfirmationDialogRaw from "../Dialog/ConfirmationDialogRaw";
@@ -38,24 +39,18 @@ const formatter = new Intl.NumberFormat('en-US', {
 const raceTab = props => {
 
   const { times } = props;
+  const jockeys = props.jockeys.map(jockey => {
+    return { label: jockey.name, value: jockey._id }
+  });
 
   const horseRaceDetailsIds = props.race.horses.map(horse => {
     let detail = horse.raceDetails.find(detail => props.programDate.toISOString() === detail.date);
-     
+
     return {
       name: horse.name,
       id: detail._id,
       ...detail
     }
-  });
-  const [values, setValues] = React.useState({
-    E: true,
-    F: true,
-    G: false,
-    Gs: false,
-    LA: false,
-    B: true,
-    L: false
   });
 
   const [completed, setCompleted] = useState(props.race.completed)
@@ -67,14 +62,17 @@ const raceTab = props => {
       finish: '1:14.3'
     },
     totalHorses: props.race.horses.length,
-    hasRaceDetails: true
+    hasRaceDetails: true,
+    trackCondition: "L"
   });
   const [horseRaceDetail, setHorseRaceDetail] = useState({
     horseEquipments: [""],
     horseMedications: [""],
+    jockey: '',
+    jockeyChanged: false
   })
 
-  const [selectedHorse, setSelectedHorse] = useState("")
+  const [selectedHorse, setSelectedHorse] = useState({ _id: "" })
   const [selectedRetiredHorses, setSelectedRetiredHorses] = useState([]);
 
   useEffect(() => {
@@ -154,9 +152,12 @@ const raceTab = props => {
   function handleCloseRaceDetails() {
 
   }
+
   function handleCloseHorseRaceDetails() {
+    console.log(horseRaceDetail)
     setOpenHorseRaceDetails(false);
   }
+
   function handleOpenRaceDetails() {
     setOpenRaceDetails(true);
   }
@@ -167,17 +168,13 @@ const raceTab = props => {
     setSelectedRetiredHorses(e.target.value);
   }
   function handleHorseChange(e) {
-    setSelectedHorse(e.target.value)
-    //console.log(horseRaceDetailsIds)
+    setSelectedHorse(horseRaceDetailsIds.find((el) => el._id === e.target.value));
   }
   useEffect(() => {
-    if(selectedHorse){
-      console.log(selectedHorse)
-      console.log(horseRaceDetailsIds)
+    if (selectedHorse.name) {
+      setHorseRaceDetail({ ...selectedHorse, jockey: selectedHorse.jockey._id });
     }
-    
-    //setraceDetails({ ...raceDetails, totalHorses: props.race.horses.length - selectedRetiredHorses.length })
-  }, [selectedHorse])
+  }, [selectedHorse, selectedHorse.name])
 
   const handleChangeQuater = name => event => {
     var times = raceDetails.times;
@@ -275,14 +272,19 @@ const raceTab = props => {
   function saveHorseRaceDetailsHandler() {
 
   }
+
+  function onJockeyChange(e) {
+    setHorseRaceDetail({ ...horseRaceDetail, "jockey": e.value, jockeyChanged: selectedHorse.jockey._id != e.target.value })
+  }
   const onEquipMedicationChange = (name, col) => event => {
+    var ar = horseRaceDetail[col];
     if (event.target.checked) {
-      horseRaceDetail[col].push(name);
-      setValues({ ...values, [name]: true });
+      ar.push(name);
+      setHorseRaceDetail({ ...horseRaceDetail, [col]: ar })
     }
     else {
-      horseRaceDetail[col].splice(horseRaceDetail[col].indexOf(name), 1);
-      setValues({ ...values, [name]: false });
+      ar.splice(horseRaceDetail[col].indexOf(name), 1)
+      setHorseRaceDetail({ ...horseRaceDetail, [col]: ar })
     }
   }
 
@@ -388,6 +390,19 @@ const raceTab = props => {
 
                 <InputLabel htmlFor="formatted-text-mask-input">1/4</InputLabel>
                 <Select
+                  value={raceDetails.trackCondition}
+                  onChange={(e) => setraceDetails({...raceDetails, trackCondition: e.target.value})}
+                >
+                  <MenuItem value={"L"}>L</MenuItem>
+                  <MenuItem value={"F"}>F</MenuItem>
+                  <MenuItem value={"H"}>H</MenuItem>                  
+                </Select>
+
+              </div>
+              <div>
+
+                <InputLabel htmlFor="formatted-text-mask-input">1/4</InputLabel>
+                <Select
                   value={raceDetails.times.quarterMile.split('.')[0]}
                   onChange={handleChangeQuater('quarter')}
                 >
@@ -472,7 +487,7 @@ const raceTab = props => {
           <DialogActions>
             <Button onClick={() => setOpenRaceDetails(false)} >
               Close
-          </Button>
+            </Button>
             <Button color="primary" onClick={saveRaceDetailsHandler}>
               Save
           </Button>
@@ -484,8 +499,10 @@ const raceTab = props => {
 
 
 
-        {/* HORSE RACE DETAILS DIALOG*/}
+        {/* HORSE RACE DETAILS DIALOG START*/}
         <Dialog
+          disableBackdropClick
+          disableEscapeKeyDown
           open={openHorseRaceDetails}
           keepMounted
           onClose={handleCloseHorseRaceDetails}>
@@ -495,7 +512,7 @@ const raceTab = props => {
               <FormControl style={{ marginTop: 2, minWidth: 120 }}>
                 <InputLabel htmlFor="max-width">Select Horse</InputLabel>
                 <Select
-                  value={selectedHorse}
+                  value={selectedHorse._id}
                   onChange={handleHorseChange}
                   inputProps={{
                     name: 'max-width',
@@ -512,8 +529,12 @@ const raceTab = props => {
 
               </FormControl>
               {
-                selectedHorse &&
+                selectedHorse.name &&
                 <React.Fragment>
+                  <FormControl>
+                    <label>Jockey</label>
+                    <Dropdown options={jockeys} filter={true} value={horseRaceDetail.jockey} onChange={onJockeyChange} />
+                  </FormControl>
                   <FormControl>
                     <InputLabel htmlFor="formatted-text-mask-input">Finish</InputLabel>
                     <Input
@@ -531,26 +552,26 @@ const raceTab = props => {
                     <FormLabel component="legend">Horse Equipments</FormLabel>
                     <FormGroup style={{ flexDirection: "row" }}>
                       <FormControlLabel
-                        control={<Checkbox checked={values.E} onChange={onEquipMedicationChange("E", "horseEquipments")} value="E" />}
+                        control={<Checkbox checked={horseRaceDetail.horseEquipments.indexOf("E") > -1} onChange={onEquipMedicationChange("E", "horseEquipments")} value="E" />}
                         label="E"
                       />
                       <FormControlLabel
-                        control={<Checkbox checked={values.F} onChange={onEquipMedicationChange("F", "horseEquipments")} value="F" />}
+                        control={<Checkbox checked={horseRaceDetail.horseEquipments.indexOf("F") > -1} onChange={onEquipMedicationChange("F", "horseEquipments")} value="F" />}
                         label="F"
                       />
                       <FormControlLabel
                         control={
-                          <Checkbox checked={values.G} onChange={onEquipMedicationChange("G", "horseEquipments")} value="G" />}
+                          <Checkbox checked={horseRaceDetail.horseEquipments.indexOf("G") > -1} onChange={onEquipMedicationChange("G", "horseEquipments")} value="G" />}
                         label="G"
                       />
                       <FormControlLabel
                         control={
-                          <Checkbox checked={values.Gs} onChange={onEquipMedicationChange("Gs", "horseEquipments")} value="Gs" />}
+                          <Checkbox checked={horseRaceDetail.horseEquipments.indexOf("Gs") > -1} onChange={onEquipMedicationChange("Gs", "horseEquipments")} value="Gs" />}
                         label="Gs"
                       />
                       <FormControlLabel
                         control={
-                          <Checkbox checked={values.LA} onChange={onEquipMedicationChange("LA", "horseEquipments")} value="LA" />}
+                          <Checkbox checked={horseRaceDetail.horseEquipments.indexOf("LA") > -1} onChange={onEquipMedicationChange("LA", "horseEquipments")} value="LA" />}
                         label="LA"
                       />
                     </FormGroup>
@@ -559,11 +580,11 @@ const raceTab = props => {
                     <FormLabel component="legend">Horse Medications</FormLabel>
                     <FormGroup style={{ flexDirection: "row" }}>
                       <FormControlLabel
-                        control={<Checkbox checked={values.L} onChange={onEquipMedicationChange("L", "horseMedications")} value="L" />}
+                        control={<Checkbox checked={horseRaceDetail.horseEquipments.indexOf("L") > -1} onChange={onEquipMedicationChange("L", "horseMedications")} value="L" />}
                         label="L"
                       />
                       <FormControlLabel
-                        control={<Checkbox checked={values.B} onChange={onEquipMedicationChange("B", "horseMedications")} value="B" />}
+                        control={<Checkbox checked={horseRaceDetail.horseEquipments.indexOf("B") > -1} onChange={onEquipMedicationChange("B", "horseMedications")} value="B" />}
                         label="B"
                       />
                     </FormGroup>
@@ -573,7 +594,7 @@ const raceTab = props => {
             </form>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setOpenHorseRaceDetails(false)} >
+            <Button onClick={handleCloseHorseRaceDetails} >
               Close
             </Button>
             <Button color="primary" onClick={saveHorseRaceDetailsHandler}>
