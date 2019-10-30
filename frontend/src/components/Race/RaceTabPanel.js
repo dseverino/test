@@ -20,8 +20,10 @@ import Chip from '@material-ui/core/Chip';
 import FormLabel from '@material-ui/core/FormLabel';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import TextField from '@material-ui/core/TextField';
 
 import MaskedInput from 'react-text-mask';
+import NumberFormat from 'react-number-format';
 import { Dropdown } from "primereact/dropdown";
 
 import Horse from '../../components/Horse/Horse';
@@ -39,6 +41,7 @@ const formatter = new Intl.NumberFormat('en-US', {
 const raceTab = props => {
 
   const { times } = props;
+
   const jockeys = props.jockeys.map(jockey => {
     return { label: jockey.name, value: jockey._id }
   });
@@ -55,22 +58,28 @@ const raceTab = props => {
 
   const [completed, setCompleted] = useState(props.race.completed)
 
+  var timeLeader = {
+    quarterMile: "23.0",
+    halfMile: '47.0',
+    thirdQuarter: '1:12.0'
+  }
+
   const [raceDetails, setraceDetails] = useState({
-    times: times || {
-      quarterMile: "23.4",
-      halfMile: '47.4',
-      finish: '1:14.3'
+    times: {
+      quarterMile: "23.0",
+      halfMile: '47.0'
     },
     totalHorses: props.race.horses.length,
     hasRaceDetails: true,
     trackCondition: "L"
   });
+
   const [horseRaceDetail, setHorseRaceDetail] = useState({
     horseEquipments: [""],
     horseMedications: [""],
     jockey: '',
     jockeyChanged: false
-  })
+  });
 
   const [selectedHorse, setSelectedHorse] = useState({ _id: "" })
   const [selectedRetiredHorses, setSelectedRetiredHorses] = useState([]);
@@ -150,7 +159,7 @@ const raceTab = props => {
   }
 
   function handleCloseRaceDetails() {
-
+    setOpenRaceDetails(false)
   }
 
   function handleCloseHorseRaceDetails() {
@@ -185,7 +194,9 @@ const raceTab = props => {
       times.quarterMile = times.quarterMile.split('.')[0] + '.' + event.target.value
     }
     setraceDetails({ ...raceDetails, times: times })
+    timeLeader = times
   }
+
   const handleChangeHalfMile = name => event => {
     var times = raceDetails.times;
     if (name === 'halfMile') {
@@ -197,14 +208,29 @@ const raceTab = props => {
     setraceDetails({ ...raceDetails, times: times })
   }
 
+  const handleChangeThirdQuarter = name => event => {
+    var times = raceDetails.times;
+    if (name === 'thirdQuarter') {
+      times.thirdQuarter = event.target.value + '.' + times.thirdQuarter.split('.')[1]
+    }
+    else {
+      times.thirdQuarter = times.thirdQuarter.split('.')[0] + '.' + event.target.value
+    }
+    setraceDetails({ ...raceDetails, times: times })
+  }
+
   const handleChangeFinish = name => event => {
     var times = raceDetails.times;
+    times.finish = event.target.value;
+    timeLeader.finish = event.target.value
+    
+    /*
     if (name === 'finish') {
       times.finish = event.target.value + '.' + times.finish.split('.')[1]
     }
     else {
       times.finish = times.finish.split('.')[0] + '.' + event.target.value
-    }
+    }*/
     setraceDetails({ ...raceDetails, times: times })
   }
 
@@ -217,7 +243,7 @@ const raceTab = props => {
         ref={ref => {
           inputRef(ref ? ref.inputElement : null);
         }}
-        mask={[/[2-3]/, /\d/, '.', /[0-4]/]}
+        mask={[/[0-2]/, ':',/[0-5]/, /\d/, '.', /[0-4]/]}
         placeholderChar={'\u2000'}
         showMask
       />
@@ -274,7 +300,7 @@ const raceTab = props => {
   }
 
   function onJockeyChange(e) {
-    setHorseRaceDetail({ ...horseRaceDetail, "jockey": e.value, jockeyChanged: selectedHorse.jockey._id != e.target.value })
+    setHorseRaceDetail({ ...horseRaceDetail, "jockey": e.value, jockeyChanged: selectedHorse.jockey._id !== e.target.value })
   }
   const onEquipMedicationChange = (name, col) => event => {
     var ar = horseRaceDetail[col];
@@ -300,178 +326,185 @@ const raceTab = props => {
   };
 
   return (
-    <React.Fragment>
+
+    <TabPanel value={props.value} index={props.index}>
+      <div>{props.race.distance}. {props.race.procedences} {props.race.horseAge}, {claimings.toString()}. {props.race.spec}</div>
+
+      <div>Premio RD{formatter.format(props.race.purse)}</div>
 
 
-      <TabPanel value={props.value} index={props.index}>
-        <div>{props.race.distance}. {props.race.procedences} {props.race.horseAge}, {claimings.toString()}. {props.race.spec}</div>
-
-        <div>Premio RD{formatter.format(props.race.purse)}</div>
-
-
-        <div>
-          <Button disabled={completed} color="primary" onClick={handleClickListItem} >
-            Add Horse
+      <div>
+        <Button disabled={completed} color="primary" onClick={handleClickListItem} >
+          Add Horse
           <AddIcon />
-          </Button>
-          <Button disabled={completed} color="primary" onClick={handleCloseRace} >
-            Close Race
+        </Button>
+        <Button disabled={completed} color="primary" onClick={handleCloseRace} >
+          Close Race
           <CheckIcon />
+        </Button>
+        <Button disabled={!completed || props.race.hasRaceDetails} color="primary" onClick={handleOpenRaceDetails} >
+          Add Race Details
           </Button>
-          <Button disabled={!completed || props.race.hasRaceDetails} color="primary" onClick={handleOpenRaceDetails} >
-            Add Race Details
+        <Button disabled={!props.race.hasRaceDetails} color="primary" onClick={handleOpenHorseRaceDetails} >
+          Add Horse Race Details
           </Button>
-          <Button disabled={!props.race.hasRaceDetails} color="primary" onClick={handleOpenHorseRaceDetails} >
-            Add Horse Race Details
-          </Button>
-        </div>
+      </div>
 
 
-        {
-          horses
-        }
+      {
+        horses
+      }
 
-        <ConfirmationDialogRaw
-          id="add-horse"
-          open={open}
-          keepMounted
-          onClose={handleClose}
-          jockeys={props.jockeys}
-          stables={props.stables}
-          trainers={props.trainers}
-          date={props.programDate}
-          claimings={props.race.claimings}
-          horsesqty={props.race.horses.length + 1}
-          racenumber={props.race.event}
-          distance={props.race.distance}
-          onHorseAdded={props.horseaddedtorace}
-          raceId={props.race._id}
-          index={props.index}
-        />
+      <ConfirmationDialogRaw
+        id="add-horse"
+        open={open}
+        keepMounted
+        onClose={handleClose}
+        jockeys={props.jockeys}
+        stables={props.stables}
+        trainers={props.trainers}
+        date={props.programDate}
+        claimings={props.race.claimings}
+        horsesqty={props.race.horses.length + 1}
+        racenumber={props.race.event}
+        distance={props.race.distance}
+        onHorseAdded={props.horseaddedtorace}
+        raceId={props.race._id}
+        index={props.index}
+      />
 
 
 
-        {/* RACE DETAILS DIALOG*/}
-        <Dialog
-          open={openRaceDetails}
-          keepMounted
-          onClose={handleCloseRaceDetails}>
-          <DialogTitle >Race Details</DialogTitle>
-          <DialogContent>
-            <form style={{ display: "flex", flexDirection: "column", margin: "auto", width: 'fit-content' }}>
-              <FormControl style={{ marginTop: 2, minWidth: 200 }}>
-                <InputLabel htmlFor="select-multiple-checkbox">Select Retired Horses</InputLabel>
-                <Select
-                  multiple
-                  value={selectedRetiredHorses}
-                  onChange={handleRetirementChange}
-                  input={<Input id="select-multiple-checkbox" />}
-                  renderValue={selected => (
-                    <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-                      {selected.map(value => (
-                        <Chip key={value} label={horseRaceDetailsIds.find(detail => detail.id === value).name} style={{ display: 'flex', flexWrap: 'wrap' }} />
-                      ))}
-                    </div>
-                  )}
-                  MenuProps={MenuProps}
-                >
-                  {
-                    horseRaceDetailsIds.map(raceDetail => (
-                      <MenuItem key={raceDetail.id} value={raceDetail.id}>
-                        <Checkbox checked={selectedRetiredHorses.indexOf(raceDetail.id) > -1} />
-                        <ListItemText primary={raceDetail.name} />
-                      </MenuItem>
-                    ))
-                  }
-                </Select>
+      {/* RACE DETAILS DIALOG*/}
+      <Dialog
+        open={openRaceDetails}
+        keepMounted
+        onClose={handleCloseRaceDetails}>
+        <DialogTitle >Race Details</DialogTitle>
+        <DialogContent>
+          <form style={{ display: "flex", flexDirection: "column", margin: "auto", width: 'fit-content' }}>
+            <FormControl style={{ marginTop: 2, minWidth: 200 }}>
+              <InputLabel htmlFor="select-multiple-checkbox">Select Retired Horses</InputLabel>
+              <Select
+                multiple
+                value={selectedRetiredHorses}
+                onChange={handleRetirementChange}
+                input={<Input id="select-multiple-checkbox" />}
+                renderValue={selected => (
+                  <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                    {selected.map(value => (
+                      <Chip key={value} label={horseRaceDetailsIds.find(detail => detail.id === value).name} style={{ display: 'flex', flexWrap: 'wrap' }} />
+                    ))}
+                  </div>
+                )}
+                MenuProps={MenuProps}
+              >
+                {
+                  horseRaceDetailsIds.map(raceDetail => (
+                    <MenuItem key={raceDetail.id} value={raceDetail.id}>
+                      <Checkbox checked={selectedRetiredHorses.indexOf(raceDetail.id) > -1} />
+                      <ListItemText primary={raceDetail.name} />
+                    </MenuItem>
+                  ))
+                }
+              </Select>
 
-              </FormControl>
+            </FormControl>
+            <div>
+
+              <InputLabel htmlFor="formatted-text-mask-input">Track Condition</InputLabel>
+              <Select
+                value={raceDetails.trackCondition}
+                onChange={(e) => setraceDetails({ ...raceDetails, trackCondition: e.target.value })}
+              >
+                <MenuItem value={"L"}>L</MenuItem>
+                <MenuItem value={"F"}>F</MenuItem>
+                <MenuItem value={"H"}>H</MenuItem>
+              </Select>
+
+            </div>
+
+            <div>
+
+              <InputLabel htmlFor="formatted-text-mask-input">1/4</InputLabel>
+              <Select
+                value={timeLeader.quarterMile.split('.')[0]}
+                onChange={handleChangeQuater('quarter')}
+              >
+                <MenuItem value={22}>22</MenuItem>
+                <MenuItem value={23}>23</MenuItem>
+                <MenuItem value={24}>24</MenuItem>
+                <MenuItem value={25}>25</MenuItem>
+                <MenuItem value={26}>26</MenuItem>
+                <MenuItem value={27}>27</MenuItem>
+              </Select>
+
+              <Select
+                value={timeLeader.quarterMile.split('.')[1]}
+                onChange={handleChangeQuater('quarterFraction')}
+              >
+                <MenuItem value={0}>0</MenuItem>
+                <MenuItem value={1}>1</MenuItem>
+                <MenuItem value={2}>2</MenuItem>
+                <MenuItem value={3}>3</MenuItem>
+                <MenuItem value={4}>4</MenuItem>
+              </Select>
+
+            </div>
+
+            <div>
+
+              <InputLabel htmlFor="formatted-text-mask-input">1/2</InputLabel>
+              <Select
+                value={timeLeader.halfMile.split('.')[0]}
+                onChange={handleChangeHalfMile('halfMile')}
+                disabled={!raceDetails.times.quarterMile}
+              >
+                <MenuItem value={'45'}>45</MenuItem>
+                <MenuItem value={'46'}>46</MenuItem>
+                <MenuItem value={'47'}>47</MenuItem>
+                <MenuItem value={'48'}>48</MenuItem>
+                <MenuItem value={'49'}>49</MenuItem>
+                <MenuItem value={'50'}>50</MenuItem>
+              </Select>
+
+              <Select
+                value={timeLeader.halfMile.split('.')[1]}
+                onChange={handleChangeHalfMile('halfMileFraction')}
+                disabled={!raceDetails.times.quarterMile}
+              >
+                <MenuItem value={0}>0</MenuItem>
+                <MenuItem value={1}>1</MenuItem>
+                <MenuItem value={2}>2</MenuItem>
+                <MenuItem value={3}>3</MenuItem>
+                <MenuItem value={4}>4</MenuItem>
+              </Select>
+
+            </div>
+
+            {
+              props.race.distance > 1200 &&
               <div>
 
-                <InputLabel htmlFor="formatted-text-mask-input">1/4</InputLabel>
+                <InputLabel htmlFor="formatted-text-mask-input">3/4</InputLabel>
                 <Select
-                  value={raceDetails.trackCondition}
-                  onChange={(e) => setraceDetails({...raceDetails, trackCondition: e.target.value})}
+                  value={timeLeader.thirdQuarter.split('.')[0]}
+                  onChange={handleChangeThirdQuarter('halfMile')}
                 >
-                  <MenuItem value={"L"}>L</MenuItem>
-                  <MenuItem value={"F"}>F</MenuItem>
-                  <MenuItem value={"H"}>H</MenuItem>                  
-                </Select>
-
-              </div>
-              <div>
-
-                <InputLabel htmlFor="formatted-text-mask-input">1/4</InputLabel>
-                <Select
-                  value={raceDetails.times.quarterMile.split('.')[0]}
-                  onChange={handleChangeQuater('quarter')}
-                >
-                  <MenuItem value={22}>22</MenuItem>
-                  <MenuItem value={23}>23</MenuItem>
-                  <MenuItem value={24}>24</MenuItem>
-                  <MenuItem value={25}>25</MenuItem>
-                  <MenuItem value={26}>26</MenuItem>
-                  <MenuItem value={27}>27</MenuItem>
-                </Select>
-
-                <Select
-                  value={raceDetails.times.quarterMile.split('.')[1]}
-                  onChange={handleChangeQuater('quarterFraction')}
-                >
-                  <MenuItem value={0}>0</MenuItem>
-                  <MenuItem value={1}>1</MenuItem>
-                  <MenuItem value={2}>2</MenuItem>
-                  <MenuItem value={3}>3</MenuItem>
-                  <MenuItem value={4}>4</MenuItem>
-                </Select>
-
-              </div>
-
-              <div>
-
-                <InputLabel htmlFor="formatted-text-mask-input">1/2</InputLabel>
-                <Select
-                  value={raceDetails.times.halfMile.split('.')[0]}
-                  onChange={handleChangeHalfMile('halfMile')}
-                >
-                  <MenuItem value={'45'}>45</MenuItem>
-                  <MenuItem value={'46'}>46</MenuItem>
-                  <MenuItem value={'47'}>47</MenuItem>
-                  <MenuItem value={'48'}>48</MenuItem>
-                  <MenuItem value={'49'}>49</MenuItem>
-                  <MenuItem value={'50'}>50</MenuItem>
-                </Select>
-
-                <Select
-                  value={raceDetails.times.halfMile.split('.')[1]}
-                  onChange={handleChangeHalfMile('halfMileFraction')}
-                >
-                  <MenuItem value={3}>3</MenuItem>
-                  <MenuItem value={1}>1</MenuItem>
-                  <MenuItem value={2}>2</MenuItem>
-                  <MenuItem value={3}>3</MenuItem>
-                  <MenuItem value={4}>4</MenuItem>
-                </Select>
-
-              </div>
-
-              <div>
-                <InputLabel htmlFor="formatted-text-mask-input">Finish</InputLabel>
-                <Select
-                  value={raceDetails.times.finish.split('.')[0]}
-                  onChange={handleChangeFinish('finish')}
-                >
+                  <MenuItem value={'1:09'}>1:09</MenuItem>
+                  <MenuItem value={'1:10'}>1:10</MenuItem>
+                  <MenuItem value={'1:11'}>1:11</MenuItem>
+                  <MenuItem value={'1:12'}>1:12</MenuItem>
+                  <MenuItem value={'1:13'}>1:13</MenuItem>
                   <MenuItem value={'1:14'}>1:14</MenuItem>
-                  <MenuItem value={23}>23</MenuItem>
-                  <MenuItem value={24}>24</MenuItem>
-                  <MenuItem value={25}>25</MenuItem>
-                  <MenuItem value={26}>26</MenuItem>
-                  <MenuItem value={27}>27</MenuItem>
+                  <MenuItem value={'1:15'}>1:15</MenuItem>
+                  <MenuItem value={'1:16'}>1:16</MenuItem>
+                  <MenuItem value={'1:17'}>1:17</MenuItem>
                 </Select>
 
                 <Select
-                  value={raceDetails.times.finish.split('.')[1]}
-                  onChange={handleChangeFinish('finishFraction')}
+                  value={timeLeader.thirdQuarter.split('.')[1]}
+                  onChange={handleChangeThirdQuarter('halfMileFraction')}
                 >
                   <MenuItem value={0}>0</MenuItem>
                   <MenuItem value={1}>1</MenuItem>
@@ -481,131 +514,167 @@ const raceTab = props => {
                 </Select>
 
               </div>
-            </form>
+            }
 
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setOpenRaceDetails(false)} >
-              Close
-            </Button>
-            <Button color="primary" onClick={saveRaceDetailsHandler}>
-              Save
+
+            <div>
+              <InputLabel htmlFor="formatted-text-mask-input">Finish</InputLabel>
+              {/*<Select
+                value={timeLeader.finish.split('.')[0]}
+                onChange={handleChangeFinish('finish')}
+                disabled={!raceDetails.times.halfMile}
+              >
+                <MenuItem value={'1:14'}>1:14</MenuItem>
+                <MenuItem value={23}>23</MenuItem>
+                <MenuItem value={24}>24</MenuItem>
+                <MenuItem value={25}>25</MenuItem>
+                <MenuItem value={26}>26</MenuItem>
+                <MenuItem value={27}>27</MenuItem>
+              </Select>*/}
+              <Input
+                value={timeLeader.finish}
+                onChange={handleChangeFinish('finish')}
+                id="formatted-text-mask-input"
+                inputComponent={TextMaskCustom}
+              />
+
+              {/*
+              <Select
+                value={timeLeader.finish.split('.')[1]}
+                onChange={handleChangeFinish('finishFraction')}
+                disabled={!raceDetails.times.halfMile}
+              >
+                <MenuItem value={0}>0</MenuItem>
+                <MenuItem value={1}>1</MenuItem>
+                <MenuItem value={2}>2</MenuItem>
+                <MenuItem value={3}>3</MenuItem>
+                <MenuItem value={4}>4</MenuItem>
+              </Select>*/}
+
+            </div>
+          </form>
+
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseRaceDetails} >
+            Close
           </Button>
-          </DialogActions>
+          <Button color="primary" onClick={saveRaceDetailsHandler}>
+            Save
+          </Button>
+        </DialogActions>
 
-        </Dialog>
-        {/* RACE DETAILS DIALOG ENDING*/}
+      </Dialog>
+      {/* RACE DETAILS DIALOG ENDING*/}
 
 
 
 
-        {/* HORSE RACE DETAILS DIALOG START*/}
-        <Dialog
-          disableBackdropClick
-          disableEscapeKeyDown
-          open={openHorseRaceDetails}
-          keepMounted
-          onClose={handleCloseHorseRaceDetails}>
-          <DialogTitle >Race Details</DialogTitle>
-          <DialogContent>
-            <form style={{ display: "flex", flexDirection: "column", margin: "auto", width: 'fit-content' }}>
-              <FormControl style={{ marginTop: 2, minWidth: 120 }}>
-                <InputLabel htmlFor="max-width">Select Horse</InputLabel>
-                <Select
-                  value={selectedHorse._id}
-                  onChange={handleHorseChange}
-                  inputProps={{
-                    name: 'max-width',
-                    id: 'max-width',
-                  }}
-                >
-                  {
-                    props.race.horses.map(horse => {
-                      const value = horse.raceDetails.find(detail => props.programDate.toISOString() === detail.date);
-                      return <MenuItem key={horse._id} value={value._id}>{horse.name}</MenuItem>
-                    })
-                  }
-                </Select>
+      {/* HORSE RACE DETAILS DIALOG START*/}
+      <Dialog
+        disableBackdropClick
+        disableEscapeKeyDown
+        open={openHorseRaceDetails}
+        keepMounted
+        onClose={handleCloseHorseRaceDetails}>
+        <DialogTitle >Race Details</DialogTitle>
+        <DialogContent>
+          <form style={{ display: "flex", flexDirection: "column", margin: "auto", width: 'fit-content' }}>
+            <FormControl style={{ marginTop: 2, minWidth: 120 }}>
+              <InputLabel htmlFor="max-width">Select Horse</InputLabel>
+              <Select
+                value={selectedHorse._id}
+                onChange={handleHorseChange}
+                inputProps={{
+                  name: 'max-width',
+                  id: 'max-width',
+                }}
+              >
+                {
+                  props.race.horses.map(horse => {
+                    const value = horse.raceDetails.find(detail => props.programDate.toISOString() === detail.date);
+                    return <MenuItem key={horse._id} value={value._id}>{horse.name}</MenuItem>
+                  })
+                }
+              </Select>
 
-              </FormControl>
-              {
-                selectedHorse.name &&
-                <React.Fragment>
-                  <FormControl>
-                    <label>Jockey</label>
-                    <Dropdown options={jockeys} filter={true} value={horseRaceDetail.jockey} onChange={onJockeyChange} />
-                  </FormControl>
-                  <FormControl>
-                    <InputLabel htmlFor="formatted-text-mask-input">Finish</InputLabel>
-                    <Input
-                      value={raceDetails.times.finish}
-                      onChange={handleChangeQuater('textmask')}
-                      id="formatted-text-mask-input"
-                      inputComponent={TextMaskCustom}
+            </FormControl>
+            {
+              selectedHorse.name &&
+              <React.Fragment>
+                <FormControl>
+                  <label>Jockey</label>
+                  <Dropdown options={jockeys} filter={true} value={horseRaceDetail.jockey} onChange={onJockeyChange} />
+                </FormControl>
+                <FormControl>
+                  <InputLabel htmlFor="formatted-text-mask-input">Finish</InputLabel>
+                  <Input
+                    value={raceDetails.times.finish}
+                    onChange={handleChangeQuater('textmask')}
+                    id="formatted-text-mask-input"
+                    inputComponent={TextMaskCustom}
+                  />
+                </FormControl>
+                <FormControl>
+                  <InputLabel htmlFor="formatted-text-mask-input">Total Horses</InputLabel>
+                  <Input disabled={true} value={raceDetails.totalHorses} />
+                </FormControl>
+                <div>
+                  <FormLabel component="legend">Horse Equipments</FormLabel>
+                  <FormGroup style={{ flexDirection: "row" }}>
+                    <FormControlLabel
+                      control={<Checkbox checked={horseRaceDetail.horseEquipments.indexOf("E") > -1} onChange={onEquipMedicationChange("E", "horseEquipments")} value="E" />}
+                      label="E"
                     />
-                  </FormControl>
-                  <FormControl>
-                    <InputLabel htmlFor="formatted-text-mask-input">Total Horses</InputLabel>
-                    <Input disabled={true} value={raceDetails.totalHorses} />
-                  </FormControl>
-                  <div>
-                    <FormLabel component="legend">Horse Equipments</FormLabel>
-                    <FormGroup style={{ flexDirection: "row" }}>
-                      <FormControlLabel
-                        control={<Checkbox checked={horseRaceDetail.horseEquipments.indexOf("E") > -1} onChange={onEquipMedicationChange("E", "horseEquipments")} value="E" />}
-                        label="E"
-                      />
-                      <FormControlLabel
-                        control={<Checkbox checked={horseRaceDetail.horseEquipments.indexOf("F") > -1} onChange={onEquipMedicationChange("F", "horseEquipments")} value="F" />}
-                        label="F"
-                      />
-                      <FormControlLabel
-                        control={
-                          <Checkbox checked={horseRaceDetail.horseEquipments.indexOf("G") > -1} onChange={onEquipMedicationChange("G", "horseEquipments")} value="G" />}
-                        label="G"
-                      />
-                      <FormControlLabel
-                        control={
-                          <Checkbox checked={horseRaceDetail.horseEquipments.indexOf("Gs") > -1} onChange={onEquipMedicationChange("Gs", "horseEquipments")} value="Gs" />}
-                        label="Gs"
-                      />
-                      <FormControlLabel
-                        control={
-                          <Checkbox checked={horseRaceDetail.horseEquipments.indexOf("LA") > -1} onChange={onEquipMedicationChange("LA", "horseEquipments")} value="LA" />}
-                        label="LA"
-                      />
-                    </FormGroup>
-                  </div>
-                  <div>
-                    <FormLabel component="legend">Horse Medications</FormLabel>
-                    <FormGroup style={{ flexDirection: "row" }}>
-                      <FormControlLabel
-                        control={<Checkbox checked={horseRaceDetail.horseEquipments.indexOf("L") > -1} onChange={onEquipMedicationChange("L", "horseMedications")} value="L" />}
-                        label="L"
-                      />
-                      <FormControlLabel
-                        control={<Checkbox checked={horseRaceDetail.horseEquipments.indexOf("B") > -1} onChange={onEquipMedicationChange("B", "horseMedications")} value="B" />}
-                        label="B"
-                      />
-                    </FormGroup>
-                  </div>
-                </React.Fragment>
-              }
-            </form>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCloseHorseRaceDetails} >
-              Close
+                    <FormControlLabel
+                      control={<Checkbox checked={horseRaceDetail.horseEquipments.indexOf("F") > -1} onChange={onEquipMedicationChange("F", "horseEquipments")} value="F" />}
+                      label="F"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox checked={horseRaceDetail.horseEquipments.indexOf("G") > -1} onChange={onEquipMedicationChange("G", "horseEquipments")} value="G" />}
+                      label="G"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox checked={horseRaceDetail.horseEquipments.indexOf("Gs") > -1} onChange={onEquipMedicationChange("Gs", "horseEquipments")} value="Gs" />}
+                      label="Gs"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox checked={horseRaceDetail.horseEquipments.indexOf("LA") > -1} onChange={onEquipMedicationChange("LA", "horseEquipments")} value="LA" />}
+                      label="LA"
+                    />
+                  </FormGroup>
+                </div>
+                <div>
+                  <FormLabel component="legend">Horse Medications</FormLabel>
+                  <FormGroup style={{ flexDirection: "row" }}>
+                    <FormControlLabel
+                      control={<Checkbox checked={horseRaceDetail.horseEquipments.indexOf("L") > -1} onChange={onEquipMedicationChange("L", "horseMedications")} value="L" />}
+                      label="L"
+                    />
+                    <FormControlLabel
+                      control={<Checkbox checked={horseRaceDetail.horseEquipments.indexOf("B") > -1} onChange={onEquipMedicationChange("B", "horseMedications")} value="B" />}
+                      label="B"
+                    />
+                  </FormGroup>
+                </div>
+              </React.Fragment>
+            }
+          </form>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseHorseRaceDetails} >
+            Close
             </Button>
-            <Button color="primary" onClick={saveHorseRaceDetailsHandler}>
-              Save
+          <Button color="primary" onClick={saveHorseRaceDetailsHandler}>
+            Save
             </Button>
-          </DialogActions>
+        </DialogActions>
 
-        </Dialog>
-        {/* HORSE RACE DETAILS DIALOG ENDING*/}
-
-      </TabPanel>
+      </Dialog>
+      {/* HORSE RACE DETAILS DIALOG ENDING*/}
 
 
       {/* Loader and Spinner*/}
@@ -616,7 +685,10 @@ const raceTab = props => {
           <Spinner />
         </React.Fragment>
       }
-    </React.Fragment>
+
+    </TabPanel>
+
+
   )
 }
 

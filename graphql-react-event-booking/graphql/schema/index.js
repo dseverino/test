@@ -46,6 +46,7 @@ module.exports = buildSchema(`
     times: TimeInput
     totalHorses: Int
     hasRaceDetails: Boolean
+    trackCondition: String
   }
 
   type Horse {
