@@ -223,7 +223,7 @@ const raceTab = props => {
     var times = raceDetails.times;
     times.finish = event.target.value;
     timeLeader.finish = event.target.value
-    
+
     /*
     if (name === 'finish') {
       times.finish = event.target.value + '.' + times.finish.split('.')[1]
@@ -243,7 +243,7 @@ const raceTab = props => {
         ref={ref => {
           inputRef(ref ? ref.inputElement : null);
         }}
-        mask={[/[0-2]/, ':',/[0-5]/, /\d/, '.', /[0-4]/]}
+        mask={[/[0-2]/, ':', /[0-5]/, /\d/, '.', /[0-4]/]}
         placeholderChar={'\u2000'}
         showMask
       />
@@ -531,11 +531,28 @@ const raceTab = props => {
                 <MenuItem value={26}>26</MenuItem>
                 <MenuItem value={27}>27</MenuItem>
               </Select>*/}
-              <Input
+              <TextField
+                value={timeLeader.finish}
+                onChange={handleChangeFinish('finish')}                
+                style={{width: 37}}
+                label="Min"
+                inputProps={{ 'aria-label': 'bare' }}
+              />
+              <span>:</span>
+              <TextField
+                value={timeLeader.finish}
+                onChange={handleChangeFinish('finish')}                
+                label="Sec"
+                style={{width: 37}}
+                inputProps={{ 'aria-label': 'bare' }}
+              />
+              <span>.</span>
+              <TextField
                 value={timeLeader.finish}
                 onChange={handleChangeFinish('finish')}
-                id="formatted-text-mask-input"
-                inputComponent={TextMaskCustom}
+                label="Frac"
+                style={{width: 37}}
+                inputProps={{ 'aria-label': 'bare' }}
               />
 
               {/*
