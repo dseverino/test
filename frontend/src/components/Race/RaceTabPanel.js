@@ -401,7 +401,7 @@ const raceTab = props => {
               >
                 {
                   horseRaceDetailsIds.map(raceDetail => (
-                    <MenuItem key={raceDetail.id} value={raceDetail.id}>
+                    <MenuItem key={raceDetail._id} value={raceDetail._id}>
                       <Checkbox checked={selectedRetiredHorses.indexOf(raceDetail.id) > -1} />
                       <ListItemText primary={raceDetail.name} />
                     </MenuItem>
@@ -519,31 +519,19 @@ const raceTab = props => {
 
             <div>
               <InputLabel htmlFor="formatted-text-mask-input">Finish</InputLabel>
-              {/*<Select
-                value={timeLeader.finish.split('.')[0]}
-                onChange={handleChangeFinish('finish')}
-                disabled={!raceDetails.times.halfMile}
-              >
-                <MenuItem value={'1:14'}>1:14</MenuItem>
-                <MenuItem value={23}>23</MenuItem>
-                <MenuItem value={24}>24</MenuItem>
-                <MenuItem value={25}>25</MenuItem>
-                <MenuItem value={26}>26</MenuItem>
-                <MenuItem value={27}>27</MenuItem>
-              </Select>*/}
               <TextField
                 value={timeLeader.finish}
-                onChange={handleChangeFinish('finish')}                
-                style={{width: 37}}
+                onChange={handleChangeFinish('finish')}
+                style={{ width: 37 }}
                 label="Min"
                 inputProps={{ 'aria-label': 'bare' }}
               />
               <span>:</span>
               <TextField
                 value={timeLeader.finish}
-                onChange={handleChangeFinish('finish')}                
+                onChange={handleChangeFinish('finish')}
                 label="Sec"
-                style={{width: 37}}
+                style={{ width: 37 }}
                 inputProps={{ 'aria-label': 'bare' }}
               />
               <span>.</span>
@@ -551,7 +539,7 @@ const raceTab = props => {
                 value={timeLeader.finish}
                 onChange={handleChangeFinish('finish')}
                 label="Frac"
-                style={{width: 37}}
+                style={{ width: 37 }}
                 inputProps={{ 'aria-label': 'bare' }}
               />
 

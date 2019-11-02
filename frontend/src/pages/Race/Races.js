@@ -194,9 +194,14 @@ class Races extends Component {
                   name                  
                 }
                 raceDetails {
-                  _id
-                  startingPosition
+                  _id                  
                   claiming
+                  date
+                  discarded
+                  distance
+                   times {
+                    quarterMile
+                  }
                   horseMedications
                   horseEquipments
                   jockey{
@@ -211,14 +216,11 @@ class Races extends Component {
                   trainer {
                     name
                     _id
-                  }
-                  date
+                  }                  
                   raceNumber
                   trackCondition          
-                  distance
-                   times {
-                    quarterMile
-                  }
+                  
+                  startingPosition
                   positions{
                     start
                   }
@@ -303,6 +305,7 @@ class Races extends Component {
                 name                  
               }
               raceDetails {
+                _id
                 startingPosition
                 claiming
                 horseMedications
@@ -391,14 +394,14 @@ class Races extends Component {
   }
 
   render() {
-    const tabs = this.state.races.map(race => {
+    const tabs = this.state.races.map(race => {      
       return (
-        <Tab key={race.event} label={this.events[race.event - 1]} />
+        <Tab key={race._id} label={this.events[race.event - 1]} />
       )
     })
     const RaceTabs = this.state.races.map((race, index) => {
       return (
-        <RaceTabPanel hasRaceDetails={this.hasRaceDetails} loading={this.loading} programDate={this.state.programDate} horseaddedtorace={this.addHorseToRace} key={index} race={race} value={this.state.selectedRace} index={index} jockeys={this.state.jockeys} stables={this.state.stables} trainers={this.state.trainers} />
+        <RaceTabPanel hasRaceDetails={this.hasRaceDetails} loading={this.loading} programDate={this.state.programDate} horseaddedtorace={this.addHorseToRace} key={race._id} race={race} value={this.state.selectedRace} index={index} jockeys={this.state.jockeys} stables={this.state.stables} trainers={this.state.trainers} />
       )
     });
     

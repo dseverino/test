@@ -4,16 +4,16 @@ import "./HorseRaceDetail.css"
 
 const horseRaceDetail = props => {
   return (
-    <div style={{ fontSize: 12 }}>
-      <span>
+    <div style={{ fontSize: 12, display: "flex" }}>
+      <div>
         {props.date.replace(/\s+/g, '')} {props.days} Hvc{props.details.raceNumber} {props.details.distance}
-      </span>
-      <span>
+      </div>
+      <div>
         <span>23 0</span>
         <span>45 3</span>
         <span>1:18 4</span>
         <span>1 57 4</span>        
-      </span>
+      </div>
 
       <span>
         {props.details.claiming}

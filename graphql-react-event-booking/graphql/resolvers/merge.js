@@ -285,7 +285,8 @@ const transformRace = race => {
     horses: horseLoader.loadMany(race.horses),
     times: race.times,
     totalHorses: race.totalHorses,
-    hasRaceDetails: race.hasRaceDetails
+    hasRaceDetails: race.hasRaceDetails,
+    trackCondition: race.trackCondition
   }
 }
 

@@ -23,7 +23,12 @@ const horse = props => {
 
         <div style={{ width: "100%" }}>
           <div style={{ fontSize: "12px", display: "flex", width: "100%" }}>
-            <div style={{ width: "67%" }}>{horseRaceDetailsFiltered[0].stable.name} (0-0-0-0)</div>
+            <div style={{ width: "67%", display: "flex" }}>{horseRaceDetailsFiltered[0].stable.name} (0-0-0-0)
+              {
+                horseRaceDetailsFiltered[0].discarded && 
+                <div style={{fontSize: "16px", fontWeight: 500, color: "red", margin: 'auto'}}>Descartada</div>
+              }
+            </div>
             <div style={{ display: "flex", width: "33%", justifyContent: "space-between" }}>
               <div>{horseRaceDetailsFiltered[0].trainer.name} (0-0-0-0)</div>
               <div>{horseRaceDetailsFiltered[0].claiming}</div>
