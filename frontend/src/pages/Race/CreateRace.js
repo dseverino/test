@@ -288,6 +288,7 @@ class CreateRacePage extends Component {
       { label: "40,000 Libres", value: "40,000 Libres" },
       { label: "75,000 Libres", value: "75,000 Libres" },
       { label: "75,000 Ganadores de 1 y 2 primeras", value: "75,000 Ganadores de 1 y 2 primeras" },
+      { label: "75,000 No Ganadores", value: "75,000 No Ganadores" },
       { label: "125,000 Libres", value: "125,000 Libres" },
       { label: "125,000 Ganadores de 1 y 2 primeras", value: "125,000 Ganadores de 1 y 2 primeras" },
       { label: "125,000 No Ganadores", value: "125,000 No Ganadores" },

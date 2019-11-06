@@ -527,12 +527,12 @@ const ConfirmationDialogRaw = (props) => {
                             label="F"
                           />
                           <FormControlLabel
-                            control={<Checkbox checked={horseRaceDetail.horseEquipments.indexOf("G") > -1} onChange={onEquipMedicationChange("G", "horseEquipments")} value="G" />}
+                            control={<Checkbox checked={horseRaceDetail.horseEquipments.indexOf("G") > -1} disabled={horseRaceDetail.horseEquipments.indexOf("Gs") > -1} onChange={onEquipMedicationChange("G", "horseEquipments")} value="G" />}
                             label="G"
                           />
                           <FormControlLabel
                             control={
-                              <Checkbox checked={horseRaceDetail.horseEquipments.indexOf("Gs") > -1} onChange={onEquipMedicationChange("Gs", "horseEquipments")} value="Gs" />}
+                              <Checkbox checked={horseRaceDetail.horseEquipments.indexOf("Gs") > -1} disabled={horseRaceDetail.horseEquipments.indexOf("G") > -1} onChange={onEquipMedicationChange("Gs", "horseEquipments")} value="Gs" />}
                             label="Gs"
                           />
                           <FormControlLabel

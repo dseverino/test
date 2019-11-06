@@ -58,11 +58,12 @@ const raceTab = props => {
 
   const [completed, setCompleted] = useState(props.race.completed)
 
-  var timeLeader = {
+  const [timeLeader, setTimeLeader] = useState({
     quarterMile: "23.0",
     halfMile: '47.0',
-    thirdQuarter: '1:12.0'
-  }
+    thirdQuarter: '1:12.0',
+    finish: '0:57.0'
+  });
 
   const [raceDetails, setraceDetails] = useState({
     times: {
@@ -193,8 +194,10 @@ const raceTab = props => {
     else {
       times.quarterMile = times.quarterMile.split('.')[0] + '.' + event.target.value
     }
-    setraceDetails({ ...raceDetails, times: times })
-    timeLeader = times
+
+    setraceDetails({ ...raceDetails, times: times });
+    setTimeLeader({ ...timeLeader, quarterMile: times.quarterMile });
+
   }
 
   const handleChangeHalfMile = name => event => {
@@ -206,6 +209,7 @@ const raceTab = props => {
       times.halfMile = times.halfMile.split('.')[0] + '.' + event.target.value
     }
     setraceDetails({ ...raceDetails, times: times })
+    setTimeLeader({ ...timeLeader, halfMile: times.halfMile });
   }
 
   const handleChangeThirdQuarter = name => event => {
@@ -520,7 +524,7 @@ const raceTab = props => {
             <div>
               <InputLabel htmlFor="formatted-text-mask-input">Finish</InputLabel>
               <TextField
-                value={timeLeader.finish}
+                value={timeLeader.finish.split(":")[0]}
                 onChange={handleChangeFinish('finish')}
                 style={{ width: 37 }}
                 label="Min"
@@ -528,7 +532,7 @@ const raceTab = props => {
               />
               <span>:</span>
               <TextField
-                value={timeLeader.finish}
+                value={timeLeader.finish.substring(2).split(":")[0]}
                 onChange={handleChangeFinish('finish')}
                 label="Sec"
                 style={{ width: 37 }}
@@ -536,7 +540,7 @@ const raceTab = props => {
               />
               <span>.</span>
               <TextField
-                value={timeLeader.finish}
+                value={timeLeader.finish.split(".")[1]}
                 onChange={handleChangeFinish('finish')}
                 label="Frac"
                 style={{ width: 37 }}

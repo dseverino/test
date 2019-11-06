@@ -12,7 +12,7 @@ const horseRaceDetail = props => {
         <span>23 0</span>
         <span>45 3</span>
         <span>1:18 4</span>
-        <span>1 57 4</span>        
+        <span>1 57 4</span>
       </div>
 
       <span>
