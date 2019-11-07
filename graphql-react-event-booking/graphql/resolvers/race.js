@@ -2,6 +2,8 @@ const Race = require("../../models/race");
 const Program = require("../../models/program");
 const { transformRace } = require("./merge")
 
+const HorseRaceDetail = require("../../models/horseRaceDetail");
+
 module.exports = {
 
   races: async (args, req) => {
@@ -46,7 +48,7 @@ module.exports = {
   completeRace: async (args) => {
     try {
       const race = await Race.findById(args.raceId)
-      console.log(args.raceId)
+
       if (race) {
         race.completed = true
         await race.save();
@@ -80,9 +82,14 @@ module.exports = {
 
   updateRaceDetails: async (args) => {
     try {
-      const race = await Race.update({_id: args.raceId}, args.raceDetails)
-      
-      if (race && race.ok) {       
+      const race = await Race.update({ _id: args.raceId }, args.raceDetails)
+      console.log(args.retiredHorses)
+      console.log(args.retiredHorses.length)
+
+      if (race && race.ok) {
+        if (args.retiredHorses.length) {
+          await HorseRaceDetail.updateMany({ _id: { $in: args.retiredHorses } }, { $set: { retired: true } })
+        }
         return args.raceDetails;
       }
     }

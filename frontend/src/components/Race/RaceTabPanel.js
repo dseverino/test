@@ -41,6 +41,7 @@ const formatter = new Intl.NumberFormat('en-US', {
 const raceTab = props => {
 
   const { times } = props;
+  const horseEquipments = ["E", "F", "G", "Gs", "LA"];
 
   const jockeys = props.jockeys.map(jockey => {
     return { label: jockey.name, value: jockey._id }
@@ -68,7 +69,8 @@ const raceTab = props => {
   const [raceDetails, setraceDetails] = useState({
     times: {
       quarterMile: "23.0",
-      halfMile: '47.0'
+      halfMile: '47.0',
+      finish: '0:57.0'
     },
     totalHorses: props.race.horses.length,
     hasRaceDetails: true,
@@ -82,7 +84,7 @@ const raceTab = props => {
     jockeyChanged: false
   });
 
-  const [selectedHorse, setSelectedHorse] = useState({ _id: "" })
+  const [selectedHorse, setSelectedHorse] = useState({ _id: "", retired: false })
   const [selectedRetiredHorses, setSelectedRetiredHorses] = useState([]);
 
   useEffect(() => {
@@ -164,22 +166,26 @@ const raceTab = props => {
   }
 
   function handleCloseHorseRaceDetails() {
-    console.log(horseRaceDetail)
     setOpenHorseRaceDetails(false);
   }
 
   function handleOpenRaceDetails() {
     setOpenRaceDetails(true);
   }
+
   function handleOpenHorseRaceDetails() {
     setOpenHorseRaceDetails(true);
   }
+
   function handleRetirementChange(e) {
     setSelectedRetiredHorses(e.target.value);
   }
+
   function handleHorseChange(e) {
-    setSelectedHorse(horseRaceDetailsIds.find((el) => el._id === e.target.value));
+    const horseRaceDetailSelected = horseRaceDetailsIds.find((el) => el._id === e.target.value)
+    setSelectedHorse({ ...horseRaceDetailSelected, retired: horseRaceDetailSelected.retired || false });
   }
+
   useEffect(() => {
     if (selectedHorse.name) {
       setHorseRaceDetail({ ...selectedHorse, jockey: selectedHorse.jockey._id });
@@ -225,17 +231,19 @@ const raceTab = props => {
 
   const handleChangeFinish = name => event => {
     var times = raceDetails.times;
-    times.finish = event.target.value;
-    timeLeader.finish = event.target.value
 
-    /*
-    if (name === 'finish') {
-      times.finish = event.target.value + '.' + times.finish.split('.')[1]
+    if (name === 'finishMinutes') {
+      times.finish = event.target.value + ':' + times.finish.split(':')[1]
+    }
+    else if (name === 'finishSeconds') {
+      times.finish = times.finish.split(":")[0] + ":" + event.target.value + '.' + times.finish.split('.')[1]
     }
     else {
       times.finish = times.finish.split('.')[0] + '.' + event.target.value
-    }*/
+    }
+    console.log(times)
     setraceDetails({ ...raceDetails, times: times })
+    setTimeLeader({ ...timeLeader, finish: times.finish });
   }
 
   function TextMaskCustom(props) {
@@ -260,19 +268,22 @@ const raceTab = props => {
 
     const requestBody = {
       query: `
-        mutation UpdateRaceDetails($raceId: ID, $raceDetails: RaceDetailsInput){
-          updateRaceDetails(raceId: $raceId, raceDetails: $raceDetails){
-            times{
+        mutation UpdateRaceDetails($raceId: ID, $raceDetails: RaceDetailsInput, $retiredHorses: [ID]){
+          updateRaceDetails(raceId: $raceId, raceDetails: $raceDetails, retiredHorses: $retiredHorses){
+            times{              
               quarterMile
+              halfMile
               finish
             }
+            trackCondition
             totalHorses
-          }  
+          }
         }          
       `,
       variables: {
         raceId: props.race._id,
-        raceDetails: raceDetails
+        raceDetails: raceDetails,
+        retiredHorses: selectedRetiredHorses
       }
     }
 
@@ -292,6 +303,8 @@ const raceTab = props => {
       .then(resData => {
         props.loading(false);
         props.hasRaceDetails(props.index);
+        setOpenRaceDetails(false)
+        props.loadProgramRaces();
       })
       .catch(error => {
         console.log(error)
@@ -306,6 +319,7 @@ const raceTab = props => {
   function onJockeyChange(e) {
     setHorseRaceDetail({ ...horseRaceDetail, "jockey": e.value, jockeyChanged: selectedHorse.jockey._id !== e.target.value })
   }
+
   const onEquipMedicationChange = (name, col) => event => {
     var ar = horseRaceDetail[col];
     if (event.target.checked) {
@@ -523,42 +537,35 @@ const raceTab = props => {
 
             <div>
               <InputLabel htmlFor="formatted-text-mask-input">Finish</InputLabel>
-              <TextField
-                value={timeLeader.finish.split(":")[0]}
-                onChange={handleChangeFinish('finish')}
-                style={{ width: 37 }}
-                label="Min"
-                inputProps={{ 'aria-label': 'bare' }}
-              />
+              <Select
+                value={timeLeader.finish.split(':')[0]}
+                onChange={handleChangeFinish('finishMinutes')}
+              >
+                <MenuItem value={0}>0</MenuItem>
+                <MenuItem value={1}>1</MenuItem>
+                <MenuItem value={2}>2</MenuItem>
+              </Select>
+
               <span>:</span>
               <TextField
-                value={timeLeader.finish.substring(2).split(":")[0]}
-                onChange={handleChangeFinish('finish')}
+                value={timeLeader.finish.split(":")[1].split(".")[0]}
+                onChange={handleChangeFinish('finishSeconds')}
                 label="Sec"
+                onFocus={(e) => e.target.select()}
                 style={{ width: 37 }}
                 inputProps={{ 'aria-label': 'bare' }}
               />
               <span>.</span>
-              <TextField
-                value={timeLeader.finish.split(".")[1]}
-                onChange={handleChangeFinish('finish')}
-                label="Frac"
-                style={{ width: 37 }}
-                inputProps={{ 'aria-label': 'bare' }}
-              />
-
-              {/*
               <Select
                 value={timeLeader.finish.split('.')[1]}
                 onChange={handleChangeFinish('finishFraction')}
-                disabled={!raceDetails.times.halfMile}
               >
                 <MenuItem value={0}>0</MenuItem>
                 <MenuItem value={1}>1</MenuItem>
                 <MenuItem value={2}>2</MenuItem>
                 <MenuItem value={3}>3</MenuItem>
                 <MenuItem value={4}>4</MenuItem>
-              </Select>*/}
+              </Select>
 
             </div>
           </form>
@@ -586,7 +593,7 @@ const raceTab = props => {
         open={openHorseRaceDetails}
         keepMounted
         onClose={handleCloseHorseRaceDetails}>
-        <DialogTitle >Race Details</DialogTitle>
+        <DialogTitle >Horse Race Details</DialogTitle>
         <DialogContent>
           <form style={{ display: "flex", flexDirection: "column", margin: "auto", width: 'fit-content' }}>
             <FormControl style={{ marginTop: 2, minWidth: 120 }}>
@@ -611,19 +618,25 @@ const raceTab = props => {
             {
               selectedHorse.name &&
               <React.Fragment>
+                <FormControlLabel
+                  control={<Checkbox checked={selectedHorse.retired} disabled={true} />}
+                  label="Retired"
+                />
                 <FormControl>
                   <label>Jockey</label>
-                  <Dropdown options={jockeys} filter={true} value={horseRaceDetail.jockey} onChange={onJockeyChange} />
+                  <Dropdown disabled={selectedHorse.retired} options={jockeys} filter={true} value={horseRaceDetail.jockey} onChange={onJockeyChange} />
                 </FormControl>
                 <FormControl>
                   <InputLabel htmlFor="formatted-text-mask-input">Finish</InputLabel>
                   <Input
                     value={raceDetails.times.finish}
+                    disabled={selectedHorse.retired}
                     onChange={handleChangeQuater('textmask')}
                     id="formatted-text-mask-input"
                     inputComponent={TextMaskCustom}
                   />
                 </FormControl>
+                
                 <FormControl>
                   <InputLabel htmlFor="formatted-text-mask-input">Total Horses</InputLabel>
                   <Input disabled={true} value={raceDetails.totalHorses} />
@@ -631,40 +644,27 @@ const raceTab = props => {
                 <div>
                   <FormLabel component="legend">Horse Equipments</FormLabel>
                   <FormGroup style={{ flexDirection: "row" }}>
-                    <FormControlLabel
-                      control={<Checkbox checked={horseRaceDetail.horseEquipments.indexOf("E") > -1} onChange={onEquipMedicationChange("E", "horseEquipments")} value="E" />}
-                      label="E"
-                    />
-                    <FormControlLabel
-                      control={<Checkbox checked={horseRaceDetail.horseEquipments.indexOf("F") > -1} onChange={onEquipMedicationChange("F", "horseEquipments")} value="F" />}
-                      label="F"
-                    />
-                    <FormControlLabel
-                      control={
-                        <Checkbox checked={horseRaceDetail.horseEquipments.indexOf("G") > -1} onChange={onEquipMedicationChange("G", "horseEquipments")} value="G" />}
-                      label="G"
-                    />
-                    <FormControlLabel
-                      control={
-                        <Checkbox checked={horseRaceDetail.horseEquipments.indexOf("Gs") > -1} onChange={onEquipMedicationChange("Gs", "horseEquipments")} value="Gs" />}
-                      label="Gs"
-                    />
-                    <FormControlLabel
-                      control={
-                        <Checkbox checked={horseRaceDetail.horseEquipments.indexOf("LA") > -1} onChange={onEquipMedicationChange("LA", "horseEquipments")} value="LA" />}
-                      label="LA"
-                    />
+                    {
+                      horseEquipments.map(eq => {
+                        return (
+                          <FormControlLabel disabled={selectedHorse.retired} key={eq}
+                            control={<Checkbox checked={horseRaceDetail.horseEquipments.indexOf(eq) > -1} onChange={onEquipMedicationChange(eq, "horseEquipments")} value={eq} />}
+                            label={eq}
+                          />
+                        )
+                      })
+                    }                    
                   </FormGroup>
                 </div>
                 <div>
                   <FormLabel component="legend">Horse Medications</FormLabel>
                   <FormGroup style={{ flexDirection: "row" }}>
-                    <FormControlLabel
-                      control={<Checkbox checked={horseRaceDetail.horseEquipments.indexOf("L") > -1} onChange={onEquipMedicationChange("L", "horseMedications")} value="L" />}
+                    <FormControlLabel disabled={selectedHorse.retired}
+                      control={<Checkbox checked={horseRaceDetail.horseMedications.indexOf("L") > -1} onChange={onEquipMedicationChange("L", "horseMedications")} value="L" />}
                       label="L"
                     />
-                    <FormControlLabel
-                      control={<Checkbox checked={horseRaceDetail.horseEquipments.indexOf("B") > -1} onChange={onEquipMedicationChange("B", "horseMedications")} value="B" />}
+                    <FormControlLabel disabled={selectedHorse.retired}
+                      control={<Checkbox checked={horseRaceDetail.horseMedications.indexOf("B") > -1} onChange={onEquipMedicationChange("B", "horseMedications")} value="B" />}
                       label="B"
                     />
                   </FormGroup>

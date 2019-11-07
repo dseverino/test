@@ -401,7 +401,7 @@ class Races extends Component {
     })
     const RaceTabs = this.state.races.map((race, index) => {
       return (
-        <RaceTabPanel hasRaceDetails={this.hasRaceDetails} loading={this.loading} programDate={this.state.programDate} horseaddedtorace={this.addHorseToRace} key={race._id} race={race} value={this.state.selectedRace} index={index} jockeys={this.state.jockeys} stables={this.state.stables} trainers={this.state.trainers} />
+        <RaceTabPanel loadProgramRaces={this.loadProgramRaces} hasRaceDetails={this.hasRaceDetails} loading={this.loading} programDate={this.state.programDate} horseaddedtorace={this.addHorseToRace} key={race._id} race={race} value={this.state.selectedRace} index={index} jockeys={this.state.jockeys} stables={this.state.stables} trainers={this.state.trainers} />
       )
     });
     

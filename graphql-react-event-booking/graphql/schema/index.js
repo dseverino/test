@@ -268,7 +268,7 @@ module.exports = buildSchema(`
     completeRace(raceId: ID): Race!
     deleteRace(raceId: String): Race!
     addRace(programId: String, raceId: String): Program!
-    updateRaceDetails(raceId: ID, raceDetails: RaceDetailsInput): Race
+    updateRaceDetails(raceId: ID, raceDetails: RaceDetailsInput, retiredHorses: [ID]): Race
     addHorse(raceId: ID, horseId: ID): Race!
     addHorseStable(horseId: ID, stableId: ID): Horse
     addTrainerStable(stableId: ID, trainerId: ID): Stable
