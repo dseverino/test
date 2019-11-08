@@ -81,7 +81,8 @@ const raceTab = props => {
     horseEquipments: [""],
     horseMedications: [""],
     jockey: '',
-    jockeyChanged: false
+    jockeyChanged: false,
+    totalHorses: props.race.totalHorses || 0
   });
 
   const [selectedHorse, setSelectedHorse] = useState({ _id: "", retired: false })
@@ -166,6 +167,7 @@ const raceTab = props => {
   }
 
   function handleCloseHorseRaceDetails() {
+    console.log(horseRaceDetail)
     setOpenHorseRaceDetails(false);
   }
 
@@ -188,7 +190,7 @@ const raceTab = props => {
 
   useEffect(() => {
     if (selectedHorse.name) {
-      setHorseRaceDetail({ ...selectedHorse, jockey: selectedHorse.jockey._id });
+      setHorseRaceDetail({ ...selectedHorse, jockey: selectedHorse.jockey._id, totalHorses: props.race.totalHorses });
     }
   }, [selectedHorse, selectedHorse.name])
 
@@ -313,7 +315,50 @@ const raceTab = props => {
   }
 
   function saveHorseRaceDetailsHandler() {
+    props.loading(true)
 
+    const requestBody = {
+      query: `
+        mutation updateHorseRaceDetail($raceDetailId: ID, $raceDetails: HorseRaceDetailInput){
+          updateRaceDetails(raceDetailId: $raceDetailId, raceDetails: $raceDetails){
+            times{              
+              quarterMile
+              halfMile
+              finish
+            }
+            trackCondition
+            totalHorses
+          }
+        }          
+      `,
+      variables: {
+        raceDetailId: selectedHorse._id,
+        raceDetails: raceDetails
+      }
+    }
+
+    fetch("http://localhost:3000/graphql", {
+      method: 'POST',
+      body: JSON.stringify(requestBody),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+      .then(result => {
+        if (result.status !== 200 && result.status !== 201) {
+          throw new Error("Failed")
+        }
+        return result.json()
+      })
+      .then(resData => {
+        props.loading(false);
+        setOpenHorseRaceDetails(false)
+        //props.loadProgramRaces();
+      })
+      .catch(error => {
+        console.log(error)
+        //setLoading(false);
+      })
   }
 
   function onJockeyChange(e) {
@@ -626,6 +671,10 @@ const raceTab = props => {
                   <label>Jockey</label>
                   <Dropdown disabled={selectedHorse.retired} options={jockeys} filter={true} value={horseRaceDetail.jockey} onChange={onJockeyChange} />
                 </FormControl>
+                <div>
+                  <TextField id="jockeyweight" disabled={selectedHorse.retired}
+                    label="Jockey Weight" type="number" onChange={e => setHorseRaceDetail({ ...horseRaceDetail, "jockeyWeight": Number(e.target.value) })} keyfilter="pint" value={selectedHorse.jockeyWeight} margin="normal" variant="outlined" />
+                </div>
                 <FormControl>
                   <InputLabel htmlFor="formatted-text-mask-input">Finish</InputLabel>
                   <Input
@@ -636,10 +685,10 @@ const raceTab = props => {
                     inputComponent={TextMaskCustom}
                   />
                 </FormControl>
-                
+
                 <FormControl>
                   <InputLabel htmlFor="formatted-text-mask-input">Total Horses</InputLabel>
-                  <Input disabled={true} value={raceDetails.totalHorses} />
+                  <Input disabled={true} value={horseRaceDetail.totalHorses} />
                 </FormControl>
                 <div>
                   <FormLabel component="legend">Horse Equipments</FormLabel>
@@ -653,7 +702,7 @@ const raceTab = props => {
                           />
                         )
                       })
-                    }                    
+                    }
                   </FormGroup>
                 </div>
                 <div>
@@ -676,10 +725,10 @@ const raceTab = props => {
         <DialogActions>
           <Button onClick={handleCloseHorseRaceDetails} >
             Close
-            </Button>
+          </Button>
           <Button color="primary" onClick={saveHorseRaceDetailsHandler}>
             Save
-            </Button>
+          </Button>
         </DialogActions>
 
       </Dialog>
