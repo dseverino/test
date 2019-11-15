@@ -14,10 +14,10 @@ module.exports = {
       if (raceDetail) {
         const horse = await Horse.findById(args.horseId)
         if (horse) {
-          if(horse.weight != args.horseRaceDetail.horseWeight){
+          if (horse.weight != args.horseRaceDetail.horseWeight) {
             horse.weight = args.horseRaceDetail.horseWeight;
           }
-          
+
           horse.raceDetails = [...horse.raceDetails, horseRaceDetail.id]
           horse.save();
         }
@@ -40,19 +40,17 @@ module.exports = {
     }
   },
 
-  updateHorseRaceDetail: async () => {
+  updateHorseRaceDetail: async (args) => {
     //raceDetails: HorseRaceDetailInput): HorseRaceDetail
     try {
-      const raceDetail = await HorseRaceDetail.findById(args.raceDetailId)
-      if (raceDetail) {
-        raceDetail.raceDetails = [...horse.raceDetails, args.raceDetailId]
-        const result = await horse.save()
-        return transformHorse(result)
+      const raceDetail = await HorseRaceDetail.update({ _id: args.raceDetailId }, args.raceDetails)
+      if (raceDetail && raceDetail.ok) {
+        return args.raceDetails;
       }
     } catch (error) {
       throw error
     }
-  }  
-    
+  }
+
 
 }

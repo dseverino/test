@@ -199,9 +199,14 @@ class Races extends Component {
                   date
                   discarded
                   distance
-                   times {
+                  times {                    
                     quarterMile
+                    halfMile
+                    thirdQuarter
+                    mile
+                    finish
                   }
+                  finishTime
                   horseMedications
                   horseEquipments
                   jockey{
@@ -209,6 +214,7 @@ class Races extends Component {
                     name
                   } 
                   jockeyWeight
+                  jockeyChanged
                   stable {
                     name
                     _id
@@ -241,6 +247,7 @@ class Races extends Component {
                   totalHorses
                   horseAge
                   comments
+                  confirmed
                 }
               }
             }
@@ -314,6 +321,7 @@ class Races extends Component {
                   name
                 } 
                 jockeyWeight
+                jockeyChanged
                 stable {
                   name
                 }
@@ -324,11 +332,21 @@ class Races extends Component {
                 raceNumber
                 trackCondition          
                 distance
-                  times {
+                times {                  
                   quarterMile
+                  haflMile
+                  thirdQuarter
+                  mile
+                  finish
                 }
+                finishTime
                 positions{
                   start
+                  quarterMile
+                  halfMile
+                  thirdQuarter
+                  mile
+                  finish
                 }
                 lengths{
                   quarterMile
@@ -347,6 +365,7 @@ class Races extends Component {
                 totalHorses
                 horseAge
                 comments
+                confirmed
               }
             }
           }

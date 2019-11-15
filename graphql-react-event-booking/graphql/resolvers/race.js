@@ -83,9 +83,7 @@ module.exports = {
   updateRaceDetails: async (args) => {
     try {
       const race = await Race.update({ _id: args.raceId }, args.raceDetails)
-      console.log(args.retiredHorses)
-      console.log(args.retiredHorses.length)
-
+      
       if (race && race.ok) {
         if (args.retiredHorses.length) {
           await HorseRaceDetail.updateMany({ _id: { $in: args.retiredHorses } }, { $set: { retired: true } })

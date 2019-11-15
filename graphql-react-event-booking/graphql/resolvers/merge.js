@@ -230,12 +230,14 @@ const transformRaceDetail = raceDetail => {
     _id: raceDetail.id,
     jockey: () => jockey(raceDetail.jockey),
     jockeyWeight: raceDetail.jockeyWeight,
+    jockeyChanged: raceDetail.jockeyChanged,
     trainer: () => trainer(raceDetail.trainer),
     stable: () => stable(raceDetail.stable),
     startingPosition: raceDetail.startingPosition,
-    positions: raceDetail.positions,
+    positions: raceDetail.positions || {start: 0},
     lengths: raceDetail.lengths,
     times: raceDetail.times,
+    finishTime: raceDetail.finishTime,
     trainingTimes: raceDetail.trainingTimes,
     horseWeight: raceDetail.horseWeight,
     claimed: raceDetail.claimed,
@@ -253,7 +255,8 @@ const transformRaceDetail = raceDetail => {
     totalHorses: raceDetail.totalHorses,
     discarded: raceDetail.discarded,
     horseAge: raceDetail.horseAge,
-    distance: raceDetail.distance
+    distance: raceDetail.distance,
+    confirmed: raceDetail.confirmed || false
   }
 }
 

@@ -22,14 +22,13 @@ import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import TextField from '@material-ui/core/TextField';
 
-import MaskedInput from 'react-text-mask';
-import NumberFormat from 'react-number-format';
 import { Dropdown } from "primereact/dropdown";
 
 import Horse from '../../components/Horse/Horse';
 import ConfirmationDialogRaw from "../Dialog/ConfirmationDialogRaw";
 import Spinner from "../../components/Spinner/Spinner";
 import Backdrop from "../../components/Backdrop/Backdrop";
+import MaskedInput from 'react-text-mask';
 
 
 const formatter = new Intl.NumberFormat('en-US', {
@@ -40,20 +39,38 @@ const formatter = new Intl.NumberFormat('en-US', {
 
 const raceTab = props => {
 
-  const { times } = props;
+  const timesByDistance = {
+    1100: "1:05.0",
+    1200: "1:09.0",
+    1300: "1:15.0",
+    1400: "1:21.0",
+    1700: "1:41.0",
+    1800: "1:47.0",
+    1900: "1:54.0",
+    2000: "1:59.0"
+  };
+  const mileTimes = ["1:35", "1:36", "1:37", "1:38", "1:39", "1:40", "1:41", "1:42", "1:43", "1:44", "1:45"];
+  const bettingList = ["1/9", "1/5", "2/5", "1/2", "3/5", "4/5", "1/1", "6/5", "7/5", "3/2", "8/5", "9/5", "2/1", "5/2", "3/1", "7/2", "4/1", "9/2"].concat([...Array(100).keys()].filter(el => el > 4).map(el => `${el}/1`))
+
   const horseEquipments = ["E", "F", "G", "Gs", "LA"];
 
   const jockeys = props.jockeys.map(jockey => {
     return { label: jockey.name, value: jockey._id }
+  });
+  const positions = [1, 2].map(el => {
+    return {label: el, value: el, key: el}
+  });
+
+  const stables = props.stables.map(stable => {
+    return { label: stable.name, value: stable._id }
   });
 
   const horseRaceDetailsIds = props.race.horses.map(horse => {
     let detail = horse.raceDetails.find(detail => props.programDate.toISOString() === detail.date);
 
     return {
-      name: horse.name,
-      id: detail._id,
-      ...detail
+      ...detail,
+      name: horse.name
     }
   });
 
@@ -63,10 +80,11 @@ const raceTab = props => {
     quarterMile: "23.0",
     halfMile: '47.0',
     thirdQuarter: '1:12.0',
+    mile: "1:35.0",
     finish: '0:57.0'
   });
 
-  const [raceDetails, setraceDetails] = useState({
+  const [raceDetails, setRaceDetails] = useState({
     times: {
       quarterMile: "23.0",
       halfMile: '47.0',
@@ -81,15 +99,28 @@ const raceTab = props => {
     horseEquipments: [""],
     horseMedications: [""],
     jockey: '',
+    jockeyWeight: 0,
     jockeyChanged: false,
-    totalHorses: props.race.totalHorses || 0
+    totalHorses: props.race.totalHorses || 0,
+    claimed: false,
+    confirmed: false,
+    positions: {
+      start: 0
+    }
   });
-
   const [selectedHorse, setSelectedHorse] = useState({ _id: "", retired: false })
+
+  useEffect(() => {
+    if (selectedHorse.name) {
+      setHorseRaceDetail({ ...selectedHorse, finishTime: selectedHorse.times.finish, jockey: selectedHorse.jockey._id, trainer: selectedHorse.trainer._id, stable: selectedHorse.stable._id, totalHorses: props.race.totalHorses });
+    }
+  }, [selectedHorse, selectedHorse.name])
+
+
   const [selectedRetiredHorses, setSelectedRetiredHorses] = useState([]);
 
   useEffect(() => {
-    setraceDetails({ ...raceDetails, totalHorses: props.race.horses.length - selectedRetiredHorses.length })
+    setRaceDetails({ ...raceDetails, totalHorses: props.race.horses.length - selectedRetiredHorses.length })
   }, [selectedRetiredHorses])
 
   const horses = props.race.horses.map(horse => {
@@ -169,6 +200,7 @@ const raceTab = props => {
   function handleCloseHorseRaceDetails() {
     console.log(horseRaceDetail)
     setOpenHorseRaceDetails(false);
+    setSelectedHorse({ _id: "", retired: false });
   }
 
   function handleOpenRaceDetails() {
@@ -185,14 +217,27 @@ const raceTab = props => {
 
   function handleHorseChange(e) {
     const horseRaceDetailSelected = horseRaceDetailsIds.find((el) => el._id === e.target.value)
-    setSelectedHorse({ ...horseRaceDetailSelected, retired: horseRaceDetailSelected.retired || false });
+    setSelectedHorse({ ...horseRaceDetailSelected, retired: horseRaceDetailSelected.retired || false, claimedBy: null, trackCondition: props.race.trackCondition, times: props.race.times, finishTime: props.race.times.finish, claimed: false });
   }
 
   useEffect(() => {
-    if (selectedHorse.name) {
-      setHorseRaceDetail({ ...selectedHorse, jockey: selectedHorse.jockey._id, totalHorses: props.race.totalHorses });
+    if (openRaceDetails) {
+      var times = raceDetails.times;
+      if (props.race.distance > 1600) {
+        times.thirdQuarter = "1:12.0"
+        times.mile = "1:35.0"
+        times.finish = timesByDistance[props.race.distance]
+        setTimeLeader({ ...times });
+        setRaceDetails({ ...raceDetails, times: times })
+      }
+      else if (props.race.distance > 1200) {
+        times.thirdQuarter = "1:12.0"
+        times.finish = timesByDistance[props.race.distance]
+        setTimeLeader({ ...timeLeader, ...times });
+        setRaceDetails({ ...raceDetails, times: times })
+      }
     }
-  }, [selectedHorse, selectedHorse.name])
+  }, [openRaceDetails])
 
   const handleChangeQuater = name => event => {
     var times = raceDetails.times;
@@ -203,7 +248,7 @@ const raceTab = props => {
       times.quarterMile = times.quarterMile.split('.')[0] + '.' + event.target.value
     }
 
-    setraceDetails({ ...raceDetails, times: times });
+    setRaceDetails({ ...raceDetails, times: times });
     setTimeLeader({ ...timeLeader, quarterMile: times.quarterMile });
 
   }
@@ -216,19 +261,32 @@ const raceTab = props => {
     else {
       times.halfMile = times.halfMile.split('.')[0] + '.' + event.target.value
     }
-    setraceDetails({ ...raceDetails, times: times })
+    setRaceDetails({ ...raceDetails, times: times })
     setTimeLeader({ ...timeLeader, halfMile: times.halfMile });
   }
 
   const handleChangeThirdQuarter = name => event => {
     var times = raceDetails.times;
     if (name === 'thirdQuarter') {
-      times.thirdQuarter = event.target.value + '.' + times.thirdQuarter.split('.')[1]
+      times.thirdQuarter = event.target.value + '.' + times.thirdQuarter.split('.')[1] || 0
     }
     else {
       times.thirdQuarter = times.thirdQuarter.split('.')[0] + '.' + event.target.value
     }
-    setraceDetails({ ...raceDetails, times: times })
+    setRaceDetails({ ...raceDetails, times: times });
+    setTimeLeader({ ...timeLeader, thirdQuarter: times.thirdQuarter });
+  }
+
+  const handleChangeMile = name => event => {
+    var times = raceDetails.times;
+    if (name === 'mile') {
+      times.mile = event.target.value + '.' + times.mile.split('.')[1]
+    }
+    else {
+      times.mile = times.mile.split('.')[0] + '.' + event.target.value
+    }
+    setRaceDetails({ ...raceDetails, times: times })
+    setTimeLeader({ ...timeLeader, mile: times.mile });
   }
 
   const handleChangeFinish = name => event => {
@@ -243,12 +301,20 @@ const raceTab = props => {
     else {
       times.finish = times.finish.split('.')[0] + '.' + event.target.value
     }
-    console.log(times)
-    setraceDetails({ ...raceDetails, times: times })
+    setRaceDetails({ ...raceDetails, times: times })
     setTimeLeader({ ...timeLeader, finish: times.finish });
   }
 
-  function TextMaskCustom(props) {
+  const handleFinishTime = name => e => {
+    if (name === "finishTime") {
+      setHorseRaceDetail({ ...horseRaceDetail, finishTime: e.target.value + ":" + horseRaceDetail.finishTime.split(".")[1] });
+    }
+    else {
+      setHorseRaceDetail({ ...horseRaceDetail, finishTime: horseRaceDetail.finishTime.split(".")[0] + "." + e.target.value });
+    }
+  }
+
+  /*function TextMaskCustom(props) {
     const { inputRef, ...other } = props;
 
     return (
@@ -262,7 +328,7 @@ const raceTab = props => {
         showMask
       />
     );
-  }
+  }*/
 
   function saveRaceDetailsHandler() {
 
@@ -316,11 +382,16 @@ const raceTab = props => {
 
   function saveHorseRaceDetailsHandler() {
     props.loading(true)
+    if (horseRaceDetail.claimed && horseRaceDetail.claimedBy === selectedHorse.stable._id) {
+      horseRaceDetail.claimed = false
+    }
+    delete horseRaceDetail.name
+    delete horseRaceDetail._id
 
     const requestBody = {
       query: `
-        mutation updateHorseRaceDetail($raceDetailId: ID, $raceDetails: HorseRaceDetailInput){
-          updateRaceDetails(raceDetailId: $raceDetailId, raceDetails: $raceDetails){
+        mutation UpdateHorseRaceDetail($raceDetailId: ID, $raceDetails: HorseRaceDetailInput){
+          updateHorseRaceDetail(raceDetailId: $raceDetailId, raceDetails: $raceDetails){
             times{              
               quarterMile
               halfMile
@@ -333,7 +404,7 @@ const raceTab = props => {
       `,
       variables: {
         raceDetailId: selectedHorse._id,
-        raceDetails: raceDetails
+        raceDetails: horseRaceDetail
       }
     }
 
@@ -353,11 +424,11 @@ const raceTab = props => {
       .then(resData => {
         props.loading(false);
         setOpenHorseRaceDetails(false)
-        //props.loadProgramRaces();
+        props.loadProgramRaces();
       })
       .catch(error => {
         console.log(error)
-        //setLoading(false);
+        props.loading(false);
       })
   }
 
@@ -375,6 +446,30 @@ const raceTab = props => {
       ar.splice(horseRaceDetail[col].indexOf(name), 1)
       setHorseRaceDetail({ ...horseRaceDetail, [col]: ar })
     }
+  }
+  const onStableSelection = e => {
+    if (e.target.value === selectedHorse.stable._id) {
+      setHorseRaceDetail({ ...horseRaceDetail, claimed: false, claimedBy: '' })
+    }
+    else {
+      setHorseRaceDetail({ ...horseRaceDetail, claimedBy: e.target.value })
+    }
+  }
+
+  function TextMaskCustom(props) {
+    const { inputRef, ...other } = props;
+
+    return (
+      <MaskedInput
+        {...other}
+        ref={ref => {
+          inputRef(ref ? ref.inputElement : null);
+        }}
+        mask={[/[0-2]/, ':', /[0-5]/, /[0-9]/, '.', /[0-4]/]}
+        placeholderChar={'\u2000'}
+        showMask
+      />
+    );
   }
 
   const ITEM_HEIGHT = 50;
@@ -441,7 +536,8 @@ const raceTab = props => {
       {/* RACE DETAILS DIALOG*/}
       <Dialog
         open={openRaceDetails}
-        keepMounted
+        disableBackdropClick
+        disableEscapeKeyDown
         onClose={handleCloseRaceDetails}>
         <DialogTitle >Race Details</DialogTitle>
         <DialogContent>
@@ -456,7 +552,7 @@ const raceTab = props => {
                 renderValue={selected => (
                   <div style={{ display: 'flex', flexWrap: 'wrap' }}>
                     {selected.map(value => (
-                      <Chip key={value} label={horseRaceDetailsIds.find(detail => detail.id === value).name} style={{ display: 'flex', flexWrap: 'wrap' }} />
+                      <Chip key={value} label={horseRaceDetailsIds.find(detail => detail._id === value).name} style={{ display: 'flex', flexWrap: 'wrap' }} />
                     ))}
                   </div>
                 )}
@@ -465,7 +561,7 @@ const raceTab = props => {
                 {
                   horseRaceDetailsIds.map(raceDetail => (
                     <MenuItem key={raceDetail._id} value={raceDetail._id}>
-                      <Checkbox checked={selectedRetiredHorses.indexOf(raceDetail.id) > -1} />
+                      <Checkbox checked={selectedRetiredHorses.indexOf(raceDetail._id) > -1} />
                       <ListItemText primary={raceDetail.name} />
                     </MenuItem>
                   ))
@@ -478,7 +574,7 @@ const raceTab = props => {
               <InputLabel htmlFor="formatted-text-mask-input">Track Condition</InputLabel>
               <Select
                 value={raceDetails.trackCondition}
-                onChange={(e) => setraceDetails({ ...raceDetails, trackCondition: e.target.value })}
+                onChange={(e) => setRaceDetails({ ...raceDetails, trackCondition: e.target.value })}
               >
                 <MenuItem value={"L"}>L</MenuItem>
                 <MenuItem value={"F"}>F</MenuItem>
@@ -552,7 +648,7 @@ const raceTab = props => {
                 <InputLabel htmlFor="formatted-text-mask-input">3/4</InputLabel>
                 <Select
                   value={timeLeader.thirdQuarter.split('.')[0]}
-                  onChange={handleChangeThirdQuarter('halfMile')}
+                  onChange={handleChangeThirdQuarter('thirdQuarter')}
                 >
                   <MenuItem value={'1:09'}>1:09</MenuItem>
                   <MenuItem value={'1:10'}>1:10</MenuItem>
@@ -579,39 +675,74 @@ const raceTab = props => {
               </div>
             }
 
+            {
+              props.race.distance > 1400 &&
+              <div>
 
-            <div>
-              <InputLabel htmlFor="formatted-text-mask-input">Finish</InputLabel>
-              <Select
-                value={timeLeader.finish.split(':')[0]}
-                onChange={handleChangeFinish('finishMinutes')}
-              >
-                <MenuItem value={0}>0</MenuItem>
-                <MenuItem value={1}>1</MenuItem>
-                <MenuItem value={2}>2</MenuItem>
-              </Select>
+                <InputLabel htmlFor="formatted-text-mask-input">mile</InputLabel>
+                <Select
+                  value={timeLeader.mile.split('.')[0]}
+                  onChange={handleChangeMile('mile')}
+                >
+                  {
+                    mileTimes.map(mil => {
+                      return <MenuItem key={mil} value={mil}>{mil}</MenuItem>
+                    })
+                  }
+                </Select>
 
-              <span>:</span>
-              <TextField
-                value={timeLeader.finish.split(":")[1].split(".")[0]}
-                onChange={handleChangeFinish('finishSeconds')}
-                label="Sec"
-                onFocus={(e) => e.target.select()}
-                style={{ width: 37 }}
-                inputProps={{ 'aria-label': 'bare' }}
-              />
-              <span>.</span>
-              <Select
-                value={timeLeader.finish.split('.')[1]}
-                onChange={handleChangeFinish('finishFraction')}
-              >
-                <MenuItem value={0}>0</MenuItem>
-                <MenuItem value={1}>1</MenuItem>
-                <MenuItem value={2}>2</MenuItem>
-                <MenuItem value={3}>3</MenuItem>
-                <MenuItem value={4}>4</MenuItem>
-              </Select>
+                <Select
+                  value={timeLeader.mile.split('.')[1]}
+                  onChange={handleChangeMile('mileFraction')}
+                >
+                  <MenuItem value={0}>0</MenuItem>
+                  <MenuItem value={1}>1</MenuItem>
+                  <MenuItem value={2}>2</MenuItem>
+                  <MenuItem value={3}>3</MenuItem>
+                  <MenuItem value={4}>4</MenuItem>
+                </Select>
 
+              </div>
+            }
+
+
+            <div style={{ display: "flex", alignItems: "baseline" }}>
+              <FormControl style={{ margin: 1, minWidth: 40 }}>
+                <InputLabel htmlFor="formatted-text-mask-input">Finish</InputLabel>
+                <Select
+                  value={timeLeader.finish.split(':')[0]}
+                  onChange={handleChangeFinish('finishMinutes')}
+                >
+                  <MenuItem value={0}>0</MenuItem>
+                  <MenuItem value={1}>1</MenuItem>
+                  <MenuItem value={2}>2</MenuItem>
+                </Select>
+              </FormControl>
+
+
+              <div>:</div>
+              <FormControl style={{ margin: 1, width: 32 }}>
+                <TextField
+                  value={timeLeader.finish.split(":")[1].split(".")[0]}
+                  onChange={handleChangeFinish('finishSeconds')}
+                  onFocus={(e) => e.target.select()}
+                  style={{ width: 37 }}
+                  inputProps={{ 'aria-label': 'bare' }}
+                />
+              </FormControl>
+              <div>.</div>
+              <FormControl style={{ margin: 1, minWidth: 40 }}>
+                <Select
+                  value={timeLeader.finish.split('.')[1]}
+                  onChange={handleChangeFinish('finishFraction')}
+                >
+                  <MenuItem value={0}>0</MenuItem>
+                  <MenuItem value={1}>1</MenuItem>
+                  <MenuItem value={2}>2</MenuItem>
+                  <MenuItem value={3}>3</MenuItem>
+                  <MenuItem value={4}>4</MenuItem>
+                </Select>
+              </FormControl>
             </div>
           </form>
 
@@ -636,7 +767,6 @@ const raceTab = props => {
         disableBackdropClick
         disableEscapeKeyDown
         open={openHorseRaceDetails}
-        keepMounted
         onClose={handleCloseHorseRaceDetails}>
         <DialogTitle >Horse Race Details</DialogTitle>
         <DialogContent>
@@ -673,23 +803,46 @@ const raceTab = props => {
                 </FormControl>
                 <div>
                   <TextField id="jockeyweight" disabled={selectedHorse.retired}
-                    label="Jockey Weight" type="number" onChange={e => setHorseRaceDetail({ ...horseRaceDetail, "jockeyWeight": Number(e.target.value) })} keyfilter="pint" value={selectedHorse.jockeyWeight} margin="normal" variant="outlined" />
+                    label="Jockey Weight" type="number" onChange={e => setHorseRaceDetail({ ...horseRaceDetail, "jockeyWeight": Number(e.target.value) })} keyfilter="pint" value={horseRaceDetail.jockeyWeight} margin="normal" variant="outlined" />
                 </div>
-                <FormControl>
-                  <InputLabel htmlFor="formatted-text-mask-input">Finish</InputLabel>
+
+                <div>
+                  <FormControlLabel
+                    control={<Checkbox checked={horseRaceDetail.claimed} onChange={e => setHorseRaceDetail({ ...horseRaceDetail, claimed: e.target.checked })} value="true" />}
+                    label="Claimed"
+                    labelPlacement="start"
+                  />
+                </div>
+                <div>
+                  <label>Stable</label>
+                  <Dropdown disabled={!horseRaceDetail.claimed} options={stables} filter={true} value={horseRaceDetail.claimedBy} onChange={onStableSelection} />
+                </div>
+
+                <div>
+                  <InputLabel htmlFor="formatted-text-mask-input">Positions</InputLabel>
+                  <Dropdown value={horseRaceDetail.positions.start} options={[ ...Array(selectedHorse.totalHorses).keys()].map(el => {return {label: el, value: el}} )} onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, positions: { ...horseRaceDetail.positions, start: e.target.value } })} placeholder="Select a Position" />
+                </div>
+
+                <div>
+                  <InputLabel htmlFor="formatted-text-mask-input">Finish Time</InputLabel>
                   <Input
-                    value={raceDetails.times.finish}
-                    disabled={selectedHorse.retired}
-                    onChange={handleChangeQuater('textmask')}
+                    value={horseRaceDetail.finishTime}
+                    onFocus={(e) => e.target.select()}
+                    onBlur={e => {
+                      if (e.target.value.trim().length == 6 && e.target.value != horseRaceDetail.finishTime) {
+                        setHorseRaceDetail({ ...horseRaceDetail, finishTime: e.target.value })
+                      }
+                    }}
                     id="formatted-text-mask-input"
                     inputComponent={TextMaskCustom}
                   />
-                </FormControl>
+                </div>
 
-                <FormControl>
-                  <InputLabel htmlFor="formatted-text-mask-input">Total Horses</InputLabel>
-                  <Input disabled={true} value={horseRaceDetail.totalHorses} />
-                </FormControl>
+                <div>
+                  <label>Bet</label>
+                  <Dropdown disabled={selectedHorse.retired} options={bettingList.map(bet => { return { label: bet, value: bet } })} filter={true} value={horseRaceDetail.bet} onChange={e => setHorseRaceDetail({ ...horseRaceDetail, bet: e.target.value })} />
+                </div>
+
                 <div>
                   <FormLabel component="legend">Horse Equipments</FormLabel>
                   <FormGroup style={{ flexDirection: "row" }}>
@@ -718,6 +871,13 @@ const raceTab = props => {
                     />
                   </FormGroup>
                 </div>
+                <div>
+                  <FormControlLabel
+                    control={<Checkbox checked={horseRaceDetail.confirmed} onChange={e => setHorseRaceDetail({ ...horseRaceDetail, confirmed: e.target.checked })} value="true" />}
+                    label="Confirmed"
+                  />
+                </div>
+
               </React.Fragment>
             }
           </form>

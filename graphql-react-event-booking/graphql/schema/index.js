@@ -70,7 +70,8 @@ module.exports = buildSchema(`
     horseMedications: [String] 
     horseEquipments: [String]    
     jockey: Jockey
-    jockeyWeight: Int 
+    jockeyWeight: Int
+    jockeyChanged: Boolean
     stable: Stable
     trainer: Trainer
     date: String
@@ -90,7 +91,9 @@ module.exports = buildSchema(`
     discarded: Boolean
     horseAge: Int
     times: Time
+    finishTime: String
     comments: String
+    confirmed: Boolean
   }
 
   type Position {
@@ -192,16 +195,22 @@ module.exports = buildSchema(`
     stable: ID
   }
 
-  input HorseRaceDetailInput {   
+  input HorseRaceDetailInput {
+    bet: String
+    comments: String
+    confirmed: Boolean
     date: String 
+    distance: Int
     jockey: ID 
-    jockeyWeight: Int 
+    jockeyWeight: Int
+    jockeyChanged: Boolean
     trainer: ID
     stable: ID
     startingPosition: Int 
     positions: PositionInput
     lengths: LengthInput
     times: TimeInput
+    finishTime: String
     trainingTimes: [TrainingTimeInput] 
     horseWeight: Int 
     claimed: Boolean 
@@ -210,15 +219,13 @@ module.exports = buildSchema(`
     trackCondition: String
     raceNumber: Int
     retired: Boolean 
-    retiredDetails: String 
-    bet: String 
-    horseEquipments: [String] 
+    retiredDetails: String
+    horseEquipments: [String]
     horseMedications: [String]
     totalHorses: Int 
     discarded: Boolean
-    horseAge: Int
-    distance: Int
-    comments: String
+    horseAge: Int    
+    
   }
 
   input ProgramInput {

@@ -12,6 +12,7 @@ const horseRaceDetailSchema = new Schema({
     type: Number,
     required: true,
   },
+  jockeyChanged: Boolean,
   trainer: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
@@ -27,6 +28,7 @@ const horseRaceDetailSchema = new Schema({
   positions: Object,
   lengths: Object,
   times: Object,
+  finishTime: String,
   trainingTimes: [
     {
       type: Object
@@ -55,5 +57,6 @@ const horseRaceDetailSchema = new Schema({
     type: Number,
     required: true
   },
+  confirmed: Boolean
 })
 module.exports = mongoose.model("HorseRaceDetail", horseRaceDetailSchema);

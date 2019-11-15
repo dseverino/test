@@ -69,6 +69,7 @@ const ConfirmationDialogRaw = (props) => {
     jockey: "",
     date: props.date,
     jockeyWeight: "",
+    jockeyChanged: false,
     trainer: "",
     stable: "",
     horseWeight: 0,
@@ -113,7 +114,7 @@ const ConfirmationDialogRaw = (props) => {
   function clearValues() {
     setHorse({ name: "", age: 2, color: "Z", sex: "M", stable: "", sire: "", dam: "", weight: "", procedence: "native" })
     setValues({ selectedHorse: null, E: true, F: true, G: false, Gs: false, LA: false, B: true, L: false })
-    setHorseRaceDetail({ jockey: "", date: props.date, jockeyWeight: "", trainer: "", stable: "", horseWeight: "", startingPosition: horsesqty, raceNumber: props.racenumber, horseEquipments: ["E", "F"], horseMedications: ["B"], horseAge: 0, distance: props.distance, discarded: false });
+    setHorseRaceDetail({ jockey: "", date: props.date, jockeyChanged: false, finishTime: "", jockeyWeight: "", trainer: "", stable: "", horseWeight: "", startingPosition: horsesqty, raceNumber: props.racenumber, horseEquipments: ["E", "F"], horseMedications: ["B"], horseAge: 0, distance: props.distance, discarded: false });
     setHorses([])
   }
 
@@ -233,7 +234,7 @@ const ConfirmationDialogRaw = (props) => {
           setHorses(resData.data.horse);
           setValues({ ...values, "selectedHorse": null });
 
-          setHorseRaceDetail({ jockey: "", date: props.date, jockeyWeight: "", trainer: "", stable: "", horseWeight: "", startingPosition: props.horsesqty, raceNumber: props.racenumber, horseEquipments: ["E", "F"], horseMedications: ["B"], horseAge: 0, distance: props.distance });
+          setHorseRaceDetail({ jockey: "", date: props.date, jockeyChanged: false, finishTime: "", jockeyWeight: "", trainer: "", stable: "", horseWeight: "", startingPosition: props.horsesqty, raceNumber: props.racenumber, horseEquipments: ["E", "F"], horseMedications: ["B"], horseAge: 0, distance: props.distance });
         }
         else {
           setHorseNotFound(true);
