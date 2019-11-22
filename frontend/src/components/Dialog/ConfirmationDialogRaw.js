@@ -82,7 +82,7 @@ const ConfirmationDialogRaw = (props) => {
     claiming: "",
     discarded: false
   });
-  
+
   React.useEffect(() => {
     if (horsesqty) {
       setHorseRaceDetail({ ...horseRaceDetail, startingPosition: horsesqty });
@@ -106,7 +106,7 @@ const ConfirmationDialogRaw = (props) => {
 
   const [loading, setLoading] = React.useState(false);
 
-  function handleCancel() {
+  function handleCancel() {    
     clearValues()
     onClose();
   }
@@ -183,6 +183,9 @@ const ConfirmationDialogRaw = (props) => {
               date
               horseEquipments
               horseMedications
+              jockey {
+                _id
+              }
             }
             stable {         
               _id
@@ -215,18 +218,33 @@ const ConfirmationDialogRaw = (props) => {
       })
       .then(resData => {
         if (resData.data.horse && resData.data.horse.length === 1) {
+          var eqp = ["E", "F"];
+          var medic = ["B"];
+          var jockey = ""
+          var details = resData.data.horse[0].raceDetails;
           setValues({ ...values, "selectedHorse": resData.data.horse[0] });
-          if(resData.data.horse.raceDetails){
-
+          if (details && details.length === 1) {
+            eqp = details[0].horseEquipments;
+            medic = details[0].horseMedications;
+            jockey = details[0].jockey._id;
           }
+          else if (details.length > 1) {
+            eqp = details[details.length - 1].horseEquipments;
+            medic = details[details.length - 1].horseMedications;
+            jockey = details[details.length - 1].jockey._id;
+          }
+
           setHorseRaceDetail(
             {
-              ...horseRaceDetail, 
-              horseAge: resData.data.horse[0].age, 
-              stable: resData.data.horse[0].stable._id, 
-              trainer: resData.data.horse[0].stable.trainers && resData.data.horse[0].stable.trainers.length === 1 ? resData.data.horse[0].stable.trainers[0]._id : "", 
+              ...horseRaceDetail,
+              horseAge: resData.data.horse[0].age,
+              stable: resData.data.horse[0].stable._id,
+              trainer: resData.data.horse[0].stable.trainers && resData.data.horse[0].stable.trainers.length === 1 ? resData.data.horse[0].stable.trainers[0]._id : "",
               claiming: props.claimings.length === 1 ? props.claimings[0] : "",
-              horseWeight: resData.data.horse[0].weight || 0
+              horseWeight: resData.data.horse[0].weight || 0,
+              horseEquipments: eqp,
+              horseMedications: medic,
+              jockey: jockey
             }
           );
         }
@@ -250,17 +268,28 @@ const ConfirmationDialogRaw = (props) => {
     var ar = horseRaceDetail[col];
     if (event.target.checked) {
       ar.push(name);
-      setHorseRaceDetail( {...horseRaceDetail, [col]: ar} )      
+      setHorseRaceDetail({ ...horseRaceDetail, [col]: ar })
     }
     else {
       ar.splice(horseRaceDetail[col].indexOf(name), 1)
-      setHorseRaceDetail( {...horseRaceDetail, [col]: ar} )
+      setHorseRaceDetail({ ...horseRaceDetail, [col]: ar })
     }
   }
 
   const onHorseSelectionChange = (e) => {
     setValues({ ...values, "selectedHorse": e.value });
-    setHorseRaceDetail({ ...horseRaceDetail, horseAge: e.value.age, stable: e.value.stable._id, trainer: e.value.stable.trainers && e.value.stable.trainers.length === 1 ? e.value.stable.trainers[0]._id : "", claiming: props.claimings.length === 1 ? props.claimings[0] : "" });
+    setHorseRaceDetail(
+      {
+        ...horseRaceDetail,
+        horseAge: e.value.age,
+        stable: e.value.stable._id,
+        trainer: e.value.stable.trainers && e.value.stable.trainers.length === 1 ? e.value.stable.trainers[0]._id : "",
+        claiming: props.claimings.length === 1 ? props.claimings[0] : "",
+        horseEquipments: e.value.raceDetails.length ? e.value.raceDetails[e.value.raceDetails.length - 1].horseEquipments : ["E", "F"],
+        horseMedications: e.value.raceDetails.length ? e.value.raceDetails[e.value.raceDetails.length - 1].horseMedications : ["B"],
+        jockey: e.value.raceDetails.length ? e.value.raceDetails[e.value.raceDetails.length - 1].jockey._id : ""
+      }
+    );
   }
 
   React.useEffect(() => {
@@ -271,7 +300,7 @@ const ConfirmationDialogRaw = (props) => {
 
   const onStableSelection = (e) => {
     const trainers = values.selectedHorse.stable.trainers;
-    
+
     setHorseRaceDetail({ ...horseRaceDetail, "stable": e.value, "trainer": trainers.length === 1 ? trainers[0]._id : "" });
   }
 
@@ -641,12 +670,12 @@ const ConfirmationDialogRaw = (props) => {
                 <FormControlLabel
                   value="native"
                   control={<Radio color="primary" />}
-                  label="Native"                  
+                  label="Native"
                 />
                 <FormControlLabel
                   value="imported"
                   control={<Radio color="primary" />}
-                  label="Imported"                  
+                  label="Imported"
                 />
               </RadioGroup>
             </div>

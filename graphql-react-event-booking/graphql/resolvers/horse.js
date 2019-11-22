@@ -50,11 +50,8 @@ module.exports = {
     const newHorse = new Horse(args.horseInput);
     try {
       const result = await newHorse.save();
-      let createdHorse = transformHorse(result);
-      const st = await Stable.findById(args.horseInput.stable, function (err, stable) {
-        stable.horses = [...stable.horses, createdHorse._id];
-        stable.save();
-      })
+      let createdHorse = await transformHorse(result);
+      await Stable.updateOne({ _id: args.horseInput.stable }, { $push: { horses: createdHorse._id } });      
       return createdHorse;
     }
     catch (err) {

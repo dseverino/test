@@ -220,7 +220,7 @@ const transformHorse = async horse => {
     dam: horse.dam,
     procedence: horse.procedence,
     stable: () => stableLoader.load(horse.stable),
-    raceDetails: () => raceDetailLoader.loadMany(horse.raceDetails)    
+    raceDetails: () => raceDetailLoader.loadMany(horse.raceDetails) || []
   }
 }
 
@@ -234,9 +234,8 @@ const transformRaceDetail = raceDetail => {
     trainer: () => trainer(raceDetail.trainer),
     stable: () => stable(raceDetail.stable),
     startingPosition: raceDetail.startingPosition,
-    positions: raceDetail.positions || {start: 0},
-    lengths: raceDetail.lengths,
-    times: raceDetail.times,
+    positions: raceDetail.positions || {start: 0, quarterMile: 0, halfMile: 0, thirdQuarter: 0, mile: 0, finish: 0},
+    lengths: raceDetail.lengths,    
     finishTime: raceDetail.finishTime,
     trainingTimes: raceDetail.trainingTimes,
     horseWeight: raceDetail.horseWeight,
@@ -255,6 +254,7 @@ const transformRaceDetail = raceDetail => {
     totalHorses: raceDetail.totalHorses,
     discarded: raceDetail.discarded,
     horseAge: raceDetail.horseAge,
+    times: raceDetail.times,
     distance: raceDetail.distance,
     confirmed: raceDetail.confirmed || false
   }

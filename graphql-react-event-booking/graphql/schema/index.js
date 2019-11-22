@@ -97,12 +97,12 @@ module.exports = buildSchema(`
   }
 
   type Position {
-    start: String 
-    quarterMile: String
-    halfMile: String
-    thirdQuarter: String
-    mile: String
-    finish: String
+    start: Int 
+    quarterMile: Int
+    halfMile: Int
+    thirdQuarter: Int
+    mile: Int
+    finish: Int
   }
 
   type Length {
@@ -155,12 +155,12 @@ module.exports = buildSchema(`
   }
 
   input PositionInput {
-    start: String
-    quarterMile: String
-    halfMile: String
-    thirdQuarter: String
-    mile: String
-    finish: String
+    start: Int
+    quarterMile: Int
+    halfMile: Int
+    thirdQuarter: Int
+    mile: Int
+    finish: Int
   }
   input LengthInput {
     quarterMile: String
@@ -197,24 +197,23 @@ module.exports = buildSchema(`
 
   input HorseRaceDetailInput {
     bet: String
+    claimed: Boolean 
+    claimedBy: ID
     comments: String
     confirmed: Boolean
-    date: String 
+    date: String
     distance: Int
     jockey: ID 
     jockeyWeight: Int
     jockeyChanged: Boolean
     trainer: ID
     stable: ID
-    startingPosition: Int 
-    positions: PositionInput
+    startingPosition: Int    
     lengths: LengthInput
     times: TimeInput
     finishTime: String
     trainingTimes: [TrainingTimeInput] 
-    horseWeight: Int 
-    claimed: Boolean 
-    claimedBy: ID
+    horseWeight: Int    
     claiming: String
     trackCondition: String
     raceNumber: Int
@@ -222,10 +221,11 @@ module.exports = buildSchema(`
     retiredDetails: String
     horseEquipments: [String]
     horseMedications: [String]
+    positions: PositionInput
     totalHorses: Int 
     discarded: Boolean
     horseAge: Int    
-    
+    horseId: ID
   }
 
   input ProgramInput {

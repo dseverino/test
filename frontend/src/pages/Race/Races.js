@@ -229,9 +229,17 @@ class Races extends Component {
                   startingPosition
                   positions{
                     start
+                    quarterMile
+                    thirdQuarter
+                    mile
+                    finish
                   }
                   lengths{
                     quarterMile
+                    halfMile
+                    thirdQuarter
+                    mile
+                    finish
                   }
                   bet
                   trainingTimes{
@@ -334,7 +342,7 @@ class Races extends Component {
                 distance
                 times {                  
                   quarterMile
-                  haflMile
+                  halfMile
                   thirdQuarter
                   mile
                   finish

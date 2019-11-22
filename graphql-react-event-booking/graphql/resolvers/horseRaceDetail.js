@@ -1,5 +1,6 @@
 const HorseRaceDetail = require("../../models/horseRaceDetail");
 const Horse = require("../../models/horse");
+const Stable = require('../../models/stable');
 const { transformRaceDetail } = require("../resolvers/merge")
 
 module.exports = {
@@ -41,10 +42,19 @@ module.exports = {
   },
 
   updateHorseRaceDetail: async (args) => {
-    //raceDetails: HorseRaceDetailInput): HorseRaceDetail
+    const horseId = args.raceDetails.horseId;
+    delete args.raceDetails.horseId;
     try {
-      const raceDetail = await HorseRaceDetail.update({ _id: args.raceDetailId }, args.raceDetails)
+      const raceDetail = await HorseRaceDetail.update({ _id: args.raceDetailId }, args.raceDetails);
       if (raceDetail && raceDetail.ok) {
+        if (args.raceDetails.claimed) {
+
+          const horse = await Horse.updateOne({ _id: horseId }, { $set: { stable: args.raceDetails.claimedBy } });          
+                    
+          await Stable.updateOne({ _id: args.raceDetails.stable }, { $pull: { horses: horseId } });
+          await Stable.updateOne({ _id: args.raceDetails.claimedBy }, { $push: { horses: horseId } });
+                    
+        }
         return args.raceDetails;
       }
     } catch (error) {
