@@ -5,8 +5,8 @@ const { transformHorse } = require("./merge");
 
 module.exports = {
   singleHorse: async (args) => {
-    try {      
-      const horse = await Horse.findOne({ name: args.name }).collation({locale: "en", strength: 1});
+    try {
+      const horse = await Horse.findOne({ name: args.name }).collation({ locale: "en", strength: 1 });
 
       if (horse) {
         return transformHorse(horse);
@@ -20,8 +20,8 @@ module.exports = {
   horses: async () => {
     try {
       //Horse.remove().then()
-      const horses = await Horse.find().sort({name: 1})
-      return horses.map(horse => {
+      const horses = await Horse.find().sort({ name: 1 })
+      return horses.map(horse => {        
         return transformHorse(horse)
       })
     }
@@ -29,10 +29,22 @@ module.exports = {
       throw err
     }
   },
-  horse: async (args) => {   
+  horse: async (args) => {
     try {
       const name = new RegExp(".*" + args.name + ".*", "i");
-      const horses = await Horse.find({name: { $regex: name }}).sort({name: 1});
+      const horses = await Horse.find({ name: { $regex: name } }).sort({ name: 1 });
+
+      const stables = await Stable.find({ horses: null })
+      const stableIds = stables.map(stable => {
+        return stable._id.toString()
+      })
+      const horsesList = await Horse.find({stable: {$in: stableIds}})
+      horsesList.forEach(async (horse) => {
+        if(stables[stableIds.indexOf(horse.stable.toString())].horses.indexOf(horse._id) == -1){
+          await Stable.update({_id: horse.stable, "horses": null}, { $set: {"horses.$": horse._id}});
+        }
+      })
+
       return horses.map(horse => {
         return transformHorse(horse);
       })
@@ -51,7 +63,7 @@ module.exports = {
     try {
       const result = await newHorse.save();
       let createdHorse = await transformHorse(result);
-      await Stable.updateOne({ _id: args.horseInput.stable }, { $push: { horses: createdHorse._id } });      
+      await Stable.updateOne({ _id: args.horseInput.stable }, { $push: { horses: createdHorse._id } });
       return createdHorse;
     }
     catch (err) {
@@ -92,7 +104,7 @@ module.exports = {
   horsesWithoutStable: async () => {
     try {
       //Horse.remove().then()
-      const horses = await Horse.find({ stable: { $exists: false } }).sort({name: 1});
+      const horses = await Horse.find({ stable: { $exists: false } }).sort({ name: 1 });
       return horses.map(horse => {
         return transformHorse(horse)
       })

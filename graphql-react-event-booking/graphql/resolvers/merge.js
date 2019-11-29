@@ -68,28 +68,9 @@ const jockeys = async jockeyIds => {
 }
 
 const stables = async stableIds => {
-  try {
-    /*const m = { $match: { "_id": { $in: stableIds } } };
-    const a = { $addFields: { "__order": { $indexOfArray: [stableIds, "$_id"] } } };
-    const s = { $sort: { "__order": 1 } };
-    const stables = await Stable.aggregate([m, a, s]);
-    
-
-    let updatedStables = [];
-    if (stableIds.length > stables.length) {
-      for (var i = 0; i < stableIds.length; i++) {
-        updatedStables.push(stableIds[i].toString());
-        if (!stables[i]) {
-          stables.splice(i, 0, stables[updatedStables.indexOf(updatedStables[i])])
-        }
-        else if (stableIds[i].toString() != stables[i]._id.toString()) {
-          stables.splice(i, 0, stables[updatedStables.indexOf(updatedStables[i])])
-        }
-      }
-    }
-    */
-    const results = await Stable.find({ _id: { $in: stableIds } });
-    const filtered = stableIds.map((stableId) => results.find((stable) => stable._id.toString() === stableId.toString() ));
+  try {   
+    const results = await Stable.find({ _id: { $in: stableIds } });    
+    const filtered = stableIds.map((stableId) => results.find((stable) => stable._id.toString() === stableId.toString() ));    
     return filtered.map(stable => {
       return transformStable(stable);
     })
@@ -98,25 +79,7 @@ const stables = async stableIds => {
   }
 }
 const trainers = async trainerIds => {
-  try {
-    /*
-    const m = { $match: { "_id": { $in: trainerIds } } };
-    const a = { $addFields: { "__order": { $indexOfArray: [trainerIds, "$_id"] } } };
-    const s = { $sort: { "__order": 1 } };
-    const trainers = await Trainer.aggregate([m, a, s]);
-    //const trainers = await Trainer.find({ _id: { $in: trainerIds } })
-    let updatedTrainers = [];
-    if (trainerIds.length > trainers.length) {
-      for (var i = 0; i < trainerIds.length; i++) {
-        updatedTrainers.push(trainerIds[i].toString());
-        if (!trainers[i]) {
-          trainers.splice(i, 0, trainers[updatedTrainers.indexOf(updatedTrainers[i])])
-        }
-        else if (trainerIds[i].toString() != trainers[i]._id.toString()) {
-          trainers.splice(i, 0, trainers[updatedTrainers.indexOf(updatedTrainers[i])])
-        }
-      }
-    }*/
+  try {    
     const results = await Trainer.find({ _id: { $in: trainerIds } });
     const filtered = trainerIds.map((trainerId) => results.find((trainer) => trainer._id.toString() === trainerId.toString() ));
     return filtered.map(trainer => {
@@ -188,8 +151,9 @@ const horses = async horseIds => {
     const a = { $addFields: { "__order": { $indexOfArray: [horseIds, "$_id"] } } };
     const s = { $sort: { "__order": 1 } };
     const horses = await Horse.aggregate([m, a, s])//await Horse.find({ _id: { $in: horseIds } });
-
+    
     return horses.map(horse => {
+      
       return transformHorse(horse)
     })
   }

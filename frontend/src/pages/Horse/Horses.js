@@ -56,7 +56,7 @@ class HorsesPage extends Component {
             sire
             dam
             stable {
-              name
+              name              
             }
           }
         }
