@@ -261,7 +261,9 @@ const transformJockey = jockey => {
   return {
     ...jockey,
     _id: jockey.id,
-    name: jockey.name
+    name: jockey.name,
+    stats: jockey.stats,
+    trainerStats: jockey.trainerStats
   }
 }
 const transformTrainer = trainer => {

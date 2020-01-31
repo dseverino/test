@@ -15,7 +15,8 @@ const stableSchema = new mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId
       }
-    ]
+    ],
+    stats: Object
   }
 )
 

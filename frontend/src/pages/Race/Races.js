@@ -153,7 +153,7 @@ class Races extends Component {
   }
 
   loading = (value) => {
-    this.setState({isLoading: value})
+    this.setState({ isLoading: value })
   }
 
   loadProgramRaces = () => {
@@ -212,6 +212,14 @@ class Races extends Component {
                   jockey{
                     _id
                     name
+                    stats {
+                      starts
+                      first
+                    }
+                    trainerStats {
+                      starts
+                      first
+                    }
                   } 
                   jockeyWeight
                   jockeyChanged
@@ -293,7 +301,7 @@ class Races extends Component {
   }
 
   addHorseToRace = (raceIndex, raceId, selectedHorse) => {
-    this.setState({isLoading: true});
+    this.setState({ isLoading: true });
     const requestBody = {
       query: `
         mutation AddHorse($raceId: ID, $horseId: ID) {
@@ -404,7 +412,7 @@ class Races extends Component {
           races[raceIndex] = resData.data.addHorse;
           return { ...prevState, races: races, isLoading: false }
         })
-        this.setState({isLoading: false})
+        this.setState({ isLoading: false })
       })
       .catch(error => {
         console.log(error)
@@ -412,7 +420,7 @@ class Races extends Component {
       })
   }
 
-  hasRaceDetails = (raceIndex) => {    
+  hasRaceDetails = (raceIndex) => {
     this.setState((prevState) => {
       const races = prevState.races;
       races[raceIndex]['hasRaceDetails'] = true;
@@ -421,7 +429,7 @@ class Races extends Component {
   }
 
   render() {
-    const tabs = this.state.races.map(race => {      
+    const tabs = this.state.races.map(race => {
       return (
         <Tab key={race._id} label={this.events[race.event - 1]} />
       )
@@ -431,7 +439,7 @@ class Races extends Component {
         <RaceTabPanel loadProgramRaces={this.loadProgramRaces} hasRaceDetails={this.hasRaceDetails} loading={this.loading} programDate={this.state.programDate} horseaddedtorace={this.addHorseToRace} key={race._id} race={race} value={this.state.selectedRace} index={index} jockeys={this.state.jockeys} stables={this.state.stables} trainers={this.state.trainers} />
       )
     });
-    
+
     return (
       <React.Fragment>
         <div>

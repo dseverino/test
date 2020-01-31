@@ -5,7 +5,9 @@ const jockeySchema = new mongoose.Schema(
     name: {
       type: String,
       required: true
-    }
+    },
+    stats: Object,
+    trainerStats: Object
   }
 )
 

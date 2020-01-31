@@ -139,9 +139,20 @@ module.exports = buildSchema(`
     token: String!
     tokenExpiration: Int!
   }
+  type Stats {
+    starts: Int
+    first: Int
+    second: Int
+    third: Int
+    fourth: Int
+    fifth: Int
+  }
+
   type Jockey {
     _id: ID!
     name: String!
+    stats: Stats
+    trainerStats: Stats
   }
   type Stable {
     _id: ID

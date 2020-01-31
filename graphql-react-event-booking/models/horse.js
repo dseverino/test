@@ -2,37 +2,39 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
-const horseSchema = new Schema({
+const horseSchema = new Schema(
+  {
     name: {
-        type: String,
-        required: true
+      type: String,
+      required: true
     },
     weight: Number,
     age: Number,
     color: {
-        type: String,
-        required: true
+      type: String,
+      required: true
     },
     sex: {
-        type: String,
-        required: true
+      type: String,
+      required: true
     },
     sire: {
-        type: String,
-        required: true
+      type: String,
+      required: true
     },
     dam: {
-        type: String,
-        required: true
+      type: String,
+      required: true
     },
     procedence: String,
     raceDetails: [
-        {
-            type: mongoose.Schema.Types.ObjectId
-        }
-    ],
-    stable: {
+      {
         type: mongoose.Schema.Types.ObjectId
-    }
-})
+      }
+    ],
+    stable: mongoose.Schema.Types.ObjectId,
+    stats: Object,
+    jockeyStats: Object
+  }
+)
 module.exports = mongoose.model("Horse", horseSchema);
