@@ -4,62 +4,67 @@ import "./HorseRaceDetail.css"
 
 const horseRaceDetail = props => {
   return (
-    <div style={{ fontSize: 12, display: "flex" }}>
-      <div>
-        {props.date.replace(/\s+/g, '')} {props.days} Hvc{props.details.raceNumber} {props.details.distance}
+    <div style={{ fontSize: 13, display: "flex" }}>
+      <div style={{ display: 'flex', width: '10%', justifyContent: 'space-between', marginRight: '20px' }}>
+        <div>{props.date.replace(/\s+/g, '')}</div>
+        <div>L</div>
+        <div>{props.days}</div>
+        <div>Hvc{props.details.raceNumber}</div>
+        <div>{props.details.distance}</div>
       </div>
-      <div>
-        <span>23 0</span>
-        <span>45 3</span>
-        <span>1:18 4</span>
-        <span>1 57 4</span>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginRight: '15px', width: '8%' }}>
+        <div>23 0</div>
+        <div>45 3</div>
+        <div>1:18 4</div>
+        <div>1 57 4</div>
       </div>
 
-      <span>
+      <div style={{ marginRight: '12px' }}>
         {props.details.claiming}
-      </span>
-      <span>
-        <span>{props.details.startingPosition}</span>
-        <span>3</span>
-        <span>2 1/2</span>
-        <span>2 1 1/2</span>
-        <span>2 1/2</span>
-        <span>1 1/4</span>
-      </span>
-      <span>
-        {props.details.horseMedications}
-      </span>
-      
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginRight: '15px', width: '10%' }}>
+        <div style={{ display: 'flex', flexDirection: 'row', width: '20px', justifyContent: 'space-between', marginRight: '15px' }}>
+          <div>{props.details.startingPosition}</div>
+          <div>3</div>
+        </div>
+        <div style={{ display: 'flex' }}><div>2</div><div style={{ fontSize: '10px', fontWeight: '600' }}>1¼</div></div>
+        <div style={{ display: 'flex' }}><div>3</div><div style={{ fontSize: '10px', fontWeight: '600' }}>2½</div></div>
+        <div style={{ display: 'flex' }}><div>5</div><div style={{ fontSize: '10px', fontWeight: '600' }}>3¾</div></div>
+        <div style={{ display: 'flex' }}><div>1</div><div style={{ fontSize: '10px', fontWeight: '600' }}>1¼</div></div>
+      </div>
 
-      ***********
-      <span>
-        {props.details.horseWeight}
-      </span>
+      <div style={{ display: 'flex', width: '9%', justifyContent: 'space-between', marginRight: '10px' }}>
+        <div>
+          {props.details.jockey.name}
+        </div>
+        <div>
+          {props.details.jockeyWeight}
+        </div>
+      </div>
 
-      ***********
-      <span>
-        
-      </span>
-      ***********
-      <span>
-        {props.details.jockey.name}
-      </span>
-      <span>
-        {props.details.jockeyWeight}
-      </span>
-      <span>
-        {props.details.horseEquipments}
-      </span>
-      <span>
-        8/5
-      </span>
-      <span>
-        Positions
-      </span>
-      <span style={{float: "right"}}>
-        {props.details.totalHorses}
-      </span>
+      <div style={{ display: 'flex' }}>
+        <div style={{ marginRight: '3px' }}>
+          {props.details.horseMedications}
+        </div>
+        <div>
+          {props.details.horseEquipments}
+        </div>
+        <div>
+          {props.details.horseWeight}
+        </div>
+      </div>
 
+      <div style={{ display: 'flex' }}>
+        <div>
+          8/5
+        </div>
+        <div>
+          Positions
+        </div>
+        <div style={{ float: "right" }}>
+          {props.details.totalHorses}
+        </div>
+      </div>
     </div>
   )
 }
