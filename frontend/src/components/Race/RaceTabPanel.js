@@ -22,6 +22,7 @@ import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import TextField from '@material-ui/core/TextField';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
+import { InputTextarea } from 'primereact/inputtextarea';
 
 import { Dropdown } from "primereact/dropdown";
 
@@ -116,7 +117,7 @@ const raceTab = props => {
   const [selectedHorse, setSelectedHorse] = useState({ _id: "", retired: false })
 
   useEffect(() => {
-    if (selectedHorse.name) {      
+    if (selectedHorse.name) {
       setHorseRaceDetail({ ...selectedHorse, finishTime: selectedHorse.times.finish, jockey: selectedHorse.jockey._id, trainer: selectedHorse.trainer._id, stable: selectedHorse.stable._id, totalHorses: props.race.totalHorses });
     }
   }, [selectedHorse, selectedHorse.name])
@@ -133,6 +134,7 @@ const raceTab = props => {
       <Horse key={horse._id} horse={horse} dateSelected={props.programDate} />
     )
   });
+
   const claimings = props.race.claimings.map(claiming => {
     return "Reclamo RD$" + claiming
   });
@@ -219,7 +221,7 @@ const raceTab = props => {
     setSelectedRetiredHorses(e.target.value);
   }
 
-  function handleHorseChange(e) {    
+  function handleHorseChange(e) {
     const horseRaceDetailSelected = horseRaceDetailsIds.find((el) => el._id === e.target.value);
     setSelectedHorse({ ...horseRaceDetailSelected, retired: horseRaceDetailSelected.retired || false, claimedBy: null, trackCondition: props.race.trackCondition, times: props.race.times, finishTime: props.race.times.finish, claimed: false });
   }
@@ -772,7 +774,9 @@ const raceTab = props => {
         disableBackdropClick
         disableEscapeKeyDown
         open={openHorseRaceDetails}
-        onClose={handleCloseHorseRaceDetails}>
+        onClose={handleCloseHorseRaceDetails}
+        maxWidth='lg'
+      >
         <DialogTitle >Horse Race Details</DialogTitle>
         <DialogContent>
           <form style={{ display: "flex", flexDirection: "column", margin: "auto", width: 'fit-content' }}>
@@ -802,123 +806,141 @@ const raceTab = props => {
                   control={<Checkbox checked={selectedHorse.retired} disabled={true} />}
                   label="Retired"
                 />
-                <FormControl>
-                  <label>Jockey</label>
-                  <Dropdown disabled={selectedHorse.retired} options={jockeys} filter={true} value={horseRaceDetail.jockey} onChange={onJockeyChange} />
-                </FormControl>
-                <div>
-                  <TextField id="jockeyweight" disabled={selectedHorse.retired}
-                    label="Jockey Weight" type="number" onChange={e => setHorseRaceDetail({ ...horseRaceDetail, "jockeyWeight": Number(e.target.value) })} keyfilter="pint" value={horseRaceDetail.jockeyWeight} margin="normal" variant="outlined" />
+
+
+
+                <div style={{ display: 'flex' }}>
+                  <div style={{width: '50%'}}>
+                    <FormControl>
+                      <label>Jockey</label>
+                      <Dropdown disabled={selectedHorse.retired} options={jockeys} filter={true} value={horseRaceDetail.jockey} onChange={onJockeyChange} />
+                    </FormControl>
+                    <div>
+                      <TextField id="jockeyweight" disabled={selectedHorse.retired}
+                        label="Jockey Weight" type="number" onChange={e => setHorseRaceDetail({ ...horseRaceDetail, "jockeyWeight": Number(e.target.value) })} keyfilter="pint" value={horseRaceDetail.jockeyWeight} margin="normal" variant="outlined" />
+                    </div>
+
+                    <div>
+                      <FormControlLabel
+                        control={<Checkbox checked={horseRaceDetail.claimed} onChange={e => setHorseRaceDetail({ ...horseRaceDetail, claimed: e.target.checked })} value="true" />}
+                        label="Claimed"
+                        labelPlacement="start"
+                      />
+                    </div>
+                    <div>
+                      <label>Stable</label>
+                      <Dropdown disabled={!horseRaceDetail.claimed} options={stables} filter={true} value={horseRaceDetail.claimedBy} onChange={onStableSelection} />
+                    </div>
+                    <div>
+                      <InputLabel htmlFor="formatted-text-mask-input">Positions</InputLabel>
+                      <FormControl variant="outlined" style={{ margin: 1, minWidth: 100 }}>
+                        <InputLabel>
+                          Started
+                        </InputLabel>
+                        <Select
+                          value={horseRaceDetail.positions.start || ''}
+                          onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, positions: { ...horseRaceDetail.positions, start: e.target.value } })}
+                          input={<OutlinedInput labelWidth={50} name="start" id="outlined-start-simple" />}
+                          disabled={selectedHorse.retired}
+                        >
+                          {
+                            positions.map(el => { return <MenuItem value={el} key={el}>{el}</MenuItem> })
+                          }
+
+                        </Select>
+                      </FormControl>
+
+
+
+                      <FormControl variant="outlined" style={{ margin: 1, minWidth: 100 }}>
+                        <InputLabel >
+                          1/4
+                        </InputLabel>
+
+                        <Select
+                          value={horseRaceDetail.positions.quarterMile || ''}
+                          onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, positions: { ...horseRaceDetail.positions, quarterMile: e.target.value } })}
+                          input={<OutlinedInput labelWidth={30} name="quarterMile" />}
+                          disabled={selectedHorse.retired}
+                        >
+                          {
+                            positions.map(el => {
+                              console.log(el)
+                              return <MenuItem value={el} key={el}>{el}</MenuItem>
+                            })
+                          }
+                        </Select>
+                      </FormControl>
+                    </div>
+                  </div>
+
+                  <div>
+
+                    <div style={{marginBottom: '15px'}}>
+                      <InputLabel htmlFor="formatted-text-mask-input">Finish Time</InputLabel>
+                      <Input
+                        value={horseRaceDetail.finishTime}
+                        onFocus={(e) => e.target.select()}
+                        onBlur={e => {
+                          if (e.target.value.trim().length === 6 && e.target.value !== horseRaceDetail.finishTime) {
+                            setHorseRaceDetail({ ...horseRaceDetail, finishTime: e.target.value });
+                          }
+                        }}
+                        id="formatted-text-mask-input"
+                        inputComponent={TextMaskCustom}
+                        disabled={selectedHorse.retired}
+                      />
+                    </div>
+
+                    <div>
+                      <label>Bet</label>
+                      <Dropdown disabled={selectedHorse.retired} options={bettingList.map(bet => { return { label: bet, value: bet } })} filter={true} value={horseRaceDetail.bet} onChange={e => setHorseRaceDetail({ ...horseRaceDetail, bet: e.target.value })} />
+                    </div>
+
+                    <div>
+                      <FormLabel component="legend">Horse Equipments</FormLabel>
+                      <FormGroup style={{ flexDirection: "row" }}>
+                        {
+                          horseEquipments.map(eq => {
+                            return (
+                              <FormControlLabel disabled={selectedHorse.retired} key={eq}
+                                control={<Checkbox checked={horseRaceDetail.horseEquipments.indexOf(eq) > -1} onChange={onEquipMedicationChange(eq, "horseEquipments")} value={eq} />}
+                                label={eq}
+                              />
+                            )
+                          })
+                        }
+                      </FormGroup>
+                    </div>
+
+                    <div>
+                      <FormLabel component="legend">Horse Medications</FormLabel>
+                      <FormGroup style={{ flexDirection: "row" }}>
+                        <FormControlLabel disabled={selectedHorse.retired}
+                          control={<Checkbox checked={horseRaceDetail.horseMedications.indexOf("L") > -1} onChange={onEquipMedicationChange("L", "horseMedications")} value="L" />}
+                          label="L"
+                        />
+                        <FormControlLabel disabled={selectedHorse.retired}
+                          control={<Checkbox checked={horseRaceDetail.horseMedications.indexOf("B") > -1} onChange={onEquipMedicationChange("B", "horseMedications")} value="B" />}
+                          label="B"
+                        />
+                      </FormGroup>
+                    </div>
+
+                    <div>
+                      <InputTextarea rows={5} cols={30} value={horseRaceDetail.comments || ""} onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, comments: e.target.value })} autoResize={true} />
+                    </div>
+
+                    <div>
+                      <FormControlLabel
+                        control={<Checkbox checked={horseRaceDetail.confirmed} onChange={e => setHorseRaceDetail({ ...horseRaceDetail, confirmed: e.target.checked })} value="true" />}
+                        label="Confirmed"
+                      />
+                    </div>
+
+                  </div>
                 </div>
 
-                <div>
-                  <FormControlLabel
-                    control={<Checkbox checked={horseRaceDetail.claimed} onChange={e => setHorseRaceDetail({ ...horseRaceDetail, claimed: e.target.checked })} value="true" />}
-                    label="Claimed"
-                    labelPlacement="start"
-                  />
-                </div>
-                <div>
-                  <label>Stable</label>
-                  <Dropdown disabled={!horseRaceDetail.claimed} options={stables} filter={true} value={horseRaceDetail.claimedBy} onChange={onStableSelection} />
-                </div>
-
-                <div>
-                  <InputLabel htmlFor="formatted-text-mask-input">Positions</InputLabel>
-                  <FormControl variant="outlined" style={{ margin: 1, minWidth: 60 }}>
-                    <InputLabel>
-                      Started
-                    </InputLabel>
-                    <Select
-                      value={horseRaceDetail.positions.start}
-                      onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, positions: { ...horseRaceDetail.positions, start: e.target.value } })}
-                      input={<OutlinedInput labelWidth={30} name="start" id="outlined-start-simple" />}
-                    >
-                      {
-                        positions.map(el => { return <MenuItem value={el} key={el}>{el}</MenuItem> })
-                      }
-
-                    </Select>
-                  </FormControl>
-
-                  <FormControl variant="outlined" style={{ margin: 1, minWidth: 60 }}>
-                    <InputLabel >
-                      1/4
-                    </InputLabel>
-
-                    <Select
-                      value={horseRaceDetail.positions.quarterMile}
-                      onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, positions: { ...horseRaceDetail.positions, quarterMile: e.target.value } })}
-                      input={<OutlinedInput labelWidth={30} name="quarterMile" />}
-                    >
-                      {
-                        positions.map(el => {
-                          return <MenuItem value={el} key={el}>{el}</MenuItem>
-                        })
-                      }
-                    </Select>
-                  </FormControl>
-
-
-
-                </div>
-
-                <div>
-                  <InputLabel htmlFor="formatted-text-mask-input">Finish Time</InputLabel>
-                  <Input
-                    value={horseRaceDetail.finishTime}
-                    onFocus={(e) => e.target.select()}
-                    onBlur={e => {
-                      if (e.target.value.trim().length === 6 && e.target.value !== horseRaceDetail.finishTime) {
-                        setHorseRaceDetail({ ...horseRaceDetail, finishTime: e.target.value });
-                      }
-                    }}
-                    id="formatted-text-mask-input"
-                    inputComponent={TextMaskCustom}
-                  />
-                </div>
-
-                <div>
-                  <label>Bet</label>
-                  <Dropdown disabled={selectedHorse.retired} options={bettingList.map(bet => { return { label: bet, value: bet } })} filter={true} value={horseRaceDetail.bet} onChange={e => setHorseRaceDetail({ ...horseRaceDetail, bet: e.target.value })} />
-                </div>
-
-                <div>
-                  <FormLabel component="legend">Horse Equipments</FormLabel>
-                  <FormGroup style={{ flexDirection: "row" }}>
-                    {
-                      horseEquipments.map(eq => {
-                        return (
-                          <FormControlLabel disabled={selectedHorse.retired} key={eq}
-                            control={<Checkbox checked={horseRaceDetail.horseEquipments.indexOf(eq) > -1} onChange={onEquipMedicationChange(eq, "horseEquipments")} value={eq} />}
-                            label={eq}
-                          />
-                        )
-                      })
-                    }
-                  </FormGroup>
-                </div>
-
-                <div>
-                  <FormLabel component="legend">Horse Medications</FormLabel>
-                  <FormGroup style={{ flexDirection: "row" }}>
-                    <FormControlLabel disabled={selectedHorse.retired}
-                      control={<Checkbox checked={horseRaceDetail.horseMedications.indexOf("L") > -1} onChange={onEquipMedicationChange("L", "horseMedications")} value="L" />}
-                      label="L"
-                    />
-                    <FormControlLabel disabled={selectedHorse.retired}
-                      control={<Checkbox checked={horseRaceDetail.horseMedications.indexOf("B") > -1} onChange={onEquipMedicationChange("B", "horseMedications")} value="B" />}
-                      label="B"
-                    />
-                  </FormGroup>
-                </div>
-
-                <div>
-                  <FormControlLabel
-                    control={<Checkbox checked={horseRaceDetail.confirmed} onChange={e => setHorseRaceDetail({ ...horseRaceDetail, confirmed: e.target.checked })} value="true" />}
-                    label="Confirmed"
-                  />
-                </div>
 
               </React.Fragment>
             }

@@ -4,26 +4,26 @@ import "./HorseRaceDetail.css"
 
 const horseRaceDetail = props => {
   return (
-    <div style={{ fontSize: 13, display: "flex" }}>
-      <div style={{ display: 'flex', width: '10%', justifyContent: 'space-between', marginRight: '20px' }}>
+    <div style={{ fontSize: 13, display: "flex", justifyContent: 'space-between', margin: '0px 5px' }}>
+      <div style={{ display: 'flex', width: '10%', justifyContent: 'space-between'}}>
         <div>{props.date.replace(/\s+/g, '')}</div>
         <div>L</div>
         <div>{props.days}</div>
         <div>Hvc{props.details.raceNumber}</div>
         <div>{props.details.distance}</div>
       </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginRight: '15px', width: '8%' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', width: '8%' }}>
         <div>23 0</div>
         <div>45 3</div>
         <div>1:18 4</div>
         <div>1 57 4</div>
       </div>
 
-      <div style={{ marginRight: '12px' }}>
+      <div style={{width: '15%'}}>
         {props.details.claiming}
       </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginRight: '15px', width: '10%' }}>
-        <div style={{ display: 'flex', flexDirection: 'row', width: '20px', justifyContent: 'space-between', marginRight: '15px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', width: '10%' }}>
+        <div style={{ display: 'flex', flexDirection: 'row', width: '20px', justifyContent: 'space-between'}}>
           <div>{props.details.startingPosition}</div>
           <div>3</div>
         </div>
@@ -33,7 +33,7 @@ const horseRaceDetail = props => {
         <div style={{ display: 'flex' }}><div>1</div><div style={{ fontSize: '10px', fontWeight: '600' }}>1¼</div></div>
       </div>
 
-      <div style={{ display: 'flex', width: '9%', justifyContent: 'space-between', marginRight: '10px' }}>
+      <div style={{ display: 'flex', width: '9%', justifyContent: 'space-between'}}>
         <div>
           {props.details.jockey.name}
         </div>
@@ -42,8 +42,8 @@ const horseRaceDetail = props => {
         </div>
       </div>
 
-      <div style={{ display: 'flex' }}>
-        <div style={{ marginRight: '3px' }}>
+      <div style={{ display: 'flex', width: '6%', justifyContent: 'space-between'}}>
+        <div>
           {props.details.horseMedications}
         </div>
         <div>
@@ -56,7 +56,7 @@ const horseRaceDetail = props => {
 
       <div style={{ display: 'flex' }}>
         <div>
-          8/5
+          1/9
         </div>
         <div>
           Positions

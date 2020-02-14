@@ -184,7 +184,9 @@ const transformHorse = async horse => {
     dam: horse.dam,
     procedence: horse.procedence,
     stable: () => stableLoader.load(horse.stable),
-    raceDetails: () => raceDetailLoader.loadMany(horse.raceDetails) || []
+    raceDetails: () => raceDetailLoader.loadMany(horse.raceDetails) || [],
+    stats: horse.stats,
+    jockeyStats: horse.jockeyStats
   }
 }
 
@@ -270,7 +272,8 @@ const transformTrainer = trainer => {
   return {
     ...trainer,
     _id: trainer._id.toString(),
-    name: trainer.name
+    name: trainer.name,
+    stats: trainer.stats
   }
 }
 const transformStable = stable => {
@@ -278,7 +281,8 @@ const transformStable = stable => {
     _id: stable._id.toString(),
     name: stable.name,
     trainers: () => trainerLoader.loadMany(stable.trainers),
-    horses: () => horseLoader.loadMany(stable.horses)
+    horses: () => horseLoader.loadMany(stable.horses),
+    stats: stable.stats
   }
 }
 
