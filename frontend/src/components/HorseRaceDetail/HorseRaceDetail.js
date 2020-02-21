@@ -12,7 +12,7 @@ const horseRaceDetail = props => {
         <div>Hvc{props.details.raceNumber}</div>
         <div>{props.details.distance}</div>
       </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', width: '8%' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', width: '10%' }}>
         <div>23 0</div>
         <div>45 3</div>
         <div>1:18 4</div>
@@ -54,14 +54,14 @@ const horseRaceDetail = props => {
         </div>
       </div>
 
-      <div style={{ display: 'flex' }}>
-        <div>
-          1/9
+      <div style={{ display: 'flex', width: '15%', position: 'relative' }}>
+        <div style={{marginRight: '10px'}}>
+          {props.details.bet}
         </div>
         <div>
           Positions
         </div>
-        <div style={{ float: "right" }}>
+        <div style={{ position:'absolute', right: '0' }}>
           {props.details.totalHorses}
         </div>
       </div>

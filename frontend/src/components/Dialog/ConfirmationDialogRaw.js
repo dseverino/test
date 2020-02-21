@@ -315,14 +315,7 @@ const ConfirmationDialogRaw = (props) => {
   }
 
   function onHorseWeightChange(e) {
-    setHorseRaceDetail({ ...horseRaceDetail, "horseWeight": Number(e.target.value) || 0 })
-    /*console.log(e.target.value.length)
-    
-    console.log(values.selectedHorse)
-    if(values.selectedHorse.weight > 0 && e.target.value.length >= 3 && values.selectedHorse.weight != e.target.value){
-      console.log('different')
-      //si el peso viejo 980 - el actual peso 960 
-    }*/
+    setHorseRaceDetail({ ...horseRaceDetail, "horseWeight": Number(e.target.value) || 0 });
   }
 
   function onAddHoseIconClick() {

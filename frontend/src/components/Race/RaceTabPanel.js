@@ -810,7 +810,7 @@ const raceTab = props => {
 
 
                 <div style={{ display: 'flex' }}>
-                  <div style={{width: '50%'}}>
+                  <div style={{ width: '50%' }}>
                     <FormControl>
                       <label>Jockey</label>
                       <Dropdown disabled={selectedHorse.retired} options={jockeys} filter={true} value={horseRaceDetail.jockey} onChange={onJockeyChange} />
@@ -865,7 +865,6 @@ const raceTab = props => {
                         >
                           {
                             positions.map(el => {
-                              console.log(el)
                               return <MenuItem value={el} key={el}>{el}</MenuItem>
                             })
                           }
@@ -876,7 +875,7 @@ const raceTab = props => {
 
                   <div>
 
-                    <div style={{marginBottom: '15px'}}>
+                    <div style={{ marginBottom: '15px' }}>
                       <InputLabel htmlFor="formatted-text-mask-input">Finish Time</InputLabel>
                       <Input
                         value={horseRaceDetail.finishTime}
@@ -928,6 +927,7 @@ const raceTab = props => {
                     </div>
 
                     <div>
+                      <h3>Comments</h3>
                       <InputTextarea rows={5} cols={30} value={horseRaceDetail.comments || ""} onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, comments: e.target.value })} autoResize={true} />
                     </div>
 
