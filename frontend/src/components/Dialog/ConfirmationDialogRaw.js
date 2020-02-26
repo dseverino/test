@@ -377,6 +377,7 @@ const ConfirmationDialogRaw = (props) => {
     setHorseNotFound(false);
     setHorseDialog(true);
   }
+
   function onHorseStableChangeHandler(e) {
     let newHorse = Object.assign({}, horse)
     newHorse[e.target.id] = e.target.value
@@ -390,6 +391,7 @@ const ConfirmationDialogRaw = (props) => {
     setCreateStable(false);
     setStable({ name: "" })
   }
+
   function onCloseCreateTrainerDialog() {
     setCreateTrainer(false);
     setTrainer({ name: "" })
@@ -398,6 +400,7 @@ const ConfirmationDialogRaw = (props) => {
   function onStableNameHandlerChange(value) {
     setStable({ name: value })
   }
+
   function onTrainerNameHandlerChange(value) {
     setTrainer({ name: value })
   }
@@ -429,6 +432,7 @@ const ConfirmationDialogRaw = (props) => {
       setStables([...stables, { label: stable.name, value: stable._id }]);
     }
   }
+
   function savedTrainer(trainer) {
     if (trainer) {
       setCreateTrainer(false);
@@ -442,6 +446,7 @@ const ConfirmationDialogRaw = (props) => {
     setStableCreated(false);
     setStable({ name: "" })
   }
+  
   function onTrainerSnackBarClose() {
     setTrainerCreated(false);
     setTrainer({ name: "" })

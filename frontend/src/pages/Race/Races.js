@@ -157,7 +157,7 @@ class Races extends Component {
   }
 
   loadProgramRaces = () => {
-    this.setState({ isLoading: true })
+    this.setState({ isLoading: true });    
     const requestBody = {
       query: `
         query SingleProgram($date: String!) {
@@ -191,7 +191,7 @@ class Races extends Component {
                 dam
                 stable {         
                   _id
-                  name                  
+                  name
                 }
                 raceDetails {
                   _id                  
@@ -212,24 +212,20 @@ class Races extends Component {
                   jockey{
                     _id
                     name
-                    stats {
-                      starts
-                      first
-                    }
-                    trainerStats {
-                      starts
-                      first
-                    }
+                    stats
+                    trainerStats
                   } 
                   jockeyWeight
                   jockeyChanged
                   stable {
                     name
                     _id
+                    stats
                   }
                   trainer {
                     name
                     _id
+                    stats
                   }                  
                   raceNumber
                   trackCondition          
@@ -238,6 +234,7 @@ class Races extends Component {
                   positions{
                     start
                     quarterMile
+                    halfMile
                     thirdQuarter
                     mile
                     finish

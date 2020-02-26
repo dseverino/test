@@ -7,6 +7,7 @@ const Race = require("../../models/race");
 const Jockey = require("../../models/jockey");
 const Stable = require("../../models/stable");
 const Trainer = require("../../models/trainer");
+const Claiming = require("../../models/claiming");
 
 const horseLoader = new DataLoader(horseIds => {
   return horses(horseIds)
@@ -190,7 +191,7 @@ const transformHorse = async horse => {
   }
 }
 
-const transformRaceDetail = raceDetail => {
+const transformRaceDetail = raceDetail => {  
   return {
     ...raceDetail,
     _id: raceDetail.id,
@@ -207,7 +208,7 @@ const transformRaceDetail = raceDetail => {
     horseWeight: raceDetail.horseWeight,
     claimed: raceDetail.claimed,
     claiming: raceDetail.claiming,
-    claimedBy: raceDetail.claimedBy,
+    claimedBy: () => raceDetail.claimedBy ? stable(raceDetail.claimedBy) : null,
     trackCondition: raceDetail.trackCondition,
     date: raceDetail.date.toISOString(),
     raceNumber: raceDetail.raceNumber,
@@ -259,7 +260,7 @@ const transformRace = race => {
   }
 }
 
-const transformJockey = jockey => {
+const transformJockey = jockey => {  
   return {
     ...jockey,
     _id: jockey.id,
@@ -286,6 +287,16 @@ const transformStable = stable => {
   }
 }
 
+const transformClaiming = claiming => {
+  return {
+    _id: claiming._id.toString(),
+    date: claiming.date,
+    claimedBy: stableLoader.load(claiming.claimedBy),
+    claimedFrom: stableLoader.load(claiming.claimedFrom),
+    price: claiming.price
+  }
+}
+
 exports.transformProgram = transformProgram
 exports.transformHorse = transformHorse
 exports.transformUser = transformUser
@@ -294,3 +305,4 @@ exports.transformJockey = transformJockey
 exports.transformRaceDetail = transformRaceDetail
 exports.transformStable = transformStable
 exports.transformTrainer = transformTrainer
+exports.transformClaiming = transformClaiming

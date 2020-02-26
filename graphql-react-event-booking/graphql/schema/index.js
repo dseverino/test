@@ -8,6 +8,22 @@ module.exports = buildSchema(`
     races: [Race!]
   }
 
+  type Claiming {
+    _id: ID!
+    date: String!
+    horse: ID
+    claimedBy: ID
+    claimedFrom: ID
+    price: Int
+  }
+  input ClaimingInput {
+    date: String!
+    horse: ID
+    claimedBy: ID
+    claimedFrom: ID
+    price: Int
+  }
+
   type Race {
     _id: ID!
     programId: String
@@ -139,14 +155,7 @@ module.exports = buildSchema(`
     token: String!
     tokenExpiration: Int!
   }
-  type Stats {
-    starts: Int
-    first: Int
-    second: Int
-    third: Int
-    fourth: Int
-    fifth: Int
-  }
+  scalar Stats
 
   type Jockey {
     _id: ID!
@@ -159,10 +168,12 @@ module.exports = buildSchema(`
     name: String
     horses: [Horse]
     trainers: [Trainer]
+    stats: Stats
   }
   type Trainer {
     _id: ID!
     name: String!
+    stats: Stats
   }
 
   input PositionInput {
@@ -296,6 +307,7 @@ module.exports = buildSchema(`
     updateHorseRaceDetail(raceDetailId: ID, raceDetails: HorseRaceDetailInput): HorseRaceDetail
     createTrainer(trainerInput: TrainerInput): Trainer
     createStable(stableInput: StableInput): Stable
+    createClaiming(claimingInput: ClaimingInput) : Claiming
   }
 
   schema {

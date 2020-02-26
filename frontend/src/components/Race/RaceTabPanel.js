@@ -41,6 +41,12 @@ const formatter = new Intl.NumberFormat('en-US', {
 
 const raceTab = props => {
 
+  const horses = props.race.horses.map(horse => {
+    return (
+      <Horse key={horse._id} horse={horse} dateSelected={props.programDate} />
+    )
+  });
+
   const timesByDistance = {
     1100: "1:05.0",
     1200: "1:09.0",
@@ -118,7 +124,7 @@ const raceTab = props => {
 
   useEffect(() => {
     if (selectedHorse.name) {
-      setHorseRaceDetail({ ...selectedHorse, finishTime: selectedHorse.times.finish, jockey: selectedHorse.jockey._id, trainer: selectedHorse.trainer._id, stable: selectedHorse.stable._id, totalHorses: props.race.totalHorses });
+      setHorseRaceDetail({ ...selectedHorse, finishTime: selectedHorse.retired ? "0" : selectedHorse.times.finish, jockey: selectedHorse.jockey._id, trainer: selectedHorse.trainer._id, stable: selectedHorse.stable._id, totalHorses: props.race.totalHorses });
     }
   }, [selectedHorse, selectedHorse.name])
 
@@ -128,12 +134,6 @@ const raceTab = props => {
   useEffect(() => {
     setRaceDetails({ ...raceDetails, totalHorses: props.race.horses.length - selectedRetiredHorses.length })
   }, [selectedRetiredHorses])
-
-  const horses = props.race.horses.map(horse => {
-    return (
-      <Horse key={horse._id} horse={horse} dateSelected={props.programDate} />
-    )
-  });
 
   const claimings = props.race.claimings.map(claiming => {
     return "Reclamo RD$" + claiming
@@ -223,7 +223,7 @@ const raceTab = props => {
 
   function handleHorseChange(e) {
     const horseRaceDetailSelected = horseRaceDetailsIds.find((el) => el._id === e.target.value);
-    setSelectedHorse({ ...horseRaceDetailSelected, retired: horseRaceDetailSelected.retired || false, claimedBy: null, trackCondition: props.race.trackCondition, times: props.race.times, finishTime: props.race.times.finish, claimed: false });
+    setSelectedHorse({ ...horseRaceDetailSelected, retired: horseRaceDetailSelected.retired || false, claimedBy: null, trackCondition: props.race.trackCondition, times: props.race.times, finishTime: horseRaceDetailSelected.retired ? 0 : props.race.times.finish, claimed: false });
   }
 
   useEffect(() => {
@@ -833,43 +833,108 @@ const raceTab = props => {
                     </div>
                     <div>
                       <InputLabel htmlFor="formatted-text-mask-input">Positions</InputLabel>
-                      <FormControl variant="outlined" style={{ margin: 1, minWidth: 100 }}>
-                        <InputLabel>
-                          Started
+                      <div>
+                        <FormControl variant="outlined" style={{ margin: 1, minWidth: 100 }}>
+                          <InputLabel>
+                            Started
                         </InputLabel>
-                        <Select
-                          value={horseRaceDetail.positions.start || ''}
-                          onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, positions: { ...horseRaceDetail.positions, start: e.target.value } })}
-                          input={<OutlinedInput labelWidth={50} name="start" id="outlined-start-simple" />}
-                          disabled={selectedHorse.retired}
-                        >
-                          {
-                            positions.map(el => { return <MenuItem value={el} key={el}>{el}</MenuItem> })
-                          }
+                          <Select
+                            value={horseRaceDetail.positions.start || ''}
+                            onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, positions: { ...horseRaceDetail.positions, start: e.target.value } })}
+                            input={<OutlinedInput labelWidth={50} name="start" id="outlined-start-simple" />}
+                            disabled={selectedHorse.retired}
+                          >
+                            {
+                              positions.map(el => { return <MenuItem value={el} key={el}>{el}</MenuItem> })
+                            }
 
-                        </Select>
-                      </FormControl>
+                          </Select>
+                        </FormControl>
+                      </div>
 
-
-
-                      <FormControl variant="outlined" style={{ margin: 1, minWidth: 100 }}>
-                        <InputLabel >
-                          1/4
+                      <div>
+                        <FormControl variant="outlined" style={{ margin: 1, minWidth: 100 }}>
+                          <InputLabel >
+                            1/4
                         </InputLabel>
 
-                        <Select
-                          value={horseRaceDetail.positions.quarterMile || ''}
-                          onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, positions: { ...horseRaceDetail.positions, quarterMile: e.target.value } })}
-                          input={<OutlinedInput labelWidth={30} name="quarterMile" />}
-                          disabled={selectedHorse.retired}
-                        >
-                          {
-                            positions.map(el => {
-                              return <MenuItem value={el} key={el}>{el}</MenuItem>
-                            })
-                          }
-                        </Select>
-                      </FormControl>
+                          <Select
+                            value={horseRaceDetail.positions.quarterMile || ''}
+                            onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, positions: { ...horseRaceDetail.positions, quarterMile: e.target.value } })}
+                            input={<OutlinedInput labelWidth={30} name="quarterMile" />}
+                            disabled={selectedHorse.retired}
+                          >
+                            {
+                              positions.map(el => {
+                                return <MenuItem value={el} key={el}>{el}</MenuItem>
+                              })
+                            }
+                          </Select>
+                        </FormControl>
+                      </div>
+                      <div>
+                        <FormControl variant="outlined" style={{ margin: 1, minWidth: 100 }}>
+                          <InputLabel>
+                            1/2
+                          </InputLabel>
+
+                          <Select
+                            value={horseRaceDetail.positions.halfMile || ''}
+                            onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, positions: { ...horseRaceDetail.positions, halfMile: e.target.value } })}
+                            input={<OutlinedInput labelWidth={30} name="halfMile" />}
+                            disabled={selectedHorse.retired}
+                          >
+                            {
+                              positions.map(el => {
+                                return <MenuItem value={el} key={el}>{el}</MenuItem>
+                              })
+                            }
+                          </Select>
+                        </FormControl>
+                      </div>
+
+                      <div>
+                        <FormControl variant="outlined" style={{ margin: 1, minWidth: 100 }}>
+                          <InputLabel>
+                            3/4
+                          </InputLabel>
+
+                          <Select
+                            value={horseRaceDetail.positions.thirdQuarter || 0}
+                            onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, positions: { ...horseRaceDetail.positions, thirdQuarter: e.target.value } })}
+                            input={<OutlinedInput labelWidth={30} name="thirdQuarter" />}
+                            disabled={selectedHorse.retired}
+                          >
+                            {
+                              positions.map(el => {
+                                return <MenuItem value={el} key={el}>{el}</MenuItem>
+                              })
+                            }
+                          </Select>
+                        </FormControl>
+                      </div>
+
+                      <div>
+                        <FormControl variant="outlined" style={{ margin: 1, minWidth: 100 }}>
+                          <InputLabel>
+                            Finish
+                          </InputLabel>
+
+                          <Select
+                            value={horseRaceDetail.positions.finish || ''}
+                            onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, positions: { ...horseRaceDetail.positions, finish: e.target.value } })}
+                            input={<OutlinedInput labelWidth={30} name="finish" />}
+                            disabled={selectedHorse.retired}
+                          >
+                            {
+                              positions.map(el => {
+                                return <MenuItem value={el} key={el}>{el}</MenuItem>
+                              })
+                            }
+                          </Select>
+                        </FormControl>
+                      </div>
+
                     </div>
                   </div>
 
@@ -878,7 +943,7 @@ const raceTab = props => {
                     <div style={{ marginBottom: '15px' }}>
                       <InputLabel htmlFor="formatted-text-mask-input">Finish Time</InputLabel>
                       <Input
-                        value={horseRaceDetail.finishTime}
+                        value={!horseRaceDetail.retired ? horseRaceDetail.finishTime : 0}
                         onFocus={(e) => e.target.select()}
                         onBlur={e => {
                           if (e.target.value.trim().length === 6 && e.target.value !== horseRaceDetail.finishTime) {

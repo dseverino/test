@@ -7,12 +7,13 @@ import Paper from '@material-ui/core/Paper';
 
 const horse = props => {
   const dateFormmater = new Intl.DateTimeFormat('en-GB', { year: '2-digit', month: 'short', day: '2-digit' });
-  
+
 
   const horseRaceDetailsFiltered = props.horse.raceDetails.sort((a, b) => (a.date < b.date) ? 1 : ((b.date < a.date) ? -1 : 0)).filter(detail => {
+    detail.times = !detail.times ? { quarterMile: "0", halfMile: "0", thirdQuarter: "0", mile: "0", finish: "0" } : detail.times
     return detail.date <= props.dateSelected.toISOString()
   })
-  
+
   return (
     <Paper style={{ margin: "10px 0px" }} className="horse__card">
 
@@ -23,14 +24,14 @@ const horse = props => {
 
         <div style={{ width: "100%" }}>
           <div style={{ fontSize: "12px", display: "flex", width: "100%" }}>
-            <div style={{ width: "67%", display: "flex" }}>{horseRaceDetailsFiltered[0].stable.name} (0-0-0-0)
+            <div style={{ width: "67%", display: "flex" }}>{horseRaceDetailsFiltered[0].stable.name} ( {horseRaceDetailsFiltered[0].stable.stats ? horseRaceDetailsFiltered[0].stable.stats[props.dateSelected.getFullYear()].starts : 0} 0-0-0)
               {
-                horseRaceDetailsFiltered[0].discarded && 
-                <div style={{fontSize: "16px", fontWeight: 500, color: "red", margin: 'auto'}}>Descartada</div>
+                horseRaceDetailsFiltered[0].discarded &&
+                <div style={{ fontSize: "16px", fontWeight: 500, color: "red", margin: 'auto' }}>Descartada</div>
               }
             </div>
             <div style={{ display: "flex", width: "33%", justifyContent: "space-between" }}>
-              <div>{horseRaceDetailsFiltered[0].trainer.name} (0-0-0-0)</div>
+              <div>{horseRaceDetailsFiltered[0].trainer.name} ( {horseRaceDetailsFiltered[0].trainer.name} ( {horseRaceDetailsFiltered[0].trainer.stats ? horseRaceDetailsFiltered[0].trainer.stats[props.dateSelected.getFullYear()].starts : 0} 0-0-0)</div>
               <div>{horseRaceDetailsFiltered[0].claiming}</div>
             </div>
           </div>
@@ -67,7 +68,8 @@ const horse = props => {
               </div>
             </div>
             <div style={{ display: "flex" }}>
-              <div ><span>{horseRaceDetailsFiltered[0].jockey.name} </span><div>( 0-0-0-0 ) 0.00%</div></div>
+              <div ><span>{horseRaceDetailsFiltered[0].jockey.name} </span>
+                <div>( {horseRaceDetailsFiltered[0].jockey.stats ? horseRaceDetailsFiltered[0].jockey.stats[props.dateSelected.getFullYear()].starts : 0} 0-0-0 ) 0.00%</div></div>
               <div>Vida Statistics</div>
             </div>
 
