@@ -7,6 +7,7 @@ const horseRaceDetail = require("../resolvers/horseRaceDetail")
 const stableResolver = require("../resolvers/stable");
 const trainerResolver = require("../resolvers/trainer")
 const claimingResolver = require("../resolvers/claiming")
+const workoutResolver = require("../resolvers/workout");
 
 module.exports = {
   ...userResolver,
@@ -17,5 +18,6 @@ module.exports = {
   ...horseRaceDetail,
   ...stableResolver,
   ...trainerResolver,
-  ...claimingResolver
+  ...claimingResolver,
+  ...workoutResolver
 }

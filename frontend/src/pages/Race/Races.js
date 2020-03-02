@@ -193,6 +193,16 @@ class Races extends Component {
                   _id
                   name
                 }
+                workouts {
+                  date
+                  jockey {
+                    name
+                  }
+                  time
+                  distance
+                  briddle
+                  trackCondition
+                }
                 raceDetails {
                   _id                  
                   claiming
@@ -323,6 +333,16 @@ class Races extends Component {
               stable {         
                 _id
                 name                  
+              }
+              workouts {
+                date
+                jockey {
+                  name
+                }
+                time
+                distance
+                briddle
+                trackCondition
               }
               raceDetails {
                 _id

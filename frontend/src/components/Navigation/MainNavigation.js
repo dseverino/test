@@ -80,6 +80,15 @@ const mainNavigation = props => (
                 </div>
               </li>
 
+              <li className="dropdown">
+                <NavLink to="/workouts" className="dropbtn">
+                  Workouts
+                </NavLink>
+                <div className="dropdown-content">
+                  <NavLink to="/createworkout">Create Workout</NavLink>
+                </div>
+              </li>
+
             </ul>
           </nav>
 

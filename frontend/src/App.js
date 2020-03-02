@@ -17,6 +17,7 @@ import TrainerPage from "./pages/Trainer/Trainer";
 import CreateTrainerPage from "./pages/Trainer/CreateTrainer";
 import CreateProgramPage from "./pages/Program/CreateProgram";
 import CreateRacePage from "./pages/Race/CreateRace";
+import CreateWorkoutPage from "./pages/Workout/CreateWorkout";
 
 import MainNavigation from "./components/Navigation/MainNavigation"
 
@@ -65,8 +66,11 @@ class App extends Component {
                 <Route path="/trainer" component={TrainerPage} />
                 <Route path="/createtrainer" component={CreateTrainerPage} />
                 
-                <Route path="/races" component={RacesPage} />}
-                <Route path="/createrace" component={CreateRacePage} />}
+                <Route path="/races" component={RacesPage} />
+                <Route path="/createrace" component={CreateRacePage} />
+
+                <Route path="/createworkout" component={CreateWorkoutPage} />
+                
                 
               </Switch>
             </main>

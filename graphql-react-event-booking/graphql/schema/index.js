@@ -77,6 +77,7 @@ module.exports = buildSchema(`
     procedence: String!
     raceDetails: [HorseRaceDetail]
     stable: Stable
+    workouts: [Workout]
   }
 
   type HorseRaceDetail {
@@ -269,6 +270,27 @@ module.exports = buildSchema(`
     name: String!
   }
 
+  input WorkoutInput {
+    date: String
+    horse: ID
+    distance: String
+    jockey: ID
+    briddle: String
+    time: String
+    trackCondition: String
+  }
+
+  type Workout {
+    _id: ID!
+    date: String
+    horse: Horse
+    distance: String
+    jockey: Jockey
+    briddle: String
+    time: String
+    trackCondition: String
+  }
+
   type RootQuery {
     horses: [Horse!]!
     horse(name: String): [Horse]
@@ -308,6 +330,7 @@ module.exports = buildSchema(`
     createTrainer(trainerInput: TrainerInput): Trainer
     createStable(stableInput: StableInput): Stable
     createClaiming(claimingInput: ClaimingInput) : Claiming
+    createWorkout(workoutInput: WorkoutInput): Workout
   }
 
   schema {

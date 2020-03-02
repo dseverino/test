@@ -8,6 +8,7 @@ const Jockey = require("../../models/jockey");
 const Stable = require("../../models/stable");
 const Trainer = require("../../models/trainer");
 const Claiming = require("../../models/claiming");
+const Workout = require("../../models/workout");
 
 const horseLoader = new DataLoader(horseIds => {
   return horses(horseIds)
@@ -30,6 +31,9 @@ const jockeyLoader = new DataLoader(jockeyIds => {
 })
 const stableLoader = new DataLoader(stableIds => {
   return stables(stableIds);
+})
+const workoutLoader = new DataLoader(workoutIds => {
+  return workouts(workoutIds);
 })
 const trainerLoader = new DataLoader(trainerIds => {
   return trainers(trainerIds);
@@ -79,6 +83,18 @@ const stables = async stableIds => {
     throw error
   }
 }
+
+const workouts = async workoutIds => {
+  try {   
+    const results = await Workout.find({ _id: { $in: workoutIds } });
+    return workoutIds.map((workoutId) => results.find((workout) => workout._id.toString() === workoutId.toString())).map(workout => {
+      return transformWorkout(workout)
+    });
+  } catch (error) {
+    throw error
+  }
+}
+
 const trainers = async trainerIds => {
   try {    
     const results = await Trainer.find({ _id: { $in: trainerIds } });
@@ -103,6 +119,15 @@ const stable = async stableId => {
   try {
     const stable = await stableLoader.load(stableId)
     return transformStable(stable)
+  } catch (error) {
+    throw error
+  }
+}
+
+const workout = async wourkoutId => {
+  try {
+    const workout = await workoutLoader.load(wourkoutId)
+    return transformWorkout(workout)
   } catch (error) {
     throw error
   }
@@ -172,7 +197,7 @@ const transformUser = (user) => {
   }
 }
 
-const transformHorse = async horse => {
+const transformHorse = async horse => {  
   return {
     ...horse,
     _id: horse._id.toString(),
@@ -187,7 +212,8 @@ const transformHorse = async horse => {
     stable: () => stableLoader.load(horse.stable),
     raceDetails: () => raceDetailLoader.loadMany(horse.raceDetails) || [],
     stats: horse.stats,
-    jockeyStats: horse.jockeyStats
+    jockeyStats: horse.jockeyStats,
+    workouts: () => workoutLoader.loadMany(horse.workouts)
   }
 }
 
@@ -269,6 +295,7 @@ const transformJockey = jockey => {
     trainerStats: jockey.trainerStats
   }
 }
+
 const transformTrainer = trainer => {
   return {
     ...trainer,
@@ -277,6 +304,7 @@ const transformTrainer = trainer => {
     stats: trainer.stats
   }
 }
+
 const transformStable = stable => {
   return {
     _id: stable._id.toString(),
@@ -291,9 +319,22 @@ const transformClaiming = claiming => {
   return {
     _id: claiming._id.toString(),
     date: claiming.date,
-    claimedBy: stableLoader.load(claiming.claimedBy),
-    claimedFrom: stableLoader.load(claiming.claimedFrom),
+    claimedBy: () => stableLoader.load(claiming.claimedBy),
+    claimedFrom: () => stableLoader.load(claiming.claimedFrom),
     price: claiming.price
+  }
+}
+
+const transformWorkout = workout => {
+  return {
+    _id: workout.id.toString(),
+    date: workout.date,      
+    horse: () => horseLoader.load(workout.horse),    
+    distance: workout.distance,
+    jockey: () => jockey(workout.jockey),
+    briddle: workout.briddle,
+    time: workout.time,
+    trackCondition: workout.trackCondition    
   }
 }
 
@@ -306,3 +347,4 @@ exports.transformRaceDetail = transformRaceDetail
 exports.transformStable = transformStable
 exports.transformTrainer = transformTrainer
 exports.transformClaiming = transformClaiming
+exports.transformWorkout = transformWorkout

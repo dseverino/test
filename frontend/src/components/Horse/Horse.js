@@ -87,12 +87,15 @@ const horse = props => {
         }
       </div>
 
-
       <div>
-        Trabajos
+        Trabajo(s): 
+        {
+          props.horse.workouts.map((workout, index) => {
+            return <div key={index}>{workout.date} {workout.distance} {workout.time} {workout.jockey.name} </div>
+          })
+        }
 
       </div>
-
 
     </Paper>
   )
