@@ -24,14 +24,14 @@ const horse = props => {
 
         <div style={{ width: "100%" }}>
           <div style={{ fontSize: "12px", display: "flex", width: "100%" }}>
-            <div style={{ width: "67%", display: "flex" }}>{horseRaceDetailsFiltered[0].stable.name} ( {horseRaceDetailsFiltered[0].stable.stats ? horseRaceDetailsFiltered[0].stable.stats[props.dateSelected.getFullYear()].starts : 0} 0-0-0)
+            <div style={{ width: "67%", display: "flex" }}>{horseRaceDetailsFiltered[0].stable.name} ({horseRaceDetailsFiltered[0].stable.stats ? horseRaceDetailsFiltered[0].stable.stats[props.dateSelected.getFullYear()].starts :0} 0-0-0)
               {
                 horseRaceDetailsFiltered[0].discarded &&
                 <div style={{ fontSize: "16px", fontWeight: 500, color: "red", margin: 'auto' }}>Descartada</div>
               }
             </div>
             <div style={{ display: "flex", width: "33%", justifyContent: "space-between" }}>
-              <div>{horseRaceDetailsFiltered[0].trainer.name} ( {horseRaceDetailsFiltered[0].trainer.name} ( {horseRaceDetailsFiltered[0].trainer.stats ? horseRaceDetailsFiltered[0].trainer.stats[props.dateSelected.getFullYear()].starts : 0} 0-0-0)</div>
+              <div>{horseRaceDetailsFiltered[0].trainer.name} ( {horseRaceDetailsFiltered[0].trainer.stats ? horseRaceDetailsFiltered[0].trainer.stats[props.dateSelected.getFullYear()].starts : 0} 0-0-0)</div>
               <div>{horseRaceDetailsFiltered[0].claiming}</div>
             </div>
           </div>

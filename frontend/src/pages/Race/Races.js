@@ -192,7 +192,10 @@ class Races extends Component {
                 stable {         
                   _id
                   name
+                  stats
                 }
+                stats
+                jockeyStats
                 workouts {
                   date
                   jockey {
@@ -330,9 +333,12 @@ class Races extends Component {
               sex
               sire
               dam
+              stats
+              jockeyStats
               stable {         
                 _id
-                name                  
+                name
+                stats          
               }
               workouts {
                 date
@@ -352,6 +358,7 @@ class Races extends Component {
                 horseEquipments
                 jockey{
                   name
+                  stats
                 } 
                 jockeyWeight
                 jockeyChanged

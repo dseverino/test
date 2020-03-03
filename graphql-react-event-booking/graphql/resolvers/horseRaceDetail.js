@@ -67,7 +67,6 @@ module.exports = {
           } catch (error) {
             console.log(error)
           }
-
         }
 
         if (args.raceDetails.positions.finish > 0 && args.raceDetails.positions.finish < 6) {
@@ -80,20 +79,20 @@ module.exports = {
           myObj[`trainerStats.${year}.${args.raceDetails.trainer}.starts`] = 1
           myObj[`trainerStats.${year}.${args.raceDetails.trainer}.${pos[args.raceDetails.positions.finish]}`] = 1;
           try {
-            //await Jockey.updateOne({ _id: args.raceDetails.jockey }, { $inc: myObj })  
+            await Jockey.updateOne({ _id: args.raceDetails.jockey }, { $inc: myObj })  
           } catch (error) {
             console.log(error)
-          }          
+          }
           try {
             myObj = {}
             myObj[`stats.${year}.starts`] = 1;
             myObj[`stats.${year}.${pos[args.raceDetails.positions.finish]}`] = 1;
-            //await Stable.updateOne({ _id: args.raceDetails.stable }, { $inc: myObj })
-            //await Trainer.updateOne({ _id: args.raceDetails.trainer }, { $inc: myObj })
+            await Stable.updateOne({ _id: args.raceDetails.stable }, { $inc: myObj })
+            await Trainer.updateOne({ _id: args.raceDetails.trainer }, { $inc: myObj })
                         
             myObj = {}
-            //myObj[`stats.${year}.starts`] = 1;
-            //myObj[`stats.${year}.${pos[args.raceDetails.positions.finish]}`] = 1;
+            myObj[`stats.${year}.starts`] = 1;
+            myObj[`stats.${year}.${pos[args.raceDetails.positions.finish]}`] = 1;
             myObj[`jockeyStats.${year}.${args.raceDetails.jockey}.starts`] = 1
             myObj[`jockeyStats.${year}.${args.raceDetails.jockey}.${pos[args.raceDetails.positions.finish]}`] = 1;
             await Horse.updateOne({ _id: horseId }, { $inc: myObj });            

@@ -77,6 +77,8 @@ module.exports = buildSchema(`
     procedence: String!
     raceDetails: [HorseRaceDetail]
     stable: Stable
+    stats: Stats
+    jockeyStats: Stats
     workouts: [Workout]
   }
 
@@ -157,6 +159,7 @@ module.exports = buildSchema(`
     tokenExpiration: Int!
   }
   scalar Stats
+
 
   type Jockey {
     _id: ID!
