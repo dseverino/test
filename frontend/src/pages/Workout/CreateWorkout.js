@@ -123,14 +123,16 @@ class CreateWorkoutPage extends Component {
   }
 
   modalCancelHandler = (event) => {    
-    this.setState({
-      workout: {
-        horse: "",
-        distance: "400",
-        jockey: "",
-        briddle: "",
-        time: "",
-        trackCondition: "L"
+    this.setState(prevState => {
+      return { 
+        workout: {
+          ...prevState.workout,
+          horse: "",        
+          jockey: "",
+          briddle: "",
+          time: "",
+          trackCondition: "L"
+        }        
       }
     })
   }
