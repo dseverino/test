@@ -41,11 +41,6 @@ const formatter = new Intl.NumberFormat('en-US', {
 
 const raceTab = props => {
 
-  const horses = props.race.horses.map(horse => {
-    return (
-      <Horse key={horse._id} horse={horse} dateSelected={props.programDate} />
-    )
-  });
 
   const timesByDistance = {
     1100: "1:05.0",
@@ -489,6 +484,12 @@ const raceTab = props => {
       },
     },
   };
+
+  const horses = props.race.horses.map(horse => {
+    return (
+      <Horse key={horse._id} horse={horse} dateSelected={props.programDate} />
+    )
+  });
 
   return (
 

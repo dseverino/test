@@ -80,7 +80,8 @@ const ConfirmationDialogRaw = (props) => {
     horseAge: 0,
     distance: props.distance,
     claiming: "",
-    discarded: false
+    discarded: false,
+    raceId: raceId
   });
 
   React.useEffect(() => {

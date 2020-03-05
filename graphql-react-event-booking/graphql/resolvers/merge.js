@@ -9,9 +9,10 @@ const Stable = require("../../models/stable");
 const Trainer = require("../../models/trainer");
 const Claiming = require("../../models/claiming");
 const Workout = require("../../models/workout");
+this.raceId = ""
 
-const horseLoader = new DataLoader(horseIds => {
-  return horses(horseIds)
+const horseLoader = new DataLoader((horseIds, raceId) => {  
+  return horses(horseIds, raceId)
 })
 
 const userLoader = new DataLoader(userIds => {
@@ -171,7 +172,7 @@ const raceDetails = async raceDetailIds => {
   }
 }
 
-const horses = async horseIds => {
+const horses = async (horseIds, raceId) => {
   try {
     const m = { $match: { "_id": { $in: horseIds } } };
     const a = { $addFields: { "__order": { $indexOfArray: [horseIds, "$_id"] } } };
@@ -179,7 +180,6 @@ const horses = async horseIds => {
     const horses = await Horse.aggregate([m, a, s])//await Horse.find({ _id: { $in: horseIds } });
     
     return horses.map(horse => {
-      
       return transformHorse(horse)
     })
   }
@@ -217,7 +217,8 @@ const transformHorse = async horse => {
   }
 }
 
-const transformRaceDetail = raceDetail => {  
+const transformRaceDetail = raceDetail => {
+  raceDetail.raceId = raceDetail.raceId | ""
   return {
     ...raceDetail,
     _id: raceDetail.id,
@@ -249,7 +250,8 @@ const transformRaceDetail = raceDetail => {
     horseAge: raceDetail.horseAge,
     times: raceDetail.times,
     distance: raceDetail.distance,
-    confirmed: raceDetail.confirmed || false
+    confirmed: raceDetail.confirmed || false,
+    raceId: raceDetail.raceId
   }
 }
 
@@ -264,6 +266,8 @@ const transformProgram = program => {
 }
 
 const transformRace = race => {
+  //console.log(race.id)
+  this.raceId = race.id
   return {
     ...race,
     _id: race.id,

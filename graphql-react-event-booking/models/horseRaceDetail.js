@@ -57,6 +57,7 @@ const horseRaceDetailSchema = new Schema({
     type: Number,
     required: true
   },
-  confirmed: Boolean
+  confirmed: Boolean,
+  raceId: mongoose.Schema.Types.ObjectId
 })
 module.exports = mongoose.model("HorseRaceDetail", horseRaceDetailSchema);

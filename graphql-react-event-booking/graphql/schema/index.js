@@ -113,6 +113,7 @@ module.exports = buildSchema(`
     finishTime: String
     comments: String
     confirmed: Boolean
+    raceId: ID
   }
 
   type Position {
@@ -251,7 +252,7 @@ module.exports = buildSchema(`
     totalHorses: Int 
     discarded: Boolean
     horseAge: Int    
-    horseId: ID
+    raceId: ID
   }
 
   input ProgramInput {

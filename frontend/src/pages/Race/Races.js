@@ -274,6 +274,7 @@ class Races extends Component {
                   horseAge
                   comments
                   confirmed
+                  raceId
                 }
               }
             }
@@ -406,6 +407,7 @@ class Races extends Component {
                 horseAge
                 comments
                 confirmed
+                raceId
               }
             }
           }
