@@ -51,7 +51,8 @@ const raceSchema = new Schema(
     times: Object,
     totalHorses: Number,
     hasRaceDetails: Boolean,
-    trackCondition: String
+    trackCondition: String,
+    positions: Object
   }
 )
 

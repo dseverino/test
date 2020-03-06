@@ -4,27 +4,12 @@ const Schema = mongoose.Schema;
 
 const horseRaceDetailSchema = new Schema({
 
-  jockey: {
-    type: mongoose.Schema.Types.ObjectId,
-    required: true,
-  },
-  jockeyWeight: {
-    type: Number,
-    required: true,
-  },
+  jockey: mongoose.Schema.Types.ObjectId,
+  jockeyWeight: Number,
   jockeyChanged: Boolean,
-  trainer: {
-    type: mongoose.Schema.Types.ObjectId,
-    required: true,
-  },
-  stable: {
-    type: mongoose.Schema.Types.ObjectId,
-    required: true,
-  },
-  startingPosition: {
-    type: Number,
-    required: true,
-  },
+  trainer: mongoose.Schema.Types.ObjectId,
+  stable: mongoose.Schema.Types.ObjectId,
+  startingPosition: Number,
   positions: Object,
   lengths: Object,
   times: Object,
@@ -48,16 +33,11 @@ const horseRaceDetailSchema = new Schema({
   claiming: String,
   trackCondition: String,
   raceNumber: Number,
-  date: {
-    type: Date,
-    required: true
-  },
+  date: Date,
   horseMedications: [String],
-  distance: {
-    type: Number,
-    required: true
-  },
+  distance: Number,
   confirmed: Boolean,
-  raceId: mongoose.Schema.Types.ObjectId
+  raceId: mongoose.Schema.Types.ObjectId,
+  length: Object
 })
 module.exports = mongoose.model("HorseRaceDetail", horseRaceDetailSchema);

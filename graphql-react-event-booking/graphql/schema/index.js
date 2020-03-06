@@ -41,6 +41,7 @@ module.exports = buildSchema(`
     totalHorses: Int
     hasRaceDetails: Boolean
     trackCondition: String
+    positions: HorsePosition
   }
   input RaceInput {
     programId: Int
@@ -160,7 +161,8 @@ module.exports = buildSchema(`
     tokenExpiration: Int!
   }
   scalar Stats
-
+  scalar SelectedHorse
+  scalar HorsePosition
 
   type Jockey {
     _id: ID!
@@ -330,7 +332,7 @@ module.exports = buildSchema(`
     createHorseRaceDetail(horseRaceDetail: HorseRaceDetailInput, horseId: ID): HorseRaceDetail
     createJockey(jockeyInput: JockeyInput): Jockey
     addRaceDetail(raceDetailId: ID, horseId: ID): Horse
-    updateHorseRaceDetail(raceDetailId: ID, raceDetails: HorseRaceDetailInput): HorseRaceDetail
+    updateHorseRaceDetail(selectedHorse: SelectedHorse, raceDetails: HorseRaceDetailInput): HorseRaceDetail
     createTrainer(trainerInput: TrainerInput): Trainer
     createStable(stableInput: StableInput): Stable
     createClaiming(claimingInput: ClaimingInput) : Claiming

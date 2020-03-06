@@ -22,6 +22,9 @@ import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import TextField from '@material-ui/core/TextField';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
+import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@material-ui/icons/CheckBox';
+
 import { InputTextarea } from 'primereact/inputtextarea';
 
 import { Dropdown } from "primereact/dropdown";
@@ -115,6 +118,7 @@ const raceTab = props => {
       finish: 0
     }
   });
+
   const [selectedHorse, setSelectedHorse] = useState({ _id: "", retired: false })
 
   useEffect(() => {
@@ -392,8 +396,8 @@ const raceTab = props => {
 
     const requestBody = {
       query: `
-        mutation UpdateHorseRaceDetail($raceDetailId: ID, $raceDetails: HorseRaceDetailInput){
-          updateHorseRaceDetail(raceDetailId: $raceDetailId, raceDetails: $raceDetails){
+        mutation UpdateHorseRaceDetail($selectedHorse: SelectedHorse, $raceDetails: HorseRaceDetailInput){
+          updateHorseRaceDetail(selectedHorse: $selectedHorse, raceDetails: $raceDetails){
             times{              
               quarterMile
               halfMile
@@ -405,7 +409,7 @@ const raceTab = props => {
         }          
       `,
       variables: {
-        raceDetailId: selectedHorse._id,
+        selectedHorse: selectedHorse,
         raceDetails: horseRaceDetail
       }
     }
@@ -811,11 +815,12 @@ const raceTab = props => {
 
 
                 <div style={{ display: 'flex' }}>
-                  <div style={{ width: '50%' }}>
+                  <div style={{ width: '60%' }}>
                     <FormControl>
                       <label>Jockey</label>
                       <Dropdown disabled={selectedHorse.retired} options={jockeys} filter={true} value={horseRaceDetail.jockey} onChange={onJockeyChange} />
                     </FormControl>
+
                     <div>
                       <TextField id="jockeyweight" disabled={selectedHorse.retired}
                         label="Jockey Weight" type="number" onChange={e => setHorseRaceDetail({ ...horseRaceDetail, "jockeyWeight": Number(e.target.value) })} keyfilter="pint" value={horseRaceDetail.jockeyWeight} margin="normal" variant="outlined" />
@@ -832,38 +837,152 @@ const raceTab = props => {
                       <label>Stable</label>
                       <Dropdown disabled={!horseRaceDetail.claimed} options={stables} filter={true} value={horseRaceDetail.claimedBy} onChange={onStableSelection} />
                     </div>
-                    <div>
-                      <InputLabel htmlFor="formatted-text-mask-input">Positions</InputLabel>
-                      <div>
-                        <FormControl variant="outlined" style={{ margin: 1, minWidth: 100 }}>
-                          <InputLabel>
-                            Started
+
+                    <div className="d-flex flex-column" style={{ border: "1px solid blue" }}>
+
+                      <div className="d-flex m-1" style={{ border: "1px solid red" }}>
+                        <div className="d-flex p-2">
+                          <div style={{ border: "1px solid blue" }}>
+                            <InputLabel>empty</InputLabel>
+                          </div>
+                          <div>
+                            <InputLabel>Positions</InputLabel>
+                          </div>
+                          <div>
+                            <InputLabel>empty</InputLabel>
+                          </div>
+                          <div>
+                            <InputLabel>empty</InputLabel>
+                          </div>
+                          <div>
+                            <InputLabel>Length</InputLabel>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="d-flex m-1" style={{ border: "1px solid red" }}>
+                        <div className="d-flex p-2">
+                          <div style={{ border: "1px solid blue" }}>
+                            <InputLabel>empty</InputLabel>
+                          </div>
+                          <div>
+                            <InputLabel>Positions</InputLabel>
+                          </div>
+                          <div>
+                            <InputLabel>empty</InputLabel>
+                          </div>
+                          <div>
+                            <InputLabel>empty</InputLabel>
+                          </div>
+                          <div>
+                            <InputLabel>Length</InputLabel>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="d-flex m-1" style={{ border: "1px solid red" }}>
+                        <div className="d-flex p-2">
+                          <div style={{ border: "1px solid blue" }}>
+                            <InputLabel>empty</InputLabel>
+                          </div>
+                          <div>
+                            <InputLabel>Positions</InputLabel>
+                          </div>
+                          <div>
+                            <InputLabel>empty</InputLabel>
+                          </div>
+                          <div>
+                            <InputLabel>empty</InputLabel>
+                          </div>
+                          <div>
+                            <InputLabel>Length</InputLabel>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="d-flex m-1" style={{ border: "1px solid red" }}>
+                        <div className="d-flex p-2">
+                          <div style={{ border: "1px solid blue" }}>
+                            <InputLabel>empty</InputLabel>
+                          </div>
+                          <div>
+                            <InputLabel>Positions</InputLabel>
+                          </div>
+                          <div>
+                            <InputLabel>empty</InputLabel>
+                          </div>
+                          <div>
+                            <InputLabel>empty</InputLabel>
+                          </div>
+                          <div>
+                            <InputLabel>Length</InputLabel>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="d-flex m-1" style={{ border: "1px solid red" }}>
+                        <div className="d-flex p-2">
+                          <div style={{ border: "1px solid blue" }}>
+                            <InputLabel>empty</InputLabel>
+                          </div>
+                          <div>
+                            <InputLabel>Positions</InputLabel>
+                          </div>
+                          <div>
+                            <InputLabel>empty</InputLabel>
+                          </div>
+                          <div>
+                            <InputLabel>empty</InputLabel>
+                          </div>
+                          <div>
+                            <InputLabel>Length</InputLabel>
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+
+
+
+                    <div style={{ display: "flex" }}>
+
+                      <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-evenly" }}>
+                        <InputLabel>
+                          Started
                         </InputLabel>
+                        <InputLabel >
+                          1/4
+                        </InputLabel>
+                        <InputLabel>
+                          1/2
+                        </InputLabel>
+                        <InputLabel>
+                          3/4
+                        </InputLabel>
+                        <InputLabel>
+                          Finish
+                        </InputLabel>
+                      </div>
+
+                      <div>
+                        <InputLabel>Positions</InputLabel>
+                        <div style={{ display: "flex", flexDirection: "column", width: "45%" }}>
+
                           <Select
                             value={horseRaceDetail.positions.start || ''}
                             onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, positions: { ...horseRaceDetail.positions, start: e.target.value } })}
                             input={<OutlinedInput labelWidth={50} name="start" id="outlined-start-simple" />}
                             disabled={selectedHorse.retired}
+                            style={{ minWidth: 70 }}
                           >
                             {
                               positions.map(el => { return <MenuItem value={el} key={el}>{el}</MenuItem> })
                             }
 
                           </Select>
-                        </FormControl>
-                      </div>
-
-                      <div>
-                        <FormControl variant="outlined" style={{ margin: 1, minWidth: 100 }}>
-                          <InputLabel >
-                            1/4
-                        </InputLabel>
 
                           <Select
                             value={horseRaceDetail.positions.quarterMile || ''}
                             onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, positions: { ...horseRaceDetail.positions, quarterMile: e.target.value } })}
                             input={<OutlinedInput labelWidth={30} name="quarterMile" />}
                             disabled={selectedHorse.retired}
+                            style={{ minWidth: 70 }}
                           >
                             {
                               positions.map(el => {
@@ -871,19 +990,13 @@ const raceTab = props => {
                               })
                             }
                           </Select>
-                        </FormControl>
-                      </div>
-                      <div>
-                        <FormControl variant="outlined" style={{ margin: 1, minWidth: 100 }}>
-                          <InputLabel>
-                            1/2
-                          </InputLabel>
 
                           <Select
                             value={horseRaceDetail.positions.halfMile || ''}
                             onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, positions: { ...horseRaceDetail.positions, halfMile: e.target.value } })}
                             input={<OutlinedInput labelWidth={30} name="halfMile" />}
                             disabled={selectedHorse.retired}
+                            style={{ minWidth: 70 }}
                           >
                             {
                               positions.map(el => {
@@ -891,20 +1004,13 @@ const raceTab = props => {
                               })
                             }
                           </Select>
-                        </FormControl>
-                      </div>
-
-                      <div>
-                        <FormControl variant="outlined" style={{ margin: 1, minWidth: 100 }}>
-                          <InputLabel>
-                            3/4
-                          </InputLabel>
 
                           <Select
                             value={horseRaceDetail.positions.thirdQuarter || 0}
                             onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, positions: { ...horseRaceDetail.positions, thirdQuarter: e.target.value } })}
                             input={<OutlinedInput labelWidth={30} name="thirdQuarter" />}
                             disabled={selectedHorse.retired}
+                            style={{ minWidth: 70 }}
                           >
                             {
                               positions.map(el => {
@@ -912,20 +1018,13 @@ const raceTab = props => {
                               })
                             }
                           </Select>
-                        </FormControl>
-                      </div>
-
-                      <div>
-                        <FormControl variant="outlined" style={{ margin: 1, minWidth: 100 }}>
-                          <InputLabel>
-                            Finish
-                          </InputLabel>
 
                           <Select
                             value={horseRaceDetail.positions.finish || ''}
                             onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, positions: { ...horseRaceDetail.positions, finish: e.target.value } })}
                             input={<OutlinedInput labelWidth={30} name="finish" />}
                             disabled={selectedHorse.retired}
+                            style={{ minWidth: 70 }}
                           >
                             {
                               positions.map(el => {
@@ -933,11 +1032,104 @@ const raceTab = props => {
                               })
                             }
                           </Select>
-                        </FormControl>
+
+                        </div>
+
+                      </div>
+
+                      <div>
+                        <InputLabel>Length</InputLabel>
+                        <div style={{ display: "flex", flexDirection: "column" }}>
+
+                          <FormGroup row>
+                            <FormControlLabel
+                              disabled={selectedHorse.retired}
+                              control={
+                                <Checkbox checked={horseRaceDetail.horseMedications.indexOf("L") > -1}
+                                  icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
+                                  checkedIcon={<CheckBoxIcon fontSize="small" />}
+                                  onChange={onEquipMedicationChange("L", "horseMedications")}
+                                  value="L"
+                                />
+                              }
+                              label="HD"
+                            />
+                            <FormControlLabel disabled={selectedHorse.retired}
+                              control={<Checkbox checked={horseRaceDetail.horseMedications.indexOf("B") > -1} icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
+                                checkedIcon={<CheckBoxIcon fontSize="small" />} onChange={onEquipMedicationChange("B", "horseMedications")} value="B" />}
+                              label="NK"
+                            />
+                            <TextField style={{ width: 65 }} disabled={false} type="number" value={""} margin="normal" variant="outlined" />
+                          </FormGroup>
+                          <FormGroup row>
+                            <FormControlLabel
+                              disabled={selectedHorse.retired}
+                              control={
+                                <Checkbox checked={horseRaceDetail.horseMedications.indexOf("L") > -1}
+                                  icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
+                                  checkedIcon={<CheckBoxIcon fontSize="small" />}
+                                  onChange={onEquipMedicationChange("L", "horseMedications")}
+                                  value="L"
+                                />
+                              }
+                              label="HD"
+                            />
+                            <FormControlLabel disabled={selectedHorse.retired}
+                              control={<Checkbox checked={horseRaceDetail.horseMedications.indexOf("B") > -1} icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
+                                checkedIcon={<CheckBoxIcon fontSize="small" />} onChange={onEquipMedicationChange("B", "horseMedications")} value="B" />}
+                              label="NK"
+                            />
+                            <TextField style={{ width: 65 }} disabled={false} type="number" value={""} margin="normal" variant="outlined" />
+                          </FormGroup>
+
+                          <FormGroup row>
+                            <FormControlLabel
+                              disabled={selectedHorse.retired}
+                              control={
+                                <Checkbox checked={horseRaceDetail.horseMedications.indexOf("L") > -1}
+                                  icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
+                                  checkedIcon={<CheckBoxIcon fontSize="small" />}
+                                  onChange={onEquipMedicationChange("L", "horseMedications")}
+                                  value="L"
+                                />
+                              }
+                              label="HD"
+                            />
+                            <FormControlLabel disabled={selectedHorse.retired}
+                              control={<Checkbox checked={horseRaceDetail.horseMedications.indexOf("B") > -1} icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
+                                checkedIcon={<CheckBoxIcon fontSize="small" />} onChange={onEquipMedicationChange("B", "horseMedications")} value="B" />}
+                              label="NK"
+                            />
+                            <TextField style={{ width: 65 }} disabled={false} type="number" value={""} margin="normal" variant="outlined" />
+                          </FormGroup>
+
+                          <FormGroup row>
+                            <FormControlLabel
+                              disabled={selectedHorse.retired}
+                              control={
+                                <Checkbox checked={horseRaceDetail.horseMedications.indexOf("L") > -1}
+                                  icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
+                                  checkedIcon={<CheckBoxIcon fontSize="small" />}
+                                  onChange={onEquipMedicationChange("L", "horseMedications")}
+                                  value="L"
+                                />
+                              }
+                              label="HD"
+                            />
+                            <FormControlLabel disabled={selectedHorse.retired}
+                              control={<Checkbox checked={horseRaceDetail.horseMedications.indexOf("B") > -1} icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
+                                checkedIcon={<CheckBoxIcon fontSize="small" />} onChange={onEquipMedicationChange("B", "horseMedications")} value="B" />}
+                              label="NK"
+                            />
+                            <TextField style={{ width: 65 }} disabled={false} type="number" value={""} margin="normal" variant="outlined" />
+                          </FormGroup>
+
+                        </div>
                       </div>
 
                     </div>
                   </div>
+
 
                   <div>
 
@@ -1034,7 +1226,7 @@ const raceTab = props => {
         </React.Fragment>
       }
 
-    </TabPanel>
+    </TabPanel >
 
 
   )

@@ -217,8 +217,7 @@ const transformHorse = async horse => {
   }
 }
 
-const transformRaceDetail = raceDetail => {
-  raceDetail.raceId = raceDetail.raceId | ""
+const transformRaceDetail = raceDetail => {  
   return {
     ...raceDetail,
     _id: raceDetail.id,
@@ -251,11 +250,11 @@ const transformRaceDetail = raceDetail => {
     times: raceDetail.times,
     distance: raceDetail.distance,
     confirmed: raceDetail.confirmed || false,
-    raceId: raceDetail.raceId
+    raceId: raceDetail.raceId.toString()
   }
 }
 
-const transformProgram = program => {
+const transformProgram = async program => {
   return {
     ...program,
     _id: program.id,
@@ -266,8 +265,6 @@ const transformProgram = program => {
 }
 
 const transformRace = race => {
-  //console.log(race.id)
-  this.raceId = race.id
   return {
     ...race,
     _id: race.id,
@@ -286,7 +283,8 @@ const transformRace = race => {
     times: race.times,
     totalHorses: race.totalHorses,
     hasRaceDetails: race.hasRaceDetails,
-    trackCondition: race.trackCondition
+    trackCondition: race.trackCondition,
+    positions: race.positions
   }
 }
 

@@ -180,6 +180,7 @@ class Races extends Component {
               totalHorses
               hasRaceDetails
               trackCondition
+              positions
               horses {
                 _id
                 name
@@ -325,6 +326,7 @@ class Races extends Component {
             horseAge
             spec
             purse
+            positions
             horses {
               _id
               name

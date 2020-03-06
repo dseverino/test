@@ -5,6 +5,7 @@ const { transformRaceDetail } = require("../resolvers/merge")
 const Claiming = require("../../models/claiming");
 const Jockey = require('../../models/jockey');
 const Trainer = require('../../models/trainer');
+const Race = require("../../models/race");
 
 module.exports = {
 
@@ -49,11 +50,11 @@ module.exports = {
     delete args.raceDetails.horseId;
 
     try {
-      const raceDetail = await HorseRaceDetail.update({ _id: args.raceDetailId }, args.raceDetails);
+      const raceDetail = await HorseRaceDetail.update({ _id: args.selectedHorse._id }, args.raceDetails);
       if (raceDetail && raceDetail.ok) {
         if (args.raceDetails.claimed) {
 
-          const horse = await Horse.updateOne({ _id: horseId }, { $set: { stable: args.raceDetails.claimedBy } });
+          await Horse.updateOne({ _id: horseId }, { $set: { stable: args.raceDetails.claimedBy } });
 
           await Stable.updateOne({ _id: args.raceDetails.stable }, { $pull: { horses: horseId } });
           await Stable.updateOne({ _id: args.raceDetails.claimedBy }, { $push: { horses: horseId } });
@@ -68,6 +69,8 @@ module.exports = {
             console.log(error)
           }
         }
+
+        await Race.update({_id: args.raceDetails.raceId}, {$set: {"positions.first.name": args.selectedHorse.name, "positions.first.by": args.raceDetails}})
 
         if (args.raceDetails.positions.finish > 0 && args.raceDetails.positions.finish < 6) {
           let year = new Date(args.raceDetails.date).getFullYear();
