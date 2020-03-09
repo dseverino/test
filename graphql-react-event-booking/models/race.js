@@ -3,17 +3,9 @@ const Schema = mongoose.Schema;
 
 const raceSchema = new Schema(
   {
-    programId: {
-      type: Number
-    },
-    event: {
-      type: Number,
-      required: true
-    },
-    date: {
-      type: Date,
-      required: true
-    },
+    programId: Number,
+    event: Number,
+    date: Date,
     distance: {
       type: Number,
       required: true
@@ -30,17 +22,9 @@ const raceSchema = new Schema(
         required: true
       }
     ],
-    spec: {
-      type: String
-    },
-    horseAge: {
-      type: String,
-      required: true
-    },
-    purse: {
-      type: Number,
-      required: true
-    },
+    spec: String,
+    horseAge: String,
+    purse: Number,
     completed: Boolean,
     horses: [
       {
