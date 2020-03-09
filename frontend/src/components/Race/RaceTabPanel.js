@@ -842,8 +842,53 @@ const raceTab = props => {
 
                       <div className="d-flex m-1" style={{ border: "1px solid red" }}>
                         <div className="d-flex p-2">
+
+                          <div className="d-flex m-1" style={{ border: "1px solid red" }}>
+                            <InputLabel>Positions</InputLabel>
+                          </div>
+
+                          <div className="d-flex m-1" style={{ border: "1px solid red" }}>
+                            <InputLabel>by</InputLabel>
+                          </div>
+                          <div className="d-flex m-1" style={{ border: "1px solid red" }}>
+                            <InputLabel>Length</InputLabel>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="d-flex m-1" style={{ border: "1px solid red" }}>
+                        <div className="d-flex p-2">
                           <div style={{ border: "1px solid blue" }}>
+                            <InputLabel>Started</InputLabel>
+                          </div>
+                          <div>
+                            <Select
+                              value={horseRaceDetail.positions.start || ''}
+                              onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, positions: { ...horseRaceDetail.positions, start: e.target.value } })}
+                              input={<OutlinedInput name="start" id="outlined-start-simple" />}
+                              disabled={selectedHorse.retired}
+                              style={{ minWidth: 70 }}
+                            >
+                              {
+                                positions.map(el => { return <MenuItem value={el} key={el}>{el}</MenuItem> })
+                              }
+
+                            </Select>
+                          </div>
+                          <div>
                             <InputLabel>empty</InputLabel>
+                          </div>
+                          <div>
+                            <InputLabel>empty</InputLabel>
+                          </div>
+                          <div>
+                            <InputLabel>Length</InputLabel>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="d-flex m-1" style={{ border: "1px solid red" }}>
+                        <div className="d-flex p-2">
+                          <div style={{ border: "1px solid blue" }}>
+                            <InputLabel>1/4</InputLabel>
                           </div>
                           <div>
                             <InputLabel>Positions</InputLabel>
@@ -862,7 +907,7 @@ const raceTab = props => {
                       <div className="d-flex m-1" style={{ border: "1px solid red" }}>
                         <div className="d-flex p-2">
                           <div style={{ border: "1px solid blue" }}>
-                            <InputLabel>empty</InputLabel>
+                            <InputLabel>1/2</InputLabel>
                           </div>
                           <div>
                             <InputLabel>Positions</InputLabel>
@@ -881,7 +926,7 @@ const raceTab = props => {
                       <div className="d-flex m-1" style={{ border: "1px solid red" }}>
                         <div className="d-flex p-2">
                           <div style={{ border: "1px solid blue" }}>
-                            <InputLabel>empty</InputLabel>
+                            <InputLabel>3/4</InputLabel>
                           </div>
                           <div>
                             <InputLabel>Positions</InputLabel>
@@ -900,26 +945,7 @@ const raceTab = props => {
                       <div className="d-flex m-1" style={{ border: "1px solid red" }}>
                         <div className="d-flex p-2">
                           <div style={{ border: "1px solid blue" }}>
-                            <InputLabel>empty</InputLabel>
-                          </div>
-                          <div>
-                            <InputLabel>Positions</InputLabel>
-                          </div>
-                          <div>
-                            <InputLabel>empty</InputLabel>
-                          </div>
-                          <div>
-                            <InputLabel>empty</InputLabel>
-                          </div>
-                          <div>
-                            <InputLabel>Length</InputLabel>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="d-flex m-1" style={{ border: "1px solid red" }}>
-                        <div className="d-flex p-2">
-                          <div style={{ border: "1px solid blue" }}>
-                            <InputLabel>empty</InputLabel>
+                            <InputLabel>Finish</InputLabel>
                           </div>
                           <div>
                             <InputLabel>Positions</InputLabel>
