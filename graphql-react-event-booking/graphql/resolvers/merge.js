@@ -250,7 +250,8 @@ const transformRaceDetail = raceDetail => {
     times: raceDetail.times,
     distance: raceDetail.distance,
     confirmed: raceDetail.confirmed || false,
-    raceId: raceDetail.raceId.toString()
+    raceId: raceDetail.raceId.toString(),
+    lengths: raceDetail.lengths || {start: "", quarterMile: "", halfMile: "", thirdQuarter: "", mile: "", finish: ""}
   }
 }
 

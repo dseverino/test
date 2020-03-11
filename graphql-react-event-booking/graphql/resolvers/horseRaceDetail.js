@@ -48,6 +48,7 @@ module.exports = {
   updateHorseRaceDetail: async (args) => {
     const horseId = args.raceDetails.horseId;
     delete args.raceDetails.horseId;
+    console.log(args.raceDetails)
 
     try {
       const raceDetail = await HorseRaceDetail.update({ _id: args.selectedHorse._id }, args.raceDetails);
@@ -70,9 +71,9 @@ module.exports = {
           }
         }
 
-        await Race.update({_id: args.raceDetails.raceId}, {$set: {"positions.first.name": args.selectedHorse.name, "positions.first.by": args.raceDetails}})
+        await Race.update({_id: args.raceDetails.raceId}, {$set: {"positions.first.name": args.selectedHorse.name, "positions.first.by": args.raceDetails.lengths.quarter}})
 
-        if (args.raceDetails.positions.finish > 0 && args.raceDetails.positions.finish < 6) {
+        if (args.raceDetails.positions.finish > 6 && args.raceDetails.positions.finish < 6) {
           let year = new Date(args.raceDetails.date).getFullYear();
           let pos = ['starts', 'first', 'second', 'third', 'fourth', 'fifth']
           var myObj = {};

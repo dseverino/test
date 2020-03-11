@@ -118,23 +118,23 @@ const raceTab = props => {
       thirdQuarter: 0,
       mile: 0,
       finish: 0
+    },
+    lengths: {
+      start: "",
+      quarterMile: "",
+      halfMile: "",
+      thirdQuarter: "",
+      mile: "",
+      finish: ""
     }
   });
 
   const [selectedHorse, setSelectedHorse] = useState({ _id: "", retired: false })
 
-  useEffect(() => {
-    if (selectedHorse.name) {
-      setHorseRaceDetail({ ...selectedHorse, finishTime: selectedHorse.retired ? "0" : selectedHorse.times.finish, jockey: selectedHorse.jockey._id, trainer: selectedHorse.trainer._id, stable: selectedHorse.stable._id, totalHorses: props.race.totalHorses });
-      setFullWidth(true)
-    }
-  }, [selectedHorse, selectedHorse.name])
-
-
   const [selectedRetiredHorses, setSelectedRetiredHorses] = useState([]);
 
   useEffect(() => {
-    setRaceDetails({ ...raceDetails, totalHorses: props.race.horses.length - selectedRetiredHorses.length })
+    setRaceDetails({ ...raceDetails, totalHorses: props.race.horses.length - selectedRetiredHorses.length });
   }, [selectedRetiredHorses])
 
   const claimings = props.race.claimings.map(claiming => {
@@ -208,7 +208,7 @@ const raceTab = props => {
   }
 
   function handleCloseHorseRaceDetails() {
-    
+
     console.log(horseRaceDetail)
     //setOpenHorseRaceDetails(false);
     //setSelectedHorse({ _id: "", retired: false });
@@ -227,9 +227,16 @@ const raceTab = props => {
   }
 
   function handleHorseChange(e) {
-    const horseRaceDetailSelected = horseRaceDetailsIds.find((el) => el._id === e.target.value);
+    const horseRaceDetailSelected = horseRaceDetailsIds.find((horseRaceDetail) => horseRaceDetail._id === e.target.value);
     setSelectedHorse({ ...horseRaceDetailSelected, retired: horseRaceDetailSelected.retired || false, claimedBy: null, trackCondition: props.race.trackCondition, times: props.race.times, finishTime: horseRaceDetailSelected.retired ? 0 : props.race.times.finish, claimed: false });
   }
+
+  useEffect(() => {
+    if (selectedHorse.name) {
+      setHorseRaceDetail({ ...selectedHorse, finishTime: selectedHorse.retired ? "0" : selectedHorse.times.finish, jockey: selectedHorse.jockey._id, trainer: selectedHorse.trainer._id, stable: selectedHorse.stable._id, totalHorses: props.race.totalHorses });
+      setFullWidth(true)
+    }
+  }, [selectedHorse, selectedHorse.name])
 
   useEffect(() => {
     if (openRaceDetails) {
@@ -500,6 +507,36 @@ const raceTab = props => {
       <Horse key={horse._id} horse={horse} dateSelected={props.programDate} />
     )
   });
+
+  function checkBodyLength(part, val) {
+    return horseRaceDetail.lengths[part] === val
+  }
+  function getLongBodyLength(item, val) {
+    return horseRaceDetail.lengths[item].indexOf(val) !== -1
+  }
+
+  function getLengthValue(item) {
+    let lengthArray = horseRaceDetail.lengths[item].match(/\d+/g);
+    if (lengthArray) {
+      return lengthArray[0]
+    }
+    return ""
+  }
+
+  const setLongBodyLength = (e, item, val) => {
+    let rem = horseRaceDetail.lengths[item].match(/["¼", "½", "¾"]/g)
+    if(e.target.checked){
+      setHorseRaceDetail({...horseRaceDetail, lengths: {...horseRaceDetail.lengths, [item]: getLengthValue(item).concat(val)}})
+    }
+    else {
+      setHorseRaceDetail({...horseRaceDetail, lengths: {...horseRaceDetail.lengths, [item]: horseRaceDetail.lengths[item].replace(val, "")}})
+    }
+  }
+
+  const setLengthTextField = (e, item) => {
+    let rep = e.target.value
+    setHorseRaceDetail({ ...horseRaceDetail, lengths: { ...horseRaceDetail.lengths, [item]: horseRaceDetail.lengths[item].replace(getLengthValue(item), rep > 0 ? rep : "") } })
+  }
 
   return (
 
@@ -791,7 +828,7 @@ const raceTab = props => {
       >
         <DialogTitle >Horse Race Details</DialogTitle>
         <DialogContent>
-          <form style={{ display: "flex", flexDirection: "column", margin: "auto", width: 'fit-content' }}>
+          <form style={{ display: "flex", flexDirection: "column" }}>
             <FormControl style={{ marginTop: 2, minWidth: 120 }}>
               <InputLabel htmlFor="max-width">Select Horse</InputLabel>
               <Select
@@ -820,7 +857,7 @@ const raceTab = props => {
                 />
 
                 <div style={{ display: 'flex' }}>
-                  <div style={{ width: '60%' }}>
+                  <div style={{ width: '50%' }} className="m-2 p-2">
                     <FormControl>
                       <label>Jockey</label>
                       <Dropdown disabled={selectedHorse.retired} options={jockeys} filter={true} value={horseRaceDetail.jockey} onChange={onJockeyChange} />
@@ -863,7 +900,7 @@ const raceTab = props => {
 
                       <div className="d-flex m-1" >
                         <div className="d-flex p-2 align-items-center">
-                          <div style={{marginRight: '10px'}}>
+                          <div style={{ marginRight: '10px' }}>
                             <InputLabel>Started</InputLabel>
                           </div>
                           <div>
@@ -884,6 +921,7 @@ const raceTab = props => {
                       </div>
 
                       <div className="d-flex m-1" >
+
                         <div className="d-flex p-2 align-items-center" style={{ width: '100%', justifyContent: 'space-between' }}>
                           <div >
                             <InputLabel>1/4</InputLabel>
@@ -906,38 +944,49 @@ const raceTab = props => {
                           <div className="d-flex flex-column">
                             <FormControlLabel style={{ margin: 0 }} disabled={selectedHorse.retired}
                               control={
-                                <Checkbox checked={false}
+                                <Checkbox checked={checkBodyLength("quarterMile", "HD")}
                                   icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
-                                  checkedIcon={<CheckBoxIcon fontSize="small" />}                                  
-                                  value="HD" />
+                                  checkedIcon={<CheckBoxIcon fontSize="small" />}
+                                  value="HD"
+                                  onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, lengths: { ...horseRaceDetail.lengths, quarterMile: e.target.value } })}
+                                />
                               }
                               label="HD" />
                             <FormControlLabel style={{ margin: 0 }} disabled={selectedHorse.retired}
-                              control={<Checkbox checked={false} icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
-                                checkedIcon={<CheckBoxIcon fontSize="small" />} value="B" />}
+                              control={
+                                <Checkbox checked={checkBodyLength("quarterMile", "NK")}
+                                  icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
+                                  checkedIcon={<CheckBoxIcon fontSize="small" />}
+                                  value="NK"
+                                  onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, lengths: { ...horseRaceDetail.lengths, quarterMile: e.target.value } })}
+                                />
+                              }
                               label="NK" />
                           </div>
 
                           <div>
-                            <TextField size="small" label="Length"  style={{ width: 90 }} disabled={false} type="number" value={""} margin="normal" variant="outlined" />
+                            <TextField size="small" label="Length" style={{ width: 90 }} onChange={(e) => setLengthTextField(e, "quarterMile")} disabled={false} type="number" value={getLengthValue("quarterMile")} margin="normal" variant="outlined" />
                           </div>
+                          
                           <div>
                             <FormGroup>
                               <FormControlLabel style={{ margin: '-10px -5px' }}
-                                control={<Checkbox checked={false} value="gilad" />}
+                                control={<Checkbox checked={getLongBodyLength("quarterMile", "¼")} value="¼" onChange={(e) => setLongBodyLength(e, "quarterMile", "¼")} />}
                                 label="¼"
                               />
                               <FormControlLabel style={{ margin: '-10px -5px' }}
-                                control={<Checkbox checked={false} value="jason" />}
+                                control={<Checkbox checked={getLongBodyLength("quarterMile", "½")} value="½" onChange={(e) => setLongBodyLength(e, "quarterMile", "½")}/>}
                                 label="½"
                               />
                               <FormControlLabel style={{ margin: '-10px -5px' }}
-                                control={<Checkbox checked={false} value="antoine" />}
+                                control={<Checkbox checked={getLongBodyLength("quarterMile", "¾")} value="¾" onChange={(e) => setLongBodyLength(e, "quarterMile", "¾")}
+                                  />
+                                }
                                 label="¾"
                               />
                             </FormGroup>
                           </div>
-                          
+
                         </div>
                       </div>
 
@@ -997,7 +1046,7 @@ const raceTab = props => {
                               />
                             </FormGroup>
                           </div>
-                          
+
                         </div>
                       </div>
                       <div className="d-flex m-1" >
@@ -1056,7 +1105,7 @@ const raceTab = props => {
                               />
                             </FormGroup>
                           </div>
-                         
+
                         </div>
                       </div>
 
@@ -1132,7 +1181,7 @@ const raceTab = props => {
                               />
                             </FormGroup>
                           </div>
-                         
+
                         </div>
                       </div>
 
@@ -1141,7 +1190,7 @@ const raceTab = props => {
                   </div>
 
 
-                  <div>
+                  <div style={{ width: '50%' }} className="m-2 p-2">
                     <div style={{ marginBottom: '15px' }}>
                       <InputLabel htmlFor="formatted-text-mask-input">Finish Time</InputLabel>
                       <Input

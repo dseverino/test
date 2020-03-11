@@ -393,6 +393,10 @@ class Races extends Component {
                 }
                 lengths{
                   quarterMile
+                  halfMile
+                  thirdQuarter
+                  mile
+                  finish
                 }
                 bet
                 trainingTimes{
