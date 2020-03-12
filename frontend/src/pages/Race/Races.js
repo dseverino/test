@@ -179,8 +179,7 @@ class Races extends Component {
               }
               totalHorses
               hasRaceDetails
-              trackCondition
-              positions
+              trackCondition              
               horses {
                 _id
                 name
@@ -242,8 +241,8 @@ class Races extends Component {
                     stats
                   }                  
                   raceNumber
-                  trackCondition          
-                  
+                  racePositions
+                  trackCondition                  
                   startingPosition
                   positions{
                     start

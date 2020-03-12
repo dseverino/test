@@ -33,6 +33,9 @@ const jockeyLoader = new DataLoader(jockeyIds => {
 const stableLoader = new DataLoader(stableIds => {
   return stables(stableIds);
 })
+const racePositionsLoader = new DataLoader(raceIds => {
+  return racePositions(raceIds);
+})
 const workoutLoader = new DataLoader(workoutIds => {
   return workouts(workoutIds);
 })
@@ -75,11 +78,20 @@ const jockeys = async jockeyIds => {
 
 const stables = async stableIds => {
   try {   
-    const results = await Stable.find({ _id: { $in: stableIds } });    
+    const results = await Stable.find({ _id: { $in: stableIds } });
     const filtered = stableIds.map((stableId) => results.find((stable) => stable._id.toString() === stableId.toString() ));    
     return filtered.map(stable => {
       return transformStable(stable);
     })
+  } catch (error) {
+    throw error
+  }
+}
+
+const racePositions = async raceIds => {
+  try {   
+    const results = await Race.find({ _id: { $in: raceIds } }, {positions: 1});
+    return raceIds.map((raceId) => results.find((race) => race._id.toString() === raceId.toString() ));    
   } catch (error) {
     throw error
   }
@@ -120,6 +132,15 @@ const stable = async stableId => {
   try {
     const stable = await stableLoader.load(stableId)
     return transformStable(stable)
+  } catch (error) {
+    throw error
+  }
+}
+
+const getRacePositions = async raceId => {
+  try {
+    const positions = await racePositionsLoader.load(raceId);
+    return positions    
   } catch (error) {
     throw error
   }
@@ -251,7 +272,9 @@ const transformRaceDetail = raceDetail => {
     distance: raceDetail.distance,
     confirmed: raceDetail.confirmed || false,
     raceId: raceDetail.raceId.toString(),
-    lengths: raceDetail.lengths || {start: "", quarterMile: "", halfMile: "", thirdQuarter: "", mile: "", finish: ""}
+    lengths: raceDetail.lengths || {start: "", quarterMile: "", halfMile: "", thirdQuarter: "", mile: "", finish: ""},
+    racePositions: () => getRacePositions(raceDetail.raceId)
+
   }
 }
 
@@ -309,6 +332,16 @@ const transformTrainer = trainer => {
 }
 
 const transformStable = stable => {
+  return {
+    _id: stable._id.toString(),
+    name: stable.name,
+    trainers: () => trainerLoader.loadMany(stable.trainers),
+    horses: () => horseLoader.loadMany(stable.horses),
+    stats: stable.stats
+  }
+}
+
+const transformRacePositions = race => {
   return {
     _id: stable._id.toString(),
     name: stable.name,

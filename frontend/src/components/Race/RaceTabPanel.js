@@ -69,13 +69,13 @@ const raceTab = props => {
     return { label: stable.name, value: stable._id }
   });
 
+  const horseNameList = []
   const horseRaceDetailsIds = props.race.horses.map(horse => {
     let detail = horse.raceDetails.find(detail => props.programDate.toISOString() === detail.date);
-
+    horseNameList.push(horse.name)
     return {
       ...detail,
-      name: horse.name,
-      horseId: horse._id
+      name: horse.name
     }
   });
 
@@ -88,6 +88,10 @@ const raceTab = props => {
     mile: "1:35.0",
     finish: '0:57.0'
   });
+  const [open, setOpen] = useState(false);
+  const [openRaceDetails, setOpenRaceDetails] = useState(false);
+  const [openHorseRaceDetails, setOpenHorseRaceDetails] = useState(false);
+  const [loading, setLoading] = React.useState(false);
 
   const [fullWidth, setFullWidth] = useState(false);
 
@@ -140,12 +144,6 @@ const raceTab = props => {
   const claimings = props.race.claimings.map(claiming => {
     return "Reclamo RD$" + claiming
   });
-
-
-  const [open, setOpen] = useState(false);
-  const [openRaceDetails, setOpenRaceDetails] = useState(false);
-  const [openHorseRaceDetails, setOpenHorseRaceDetails] = useState(false);
-  const [loading, setLoading] = React.useState(false);
 
   function handleClickListItem() {
     setOpen(true);
@@ -209,9 +207,10 @@ const raceTab = props => {
 
   function handleCloseHorseRaceDetails() {
 
-    console.log(horseRaceDetail)
+    console.log(horseRaceDetail.lengths)
     //setOpenHorseRaceDetails(false);
     //setSelectedHorse({ _id: "", retired: false });
+    //setFullWidth(false)
   }
 
   function handleOpenRaceDetails() {
@@ -406,6 +405,7 @@ const raceTab = props => {
     }
     delete horseRaceDetail.name
     delete horseRaceDetail._id
+    delete horseRaceDetail.racePositions
 
     const requestBody = {
       query: `
@@ -502,7 +502,7 @@ const raceTab = props => {
     },
   };
 
-  const horses = props.race.horses.map(horse => {
+  const horseComponentList = props.race.horses.map(horse => {
     return (
       <Horse key={horse._id} horse={horse} dateSelected={props.programDate} />
     )
@@ -517,25 +517,32 @@ const raceTab = props => {
 
   function getLengthValue(item) {
     let lengthArray = horseRaceDetail.lengths[item].match(/\d+/g);
+
     if (lengthArray) {
       return lengthArray[0]
     }
     return ""
   }
 
+  function getShortLengthValue(item) {
+    const short = horseRaceDetail.lengths[item].match(/(NO|HD|NK)/g);
+    if (short) {
+      return short[0];
+    }
+  }
+
   const setLongBodyLength = (e, item, val) => {
-    let rem = horseRaceDetail.lengths[item].match(/["¼", "½", "¾"]/g)
-    if(e.target.checked){
-      setHorseRaceDetail({...horseRaceDetail, lengths: {...horseRaceDetail.lengths, [item]: getLengthValue(item).concat(val)}})
+    if (e.target.checked) {
+      setHorseRaceDetail({ ...horseRaceDetail, lengths: { ...horseRaceDetail.lengths, [item]: getLengthValue(item).concat(val) } })
     }
     else {
-      setHorseRaceDetail({...horseRaceDetail, lengths: {...horseRaceDetail.lengths, [item]: horseRaceDetail.lengths[item].replace(val, "")}})
+      setHorseRaceDetail({ ...horseRaceDetail, lengths: { ...horseRaceDetail.lengths, [item]: horseRaceDetail.lengths[item].replace(val, "") } })
     }
   }
 
   const setLengthTextField = (e, item) => {
-    let rep = e.target.value
-    setHorseRaceDetail({ ...horseRaceDetail, lengths: { ...horseRaceDetail.lengths, [item]: horseRaceDetail.lengths[item].replace(getLengthValue(item), rep > 0 ? rep : "") } })
+    let rep = getShortLengthValue(item)
+    setHorseRaceDetail({ ...horseRaceDetail, lengths: { ...horseRaceDetail.lengths, [item]: horseRaceDetail.lengths[item].replace(rep || getLengthValue(item), e.target.value > 0 ? e.target.value : "") } })
   }
 
   return (
@@ -565,7 +572,7 @@ const raceTab = props => {
 
 
       {
-        horses
+        horseComponentList
       }
 
       <ConfirmationDialogRaw
@@ -965,9 +972,9 @@ const raceTab = props => {
                           </div>
 
                           <div>
-                            <TextField size="small" label="Length" style={{ width: 90 }} onChange={(e) => setLengthTextField(e, "quarterMile")} disabled={false} type="number" value={getLengthValue("quarterMile")} margin="normal" variant="outlined" />
+                            <TextField size="small" label="Length" style={{ width: 80 }} onChange={(e) => setLengthTextField(e, "quarterMile")} disabled={false} type="number" value={getLengthValue("quarterMile")} margin="normal" variant="outlined" />
                           </div>
-                          
+
                           <div>
                             <FormGroup>
                               <FormControlLabel style={{ margin: '-10px -5px' }}
@@ -975,13 +982,11 @@ const raceTab = props => {
                                 label="¼"
                               />
                               <FormControlLabel style={{ margin: '-10px -5px' }}
-                                control={<Checkbox checked={getLongBodyLength("quarterMile", "½")} value="½" onChange={(e) => setLongBodyLength(e, "quarterMile", "½")}/>}
+                                control={<Checkbox checked={getLongBodyLength("quarterMile", "½")} value="½" onChange={(e) => setLongBodyLength(e, "quarterMile", "½")} />}
                                 label="½"
                               />
                               <FormControlLabel style={{ margin: '-10px -5px' }}
-                                control={<Checkbox checked={getLongBodyLength("quarterMile", "¾")} value="¾" onChange={(e) => setLongBodyLength(e, "quarterMile", "¾")}
-                                  />
-                                }
+                                control={<Checkbox checked={getLongBodyLength("quarterMile", "¾")} value="¾" onChange={(e) => setLongBodyLength(e, "quarterMile", "¾")} />}
                                 label="¾"
                               />
                             </FormGroup>
@@ -1013,35 +1018,41 @@ const raceTab = props => {
                           <div className="d-flex flex-column">
                             <FormControlLabel style={{ margin: 0 }} disabled={selectedHorse.retired}
                               control={
-                                <Checkbox checked={horseRaceDetail.horseMedications.indexOf("L") > -1}
+                                <Checkbox checked={checkBodyLength("halfMile", "HD")}
                                   icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
                                   checkedIcon={<CheckBoxIcon fontSize="small" />}
-                                  onChange={onEquipMedicationChange("L", "horseMedications")}
-                                  value="L"
+                                  value="HD"
+                                  onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, lengths: { ...horseRaceDetail.lengths, halfMile: e.target.value } })}
                                 />
                               }
                               label="HD" />
                             <FormControlLabel style={{ margin: 0 }} disabled={selectedHorse.retired}
-                              control={<Checkbox checked={horseRaceDetail.horseMedications.indexOf("B") > -1} icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
-                                checkedIcon={<CheckBoxIcon fontSize="small" />} onChange={onEquipMedicationChange("B", "horseMedications")} value="B" />}
+                              control={
+                                <Checkbox checked={checkBodyLength("halfMile", "NK")}
+                                  icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
+                                  checkedIcon={<CheckBoxIcon fontSize="small" />}
+                                  value="NK"
+                                  onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, lengths: { ...horseRaceDetail.lengths, halfMile: e.target.value } })}
+                                />
+                              }
                               label="NK" />
                           </div>
 
                           <div>
-                            <TextField style={{ width: 65 }} disabled={false} type="number" value={""} margin="normal" variant="outlined" />
+                            <TextField size="small" label="Length" style={{ width: 80 }} onChange={(e) => setLengthTextField(e, "halfMile")} disabled={false} type="number" value={getLengthValue("halfMile")} margin="normal" variant="outlined" />
                           </div>
                           <div>
                             <FormGroup>
                               <FormControlLabel style={{ margin: '-10px -5px' }}
-                                control={<Checkbox checked={false} value="gilad" />}
+                                control={<Checkbox checked={getLongBodyLength("halfMile", "¼")} value="¼" onChange={(e) => setLongBodyLength(e, "halfMile", "¼")} />}
                                 label="¼"
                               />
                               <FormControlLabel style={{ margin: '-10px -5px' }}
-                                control={<Checkbox checked={false} value="jason" />}
+                                control={<Checkbox checked={getLongBodyLength("halfMile", "½")} value="½" onChange={(e) => setLongBodyLength(e, "halfMile", "½")} />}
                                 label="½"
                               />
                               <FormControlLabel style={{ margin: '-10px -5px' }}
-                                control={<Checkbox checked={false} value="antoine" />}
+                                control={<Checkbox checked={getLongBodyLength("halfMile", "¾")} value="¾" onChange={(e) => setLongBodyLength(e, "halfMile", "¾")} />}
                                 label="¾"
                               />
                             </FormGroup>
@@ -1049,6 +1060,7 @@ const raceTab = props => {
 
                         </div>
                       </div>
+
                       <div className="d-flex m-1" >
                         <div className="d-flex p-2 align-items-center" style={{ width: '100%', justifyContent: 'space-between' }}>
                           <div >
@@ -1072,35 +1084,41 @@ const raceTab = props => {
                           <div className="d-flex flex-column">
                             <FormControlLabel style={{ margin: 0 }} disabled={selectedHorse.retired}
                               control={
-                                <Checkbox checked={horseRaceDetail.horseMedications.indexOf("L") > -1}
+                                <Checkbox checked={checkBodyLength("thirdQuarter", "HD")}
                                   icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
                                   checkedIcon={<CheckBoxIcon fontSize="small" />}
-                                  onChange={onEquipMedicationChange("L", "horseMedications")}
-                                  value="L"
+                                  value="HD"
+                                  onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, lengths: { ...horseRaceDetail.lengths, thirdQuarter: e.target.value } })}
                                 />
                               }
                               label="HD" />
                             <FormControlLabel style={{ margin: 0 }} disabled={selectedHorse.retired}
-                              control={<Checkbox checked={horseRaceDetail.horseMedications.indexOf("B") > -1} icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
-                                checkedIcon={<CheckBoxIcon fontSize="small" />} onChange={onEquipMedicationChange("B", "horseMedications")} value="B" />}
+                              control={
+                                <Checkbox checked={checkBodyLength("thirdQuarter", "NK")}
+                                  icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
+                                  checkedIcon={<CheckBoxIcon fontSize="small" />}
+                                  value="NK"
+                                  onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, lengths: { ...horseRaceDetail.lengths, thirdQuarter: e.target.value } })}
+                                />
+                              }
                               label="NK" />
                           </div>
 
                           <div>
-                            <TextField style={{ width: 65 }} disabled={false} type="number" value={""} margin="normal" variant="outlined" />
+                            <TextField size="small" label="Length" style={{ width: 80 }} onChange={(e) => setLengthTextField(e, "thirdQuarter")} disabled={false} type="number" value={getLengthValue("thirdQuarter")} margin="normal" variant="outlined" />
                           </div>
                           <div>
                             <FormGroup>
                               <FormControlLabel style={{ margin: '-10px -5px' }}
-                                control={<Checkbox checked={false} value="gilad" />}
+                                control={<Checkbox checked={getLongBodyLength("thirdQuarter", "¼")} value="¼" onChange={(e) => setLongBodyLength(e, "thirdQuarter", "¼")} />}
                                 label="¼"
                               />
                               <FormControlLabel style={{ margin: '-10px -5px' }}
-                                control={<Checkbox checked={false} value="jason" />}
+                                control={<Checkbox checked={getLongBodyLength("thirdQuarter", "½")} value="½" onChange={(e) => setLongBodyLength(e, "thirdQuarter", "½")} />}
                                 label="½"
                               />
                               <FormControlLabel style={{ margin: '-10px -5px' }}
-                                control={<Checkbox checked={false} value="antoine" />}
+                                control={<Checkbox checked={getLongBodyLength("thirdQuarter", "¾")} value="¾" onChange={(e) => setLongBodyLength(e, "thirdQuarter", "¾")} />}
                                 label="¾"
                               />
                             </FormGroup>
@@ -1131,52 +1149,54 @@ const raceTab = props => {
                           </div>
                           <div className="d-flex flex-column">
 
-                            <FormControlLabel
-                              disabled={selectedHorse.retired} style={{ margin: 0 }}
+                            <FormControlLabel style={{ margin: 0 }} disabled={selectedHorse.retired}
                               control={
-                                <Checkbox checked={horseRaceDetail.horseMedications.indexOf("L") > -1}
+                                <Checkbox checked={checkBodyLength("finish", "NO")}
                                   icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
                                   checkedIcon={<CheckBoxIcon fontSize="small" />}
-                                  onChange={onEquipMedicationChange("L", "horseMedications")}
-                                  value="L"
+                                  value="NO"
+                                  onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, lengths: { ...horseRaceDetail.lengths, finish: e.target.value } })}
                                 />
                               }
                               label="NO"
                             />
-                            <FormControlLabel
-                              disabled={selectedHorse.retired} style={{ margin: 0 }}
+                            <FormControlLabel style={{ margin: 0 }} disabled={selectedHorse.retired}
                               control={
-                                <Checkbox checked={horseRaceDetail.horseMedications.indexOf("L") > -1}
+                                <Checkbox checked={checkBodyLength("finish", "HD")}
                                   icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
                                   checkedIcon={<CheckBoxIcon fontSize="small" />}
-                                  onChange={onEquipMedicationChange("L", "horseMedications")}
-                                  value="L"
+                                  value="HD"
+                                  onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, lengths: { ...horseRaceDetail.lengths, finish: e.target.value } })}
                                 />
                               }
-                              label="HD"
-                            />
-                            <FormControlLabel disabled={selectedHorse.retired} style={{ margin: 0 }}
-                              control={<Checkbox checked={horseRaceDetail.horseMedications.indexOf("B") > -1} icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
-                                checkedIcon={<CheckBoxIcon fontSize="small" />} onChange={onEquipMedicationChange("B", "horseMedications")} value="B" />}
-                              label="NK"
-                            />
+                              label="HD" />
+                            <FormControlLabel style={{ margin: 0 }} disabled={selectedHorse.retired}
+                              control={
+                                <Checkbox checked={checkBodyLength("finish", "NK")}
+                                  icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
+                                  checkedIcon={<CheckBoxIcon fontSize="small" />}
+                                  value="NK"
+                                  onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, lengths: { ...horseRaceDetail.lengths, finish: e.target.value } })}
+                                />
+                              }
+                              label="NK" />
 
                           </div>
                           <div>
-                            <TextField style={{ width: 65 }} disabled={false} type="number" value={""} margin="normal" variant="outlined" />
+                            <TextField size="small" label="Length" style={{ width: 80 }} onChange={(e) => setLengthTextField(e, "finish")} disabled={false} type="number" value={getLengthValue("finish")} margin="normal" variant="outlined" />
                           </div>
                           <div>
                             <FormGroup>
                               <FormControlLabel style={{ margin: '-10px -5px' }}
-                                control={<Checkbox checked={false} value="gilad" />}
+                                control={<Checkbox checked={getLongBodyLength("finish", "¼")} value="¼" onChange={(e) => setLongBodyLength(e, "finish", "¼")} />}
                                 label="¼"
                               />
                               <FormControlLabel style={{ margin: '-10px -5px' }}
-                                control={<Checkbox checked={false} value="jason" />}
+                                control={<Checkbox checked={getLongBodyLength("finish", "½")} value="½" onChange={(e) => setLongBodyLength(e, "finish", "½")} />}
                                 label="½"
                               />
                               <FormControlLabel style={{ margin: '-10px -5px' }}
-                                control={<Checkbox checked={false} value="antoine" />}
+                                control={<Checkbox checked={getLongBodyLength("finish", "¾")} value="¾" onChange={(e) => setLongBodyLength(e, "finish", "¾")} />}
                                 label="¾"
                               />
                             </FormGroup>

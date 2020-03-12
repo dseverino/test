@@ -41,7 +41,6 @@ module.exports = buildSchema(`
     totalHorses: Int
     hasRaceDetails: Boolean
     trackCondition: String
-    positions: HorsePosition
   }
   input RaceInput {
     programId: Int
@@ -115,6 +114,7 @@ module.exports = buildSchema(`
     comments: String
     confirmed: Boolean
     raceId: ID
+    racePositions: RacePositions
   }
 
   type Position {
@@ -162,7 +162,7 @@ module.exports = buildSchema(`
   }
   scalar Stats
   scalar SelectedHorse
-  scalar HorsePosition
+  scalar RacePositions
 
   type Jockey {
     _id: ID!

@@ -6,10 +6,7 @@ const raceSchema = new Schema(
     programId: Number,
     event: Number,
     date: Date,
-    distance: {
-      type: Number,
-      required: true
-    },
+    distance: Number,
     claimings: [
       {
         type: String,
