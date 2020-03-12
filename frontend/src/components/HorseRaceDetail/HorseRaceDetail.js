@@ -4,14 +4,12 @@ import "./HorseRaceDetail.css"
 
 const horseRaceDetail = props => {
   const posObject = props.details.racePositions.positions
-  var positions = []
+  var positions = [];
   if (posObject) {
-    positions = Object.keys(posObject).map(key => {
-      return <div key={key}>{posObject[key]}</div>
+    positions = Object.keys(posObject).map((key, index) => {
+      return <div key={key}>{posObject[key].name}-{posObject[key].by}</div>
     })
   }
-
-
 
   return (
     <div style={{ fontSize: 13, display: "flex", justifyContent: 'space-between', margin: '0px 5px' }}>
@@ -74,7 +72,7 @@ const horseRaceDetail = props => {
         <div style={{ width: '10%' }}>
           {props.details.bet}
         </div>
-        <div style={{ width: '85%' }}>
+        <div className="d-flex" style={{ width: '85%' }}>
           {positions}
         </div>
         <div style={{ width: '3%' }}>

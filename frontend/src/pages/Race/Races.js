@@ -275,6 +275,7 @@ class Races extends Component {
                   comments
                   confirmed
                   raceId
+                  statsReady
                 }
               }
             }
@@ -413,6 +414,7 @@ class Races extends Component {
                 comments
                 confirmed
                 raceId
+                statsReady
               }
             }
           }

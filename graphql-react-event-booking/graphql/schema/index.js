@@ -115,6 +115,7 @@ module.exports = buildSchema(`
     confirmed: Boolean
     raceId: ID
     racePositions: RacePositions
+    statsReady: Boolean
   }
 
   type Position {
@@ -255,6 +256,8 @@ module.exports = buildSchema(`
     discarded: Boolean
     horseAge: Int    
     raceId: ID
+    statsReady: Boolean
+    horseId: ID
   }
 
   input ProgramInput {

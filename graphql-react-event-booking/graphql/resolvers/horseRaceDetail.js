@@ -46,7 +46,8 @@ module.exports = {
   },
 
   updateHorseRaceDetail: async (args) => {
-    const horseId = args.selectedHorse.horseId;
+    const horseId = args.raceDetails.horseId;
+    delete args.raceDetails.horseId;
 
     try {
       const raceDetail = await HorseRaceDetail.update({ _id: args.selectedHorse._id }, args.raceDetails);
@@ -71,12 +72,16 @@ module.exports = {
 
         let pos = ['starts', 'first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth', 'ninth', 'tenth', 'eleventh', 'twelfth']
         var myObj = {};
-        myObj[`positions.${pos[args.raceDetails.positions.finish]}.name`] = args.selectedHorse.name
-        myObj[`positions.${pos[args.raceDetails.positions.finish]}.by`] = args.raceDetails.lengths.finish
-
-        await Race.update({ _id: args.raceDetails.raceId }, { $set: myObj })
 
         if (args.raceDetails.positions.finish > 0) {
+          myObj[`positions.${pos[args.raceDetails.positions.finish]}.name`] = args.selectedHorse.name
+          myObj[`positions.${pos[args.raceDetails.positions.finish]}.by`] = args.raceDetails.lengths.finish
+
+          await Race.update({ _id: args.raceDetails.raceId }, { $set: myObj });
+        }
+
+        if (args.raceDetails.positions.finish > 0 && !args.raceDetails.statsReady) {
+
           let year = new Date(args.raceDetails.date).getFullYear();
           myObj = {};
           myObj[`stats.${year}.starts`] = 1;
@@ -101,6 +106,8 @@ module.exports = {
             myObj[`jockeyStats.${year}.${args.raceDetails.jockey}.starts`] = 1
             myObj[`jockeyStats.${year}.${args.raceDetails.jockey}.${pos[args.raceDetails.positions.finish]}`] = 1;
             await Horse.updateOne({ _id: horseId }, { $inc: myObj });
+            
+            await HorseRaceDetail.update({ _id: args.selectedHorse._id }, { $set: { statsReady: true } });
 
           } catch (error) {
             console.log(error)

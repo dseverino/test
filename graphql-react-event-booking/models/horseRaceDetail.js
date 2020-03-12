@@ -38,6 +38,7 @@ const horseRaceDetailSchema = new Schema({
   distance: Number,
   confirmed: Boolean,
   raceId: mongoose.Schema.Types.ObjectId,
-  length: Object
+  length: Object,
+  statsReady: Boolean
 })
 module.exports = mongoose.model("HorseRaceDetail", horseRaceDetailSchema);

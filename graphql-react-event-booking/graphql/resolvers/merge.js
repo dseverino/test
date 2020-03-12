@@ -91,7 +91,9 @@ const stables = async stableIds => {
 const racePositions = async raceIds => {
   try {   
     const results = await Race.find({ _id: { $in: raceIds } }, {positions: 1});
-    return raceIds.map((raceId) => results.find((race) => race._id.toString() === raceId.toString() ));    
+    const filtered = raceIds.map((raceId) => results.find((race) => race._id.toString() === raceId.toString() ));    
+    console.log(filtered)
+    return filtered
   } catch (error) {
     throw error
   }
@@ -138,9 +140,9 @@ const stable = async stableId => {
 }
 
 const getRacePositions = async raceId => {
-  try {
+  try {    
     const positions = await racePositionsLoader.load(raceId);
-    return positions    
+    return positions
   } catch (error) {
     throw error
   }
@@ -273,8 +275,8 @@ const transformRaceDetail = raceDetail => {
     confirmed: raceDetail.confirmed || false,
     raceId: raceDetail.raceId.toString(),
     lengths: raceDetail.lengths || {start: "", quarterMile: "", halfMile: "", thirdQuarter: "", mile: "", finish: ""},
-    racePositions: () => getRacePositions(raceDetail.raceId)
-
+    racePositions: () => getRacePositions(raceDetail.raceId),
+    statsReady: raceDetail.statsReady
   }
 }
 

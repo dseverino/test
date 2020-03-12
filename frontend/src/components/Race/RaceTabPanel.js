@@ -75,7 +75,8 @@ const raceTab = props => {
     horseNameList.push(horse.name)
     return {
       ...detail,
-      name: horse.name
+      name: horse.name,
+      horseId: horse._id
     }
   });
 
@@ -207,10 +208,10 @@ const raceTab = props => {
 
   function handleCloseHorseRaceDetails() {
 
-    console.log(horseRaceDetail.lengths)
-    //setOpenHorseRaceDetails(false);
-    //setSelectedHorse({ _id: "", retired: false });
-    //setFullWidth(false)
+    console.log(horseRaceDetail)
+    setOpenHorseRaceDetails(false);
+    setSelectedHorse({ _id: "", retired: false });
+    setFullWidth(false)
   }
 
   function handleOpenRaceDetails() {
@@ -227,12 +228,12 @@ const raceTab = props => {
 
   function handleHorseChange(e) {
     const horseRaceDetailSelected = horseRaceDetailsIds.find((horseRaceDetail) => horseRaceDetail._id === e.target.value);
-    setSelectedHorse({ ...horseRaceDetailSelected, retired: horseRaceDetailSelected.retired || false, claimedBy: null, trackCondition: props.race.trackCondition, times: props.race.times, finishTime: horseRaceDetailSelected.retired ? 0 : props.race.times.finish, claimed: false });
+    setSelectedHorse({ ...horseRaceDetailSelected, retired: horseRaceDetailSelected.retired || false, claimedBy: null, trackCondition: props.race.trackCondition, times: props.race.times, claimed: false });
   }
 
   useEffect(() => {
     if (selectedHorse.name) {
-      setHorseRaceDetail({ ...selectedHorse, finishTime: selectedHorse.retired ? "0" : selectedHorse.times.finish, jockey: selectedHorse.jockey._id, trainer: selectedHorse.trainer._id, stable: selectedHorse.stable._id, totalHorses: props.race.totalHorses });
+      setHorseRaceDetail({ ...selectedHorse, jockey: selectedHorse.jockey._id, trainer: selectedHorse.trainer._id, stable: selectedHorse.stable._id, totalHorses: props.race.totalHorses });
       setFullWidth(true)
     }
   }, [selectedHorse, selectedHorse.name])
@@ -321,31 +322,6 @@ const raceTab = props => {
     setRaceDetails({ ...raceDetails, times: times })
     setTimeLeader({ ...timeLeader, finish: times.finish });
   }
-
-  /*const handleFinishTime = name => e => {
-    if (name === "finishTime") {
-      setHorseRaceDetail({ ...horseRaceDetail, finishTime: e.target.value + ":" + horseRaceDetail.finishTime.split(".")[1] });
-    }
-    else {
-      setHorseRaceDetail({ ...horseRaceDetail, finishTime: horseRaceDetail.finishTime.split(".")[0] + "." + e.target.value });
-    }
-  }*/
-
-  /*function TextMaskCustom(props) {
-    const { inputRef, ...other } = props;
-
-    return (
-      <MaskedInput
-        {...other}
-        ref={ref => {
-          inputRef(ref ? ref.inputElement : null);
-        }}
-        mask={[/[0-2]/, ':', /[0-5]/, /\d/, '.', /[0-4]/]}
-        placeholderChar={'\u2000'}
-        showMask
-      />
-    );
-  }*/
 
   function saveRaceDetailsHandler() {
 
@@ -1214,7 +1190,7 @@ const raceTab = props => {
                     <div style={{ marginBottom: '15px' }}>
                       <InputLabel htmlFor="formatted-text-mask-input">Finish Time</InputLabel>
                       <Input
-                        value={!horseRaceDetail.retired ? horseRaceDetail.finishTime : 0}
+                        value={horseRaceDetail.finishTime}
                         onFocus={(e) => e.target.select()}
                         onBlur={e => {
                           if (e.target.value.trim().length === 6 && e.target.value !== horseRaceDetail.finishTime) {
