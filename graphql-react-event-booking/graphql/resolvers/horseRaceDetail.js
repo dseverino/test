@@ -74,10 +74,18 @@ module.exports = {
         var myObj = {};
 
         if (args.raceDetails.positions.finish > 0) {
-          myObj[`positions.${pos[args.raceDetails.positions.finish]}.name`] = args.selectedHorse.name
-          myObj[`positions.${pos[args.raceDetails.positions.finish]}.by`] = args.raceDetails.lengths.finish
 
-          await Race.update({ _id: args.raceDetails.raceId }, { $set: myObj });
+          //myObj['position'] = args.raceDetails.positions.finish
+          myObj['name'] = args.selectedHorse.name
+          myObj[`by`] = args.raceDetails.lengths.finish
+          console.log(myObj)
+
+          var ob = { }
+          ob[`positions.${args.raceDetails.positions.finish}`] = myObj
+
+          const race = await Race.update({ _id: args.raceDetails.raceId }, { $set: ob });
+          console.log(race)
+          //await Race.update({ _id: args.raceDetails.raceId }, { $set: myObj });
         }
 
         if (args.raceDetails.positions.finish > 0 && !args.raceDetails.statsReady) {
@@ -106,7 +114,7 @@ module.exports = {
             myObj[`jockeyStats.${year}.${args.raceDetails.jockey}.starts`] = 1
             myObj[`jockeyStats.${year}.${args.raceDetails.jockey}.${pos[args.raceDetails.positions.finish]}`] = 1;
             await Horse.updateOne({ _id: horseId }, { $inc: myObj });
-            
+
             await HorseRaceDetail.update({ _id: args.selectedHorse._id }, { $set: { statsReady: true } });
 
           } catch (error) {

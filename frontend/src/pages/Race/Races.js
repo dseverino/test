@@ -415,6 +415,7 @@ class Races extends Component {
                 confirmed
                 raceId
                 statsReady
+                racePositions
               }
             }
           }

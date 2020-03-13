@@ -41,6 +41,7 @@ module.exports = buildSchema(`
     totalHorses: Int
     hasRaceDetails: Boolean
     trackCondition: String
+    positions: [RacePositions]
   }
   input RaceInput {
     programId: Int
@@ -63,6 +64,7 @@ module.exports = buildSchema(`
     totalHorses: Int
     hasRaceDetails: Boolean
     trackCondition: String
+    positions: [RacePositions]
   }
 
   type Horse {

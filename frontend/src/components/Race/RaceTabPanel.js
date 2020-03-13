@@ -139,7 +139,8 @@ const raceTab = props => {
   const [selectedRetiredHorses, setSelectedRetiredHorses] = useState([]);
 
   useEffect(() => {
-    setRaceDetails({ ...raceDetails, totalHorses: props.race.horses.length - selectedRetiredHorses.length });
+    const totalHorses = props.race.horses.length - selectedRetiredHorses.length
+    setRaceDetails({ ...raceDetails, totalHorses: totalHorses, positions: Array(totalHorses).fill({})});
   }, [selectedRetiredHorses])
 
   const claimings = props.race.claimings.map(claiming => {

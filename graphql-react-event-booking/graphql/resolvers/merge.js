@@ -91,9 +91,7 @@ const stables = async stableIds => {
 const racePositions = async raceIds => {
   try {   
     const results = await Race.find({ _id: { $in: raceIds } }, {positions: 1});
-    const filtered = raceIds.map((raceId) => results.find((race) => race._id.toString() === raceId.toString() ));    
-    console.log(filtered)
-    return filtered
+    return raceIds.map((raceId) => results.find((race) => race._id.toString() === raceId.toString() ));    
   } catch (error) {
     throw error
   }
