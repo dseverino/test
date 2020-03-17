@@ -6,10 +6,9 @@ const horseRaceDetail = props => {
   const posObject = props.details.racePositions.positions
   var positions = [];
   if (posObject) {
-    positions = Object.keys(posObject).map((key, index) => {
-      console.log( posObject[key])
+    positions = Object.keys(posObject).map((key, index) => {      
       if(!posObject[key]){
-        return <div></div>
+        return <div key={index}></div>
       }
       return <div key={key}>{posObject[key].name}-{posObject[key].by}</div>
       
