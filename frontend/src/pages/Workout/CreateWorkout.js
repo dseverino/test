@@ -10,6 +10,7 @@ import Button from '@material-ui/core/Button';
 
 import Input from '@material-ui/core/Input';
 import FormControl from '@material-ui/core/FormControl';
+import TextField from '@material-ui/core/TextField';
 
 import { Dropdown } from 'primereact/dropdown';
 import { Calendar } from 'primereact/calendar';
@@ -30,9 +31,10 @@ class CreateWorkoutPage extends Component {
       horse: "",
       distance: "400",
       jockey: "",
-      briddle: "",
+      type: "¼",
       time: "",
-      trackCondition: "L"
+      trackCondition: "L",
+      workoutUrl: ""
     },
     horses: []
   }
@@ -129,7 +131,7 @@ class CreateWorkoutPage extends Component {
           ...prevState.workout,
           horse: "",        
           jockey: "",
-          briddle: "",
+          type: "¼",
           time: "",
           trackCondition: "L"
         }        
@@ -238,6 +240,18 @@ class CreateWorkoutPage extends Component {
               <Dropdown options={this.state.horses} id="horse" filter={true} value={this.state.workout.horse} onChange={this.onHandleChange} placeholder="Select a Horse" />
             </div>
             <div>
+              <label htmlFor="type">Type</label>
+              <select className="form-control" onChange={this.onHandleChange} id="type" value={this.state.workout.type}>                
+                <option value="¼">¼</option>
+                <option value="½">½</option>
+                <option value="¾">¾</option>
+                <option value="Sit">Sit</option>
+                <option value="trotting">trotting</option>
+                <option value="canter">canter</option>
+                <option value="gallop">gallop</option>
+              </select>
+            </div>
+            <div>
               <label htmlFor="date">Date</label>
               <Calendar dateFormat="dd/mm/yy" id="date" value={this.state.workout.date} onChange={this.onHandleChange}></Calendar>
             </div>
@@ -265,19 +279,11 @@ class CreateWorkoutPage extends Component {
                 inputComponent={this.TextMaskCustom}
               />
             </div>
-            <FormControl>
+            <FormControl style={{width: '100%'}}>
               <label>Jockey</label>
               <Dropdown options={this.jockeys} id="jockey" filter={true} value={this.state.workout.jockey} onChange={this.onHandleChange} />
             </FormControl>
-            <div>
-              <label htmlFor="sex">Briddle</label>
-              <select className="form-control" onChange={this.onHandleChange} id="briddle" value={this.state.workout.briddle}>
-                <option value=""></option>
-                <option value="¼">¼</option>
-                <option value="½">½</option>
-                <option value="¾">¾</option>
-              </select>
-            </div>
+            
             <div>
               <label htmlFor="sex">Track Condition</label>
               <select className="form-control" onChange={this.onHandleChange} id="trackCondition" value={this.state.workout.trackCondition}>
@@ -285,6 +291,9 @@ class CreateWorkoutPage extends Component {
                 <option value="F">F</option>
                 <option value="H">H</option>
               </select>
+            </div>
+            <div>
+              <TextField id="workoutUrl" label="workoutUrl" onChange={this.onHandleChange} value={this.state.workout.workoutUrl} fullWidth/>
             </div>
           </div>
 

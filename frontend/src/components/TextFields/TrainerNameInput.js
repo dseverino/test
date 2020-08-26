@@ -73,7 +73,7 @@ const TrainerInput = props => {
     <React.Fragment>
       <div style={{ margin: "20px 0px" }}>
         <InputLabel htmlFor="name">Name</InputLabel>
-        <Input id="name" onBlur={validateTrainer} value={props.name} onChange={onHandleChange} />
+        <Input   onBlur={validateTrainer} value={props.name} onChange={onHandleChange} />
       </div>
 
       {

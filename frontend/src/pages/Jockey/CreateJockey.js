@@ -32,12 +32,10 @@ class CreateJockeyPage extends Component {
         name: ""
       }
     })
-    document.getElementById("name").focus();
+    document.getElementsByName("name").focus();
   }
-  onHandleChange = (e) => {
-    let newJockey = Object.assign({}, this.state.jockey)
-    newJockey[e.target.id] = e.target.value
-    this.setState({ jockey: newJockey })
+  onHandleChange = (e) => {    
+    this.setState({ jockey: {name: e.target.value} })
   }
 
   validateJockey = () => {
@@ -131,7 +129,7 @@ class CreateJockeyPage extends Component {
         <form>
           <div className="col-md-3 mb-3">
             <label htmlFor="name">Name</label>
-            <input type="text" onBlur={this.validateJockey} className="form-control" onChange={this.onHandleChange} id="name" value={this.state.jockey.name} />
+            <input type="text" onBlur={this.validateJockey} className="form-control" onChange={this.onHandleChange}   value={this.state.jockey.name} />
           </div>
         </form>
         <button className="btn btn-secondary">

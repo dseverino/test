@@ -182,9 +182,9 @@ const races = async raceIds => {
   }
 }
 
-const raceDetails = async raceDetailIds => {
+const raceDetails = async raceDetailIds => {  
   try {
-    const results = await HorseRaceDetail.find({ _id: { $in: raceDetailIds } });
+    const results = await HorseRaceDetail.find({ _id: { $in: raceDetailIds } });    
     return raceDetailIds.map((raceDetailId) => results.find((raceDetail) => raceDetail._id.toString() === raceDetailId.toString())).map(raceDetail => {
       return transformRaceDetail(raceDetail);
     })
@@ -218,7 +218,7 @@ const transformUser = (user) => {
   }
 }
 
-const transformHorse = async horse => {  
+const transformHorse = async horse => {
   return {
     ...horse,
     _id: horse._id.toString(),
@@ -231,10 +231,11 @@ const transformHorse = async horse => {
     dam: horse.dam,
     procedence: horse.procedence,
     stable: () => stableLoader.load(horse.stable),
-    raceDetails: () => raceDetailLoader.loadMany(horse.raceDetails) || [],
+    raceDetails: raceDetailLoader.loadMany(horse.raceDetails) || [],
     stats: horse.stats,
     jockeyStats: horse.jockeyStats,
-    workouts: () => workoutLoader.loadMany(horse.workouts)
+    workouts: () => workoutLoader.loadMany(horse.workouts),
+    bestTimes: horse.bestTimes || {}
   }
 }
 
@@ -242,39 +243,40 @@ const transformRaceDetail = raceDetail => {
   return {
     ...raceDetail,
     _id: raceDetail.id,
+    bet: raceDetail.bet,
+    claimed: raceDetail.claimed,
+    claimedBy: () => raceDetail.claimedBy ? stable(raceDetail.claimedBy) : null,
+    claiming: raceDetail.claiming,
+    comments: raceDetail.comments,
+    confirmed: raceDetail.confirmed || false,
+    date: raceDetail.date.toISOString(),
+    discarded: raceDetail.discarded,
+    distance: raceDetail.distance,
+    finalStraightUrl: raceDetail.finalStraightUrl,
+    finishTime: raceDetail.finishTime,
+    horseAge: raceDetail.horseAge,
+    horseEquipments: raceDetail.horseEquipments.sort(),
+    horseMedications: raceDetail.horseMedications.sort((a, b) => (a < b) ? 1 : ((b < a) ? -1 : 0)),
+    horseWeight: raceDetail.horseWeight,    
     jockey: () => jockey(raceDetail.jockey),
     jockeyWeight: raceDetail.jockeyWeight,
     jockeyChanged: raceDetail.jockeyChanged,
-    trainer: () => trainer(raceDetail.trainer),
+    lengths: raceDetail.lengths || {start: "", quarterMile: "", halfMile: "", thirdQuarter: "", mile: "", finish: ""},
+    positions: raceDetail.positions || {start: 0, quarterMile: 0, halfMile: 0, thirdQuarter: 0, mile: 0, finish: 0},
+    raceUrl: raceDetail.raceUrl || "",
+    raceId: raceDetail.raceId.toString(),
+    raceNumber: raceDetail.raceNumber,
+    racePositions: () => getRacePositions(raceDetail.raceId),    
+    retiredDetails: raceDetail.retiredDetails,
     stable: () => stable(raceDetail.stable),
     startingPosition: raceDetail.startingPosition,
-    positions: raceDetail.positions || {start: 0, quarterMile: 0, halfMile: 0, thirdQuarter: 0, mile: 0, finish: 0},
-    lengths: raceDetail.lengths,    
-    finishTime: raceDetail.finishTime,
-    trainingTimes: raceDetail.trainingTimes,
-    horseWeight: raceDetail.horseWeight,
-    claimed: raceDetail.claimed,
-    claiming: raceDetail.claiming,
-    claimedBy: () => raceDetail.claimedBy ? stable(raceDetail.claimedBy) : null,
-    trackCondition: raceDetail.trackCondition,
-    date: raceDetail.date.toISOString(),
-    raceNumber: raceDetail.raceNumber,
-    horseMedications: raceDetail.horseMedications.sort((a, b) => (a < b) ? 1 : ((b < a) ? -1 : 0)),
-    retired: raceDetail.retired,
-    retiredDetails: raceDetail.retiredDetails,
-    comments: raceDetail.comments,
-    bet: raceDetail.bet,
-    horseEquipments: raceDetail.horseEquipments.sort(),
+    statsReady: raceDetail.statsReady,
+    status: raceDetail.status,
+    times: raceDetail.times || { quarterMile: "0", halfMile: "0", thirdQuarter: "0", mile: "0", finish: "0" },
     totalHorses: raceDetail.totalHorses,
-    discarded: raceDetail.discarded,
-    horseAge: raceDetail.horseAge,
-    times: raceDetail.times,
-    distance: raceDetail.distance,
-    confirmed: raceDetail.confirmed || false,
-    raceId: raceDetail.raceId.toString(),
-    lengths: raceDetail.lengths || {start: "", quarterMile: "", halfMile: "", thirdQuarter: "", mile: "", finish: ""},
-    racePositions: () => getRacePositions(raceDetail.raceId),
-    statsReady: raceDetail.statsReady
+    trackCondition: raceDetail.trackCondition,
+    trainer: () => trainer(raceDetail.trainer),
+    trainingTimes: raceDetail.trainingTimes
   }
 }
 
@@ -308,7 +310,9 @@ const transformRace = race => {
     totalHorses: race.totalHorses,
     hasRaceDetails: race.hasRaceDetails,
     trackCondition: race.trackCondition,
-    positions: race.positions
+    positions: race.positions,
+    raceUrl: race.raceUrl,
+    finalStraightUrl: race.finalStraightUrl
   }
 }
 
@@ -368,7 +372,7 @@ const transformWorkout = workout => {
     horse: () => horseLoader.load(workout.horse),    
     distance: workout.distance,
     jockey: () => jockey(workout.jockey),
-    briddle: workout.briddle,
+    type: workout.type,
     time: workout.time,
     trackCondition: workout.trackCondition    
   }

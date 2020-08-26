@@ -33,7 +33,9 @@ const raceSchema = new Schema(
     totalHorses: Number,
     hasRaceDetails: Boolean,
     trackCondition: String,
-    positions: Object
+    positions: Object,
+    raceUrl: String,
+    finalStraightUrl: String
   }
 )
 

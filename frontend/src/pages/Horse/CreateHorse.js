@@ -50,7 +50,8 @@ class CreateHorsePage extends Component {
       sex: "M",
       sire: "",
       dam: "",
-      stable: ""
+      stable: "",
+      bestTimes: {}
     }
   }
 
@@ -116,7 +117,8 @@ class CreateHorsePage extends Component {
         sex: "M",
         sire: "",
         dam: "",
-        stable: null
+        stable: null,
+        bestTimes: {}
       }
     })
     document.getElementById("name").focus();
@@ -146,8 +148,8 @@ class CreateHorsePage extends Component {
     this.setState({ isLoading: true })
     const requestBody = {
       query: `
-        query SingleHorse($name: String!) {
-          singleHorse(name: $name) {
+        query SearchHorse($name: String!) {
+          searchHorse(name: $name) {
             name
             weight
             age
@@ -359,11 +361,11 @@ class CreateHorsePage extends Component {
             </div>
             <div>
               <label htmlFor="sire">Sire</label>
-              <input type="text" className="form-control" onChange={this.onHandleChange} id="sire" value={this.state.horse.sire} />
+              <input type="text" className="form-control" onChange={this.onHandleChange}    value={this.state.horse.sire} />
             </div>
             <div>
               <label htmlFor="dam">Dam</label>
-              <input type="text" className="form-control" onChange={this.onHandleChange} id="dam" value={this.state.horse.dam} />
+              <input type="text" className="form-control" onChange={this.onHandleChange} value={this.state.horse.dam} />
             </div>
             <div style={{ display: "flex", flexDirection: "column" }}>
               <label htmlFor="stable">Stable</label>
@@ -417,7 +419,7 @@ class CreateHorsePage extends Component {
         >
           <DialogTitle id="alert-dialog-slide-title">{"Create Stable"}</DialogTitle>
           <DialogContent>
-            <StableInput id="name" validateStable={this.onValidateStable} change={this.onStableHandlerChange} name={this.state.stable.name} />
+            <StableInput   validateStable={this.onValidateStable} change={this.onStableHandlerChange} name={this.state.stable.name} />
           </DialogContent>
           <DialogActions>
             <Button onClick={this.closeStableDialog} >

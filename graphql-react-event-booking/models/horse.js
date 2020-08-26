@@ -35,7 +35,9 @@ const horseSchema = new Schema(
     stable: mongoose.Schema.Types.ObjectId,
     stats: Object,
     jockeyStats: Object,
-    workouts: [mongoose.Schema.Types.ObjectId]
+    workouts: [mongoose.Schema.Types.ObjectId],
+    retirements: [mongoose.Schema.Types.ObjectId],
+    bestTimes: Object
   }
 )
 module.exports = mongoose.model("Horse", horseSchema);

@@ -26,14 +26,17 @@ import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 
 import { InputTextarea } from 'primereact/inputtextarea';
-
 import { Dropdown } from "primereact/dropdown";
 
 import Horse from '../../components/Horse/Horse';
-import ConfirmationDialogRaw from "../Dialog/ConfirmationDialogRaw";
+import ConfirmationDialogRaw from "../Dialogs/ConfirmationDialogRaw";
 import Spinner from "../../components/Spinner/Spinner";
 import Backdrop from "../../components/Backdrop/Backdrop";
 import MaskedInput from 'react-text-mask';
+import MainDialog from "../../components/Dialogs/MainDialog";
+import *  as DialogList from "../../components/Dialogs/DialogIndex";
+
+import './RaceTabPanel.css'
 
 
 const formatter = new Intl.NumberFormat('en-US', {
@@ -43,6 +46,8 @@ const formatter = new Intl.NumberFormat('en-US', {
 });
 
 const raceTab = props => {
+
+  const [state, setState] = useState({})
 
 
   const timesByDistance = {
@@ -76,7 +81,8 @@ const raceTab = props => {
     return {
       ...detail,
       name: horse.name,
-      horseId: horse._id
+      horseId: horse._id,
+      bestTime: horse.bestTimes[props.race.distance] || ""
     }
   });
 
@@ -104,51 +110,41 @@ const raceTab = props => {
     },
     totalHorses: props.race.horses.length,
     hasRaceDetails: true,
-    trackCondition: "L"
+    trackCondition: "L",
+    raceUrl: "",
+    positions: Array(props.race.horses.length).fill({}),
+    finalStraightUrl: ""
   });
 
-  const [horseRaceDetail, setHorseRaceDetail] = useState({
-    horseEquipments: [""],
-    horseMedications: [""],
-    jockey: '',
-    jockeyWeight: 0,
-    jockeyChanged: false,
-    totalHorses: props.race.totalHorses || 0,
-    claimed: false,
-    confirmed: false,
-    positions: {
-      start: 0,
-      quarterMile: 0,
-      halfMile: 0,
-      thirdQuarter: 0,
-      mile: 0,
-      finish: 0
-    },
-    lengths: {
-      start: "",
-      quarterMile: "",
-      halfMile: "",
-      thirdQuarter: "",
-      mile: "",
-      finish: ""
-    }
-  });
-
-  const [selectedHorse, setSelectedHorse] = useState({ _id: "", retired: false })
+  const [selectedHorse, setSelectedHorse] = useState({ _id: "", status: "" })
 
   const [selectedRetiredHorses, setSelectedRetiredHorses] = useState([]);
 
   useEffect(() => {
     const totalHorses = props.race.horses.length - selectedRetiredHorses.length
-    setRaceDetails({ ...raceDetails, totalHorses: totalHorses, positions: Array(totalHorses).fill({})});
+    setRaceDetails({ ...raceDetails, totalHorses: totalHorses, positions: Array(totalHorses).fill({}) });
   }, [selectedRetiredHorses])
 
   const claimings = props.race.claimings.map(claiming => {
     return "Reclamo RD$" + claiming
   });
 
-  function handleClickListItem() {
-    setOpen(true);
+  function handleOpenAddHorseDialog() {
+    //setOpen(true);
+    //props.addHorseDialog("addHorse")
+
+    setState(
+      {
+        "addHorse": < DialogList.AddHorseDialog
+          jockeys={props.jockeys}
+          stables={props.stables}
+          trainers={props.trainers} key={props.index} horses={props.horses} loading={props.loading} loadHorses={props.loadHorses} race={props.race} close={closeDialog} />
+      }
+    )
+
+  }
+  function closeDialog() {
+    setState({ "addHorse": null })
   }
 
   function handleClose(newName) {
@@ -208,10 +204,8 @@ const raceTab = props => {
   }
 
   function handleCloseHorseRaceDetails() {
-
-    console.log(horseRaceDetail)
     setOpenHorseRaceDetails(false);
-    setSelectedHorse({ _id: "", retired: false });
+    setSelectedHorse({ _id: "", status: "" });
     setFullWidth(false)
   }
 
@@ -228,16 +222,34 @@ const raceTab = props => {
   }
 
   function handleHorseChange(e) {
-    const horseRaceDetailSelected = horseRaceDetailsIds.find((horseRaceDetail) => horseRaceDetail._id === e.target.value);
-    setSelectedHorse({ ...horseRaceDetailSelected, retired: horseRaceDetailSelected.retired || false, claimedBy: null, trackCondition: props.race.trackCondition, times: props.race.times, claimed: false });
-  }
 
-  useEffect(() => {
-    if (selectedHorse.name) {
-      setHorseRaceDetail({ ...selectedHorse, jockey: selectedHorse.jockey._id, trainer: selectedHorse.trainer._id, stable: selectedHorse.stable._id, totalHorses: props.race.totalHorses });
-      setFullWidth(true)
-    }
-  }, [selectedHorse, selectedHorse.name])
+    const horseRaceDetailSelected = horseRaceDetailsIds.find((detail) => detail._id === e.target.value);
+    setSelectedHorse({
+      ...horseRaceDetailSelected,
+      claimedBy: null,
+      trackCondition: props.race.trackCondition,
+      times: props.race.times,
+      claimed: false,
+      jockey: horseRaceDetailSelected.jockey._id,
+      trainer: horseRaceDetailSelected.trainer._id,
+      stable: horseRaceDetailSelected.stable._id,
+      totalHorses: props.race.totalHorses,
+      horseEquipments: horseRaceDetailSelected.horseEquipments.slice(),
+      horseMedications: horseRaceDetailSelected.horseMedications.slice(),
+      lengths: { ...horseRaceDetailSelected.lengths },
+      positions: { ...horseRaceDetailSelected.positions },
+      status: horseRaceDetailSelected.status || ""
+    });
+    //setSelectedHorse( JSON.parse( JSON.stringify( horseRaceDetailSelected  ) ) );
+  }
+  /*
+    useEffect(() => {
+      if (selectedHorse.name) {
+        //setSelectedHorse({ ...selectedHorse, jockey: selectedHorse.jockey._id, trainer: selectedHorse.trainer._id, stable: selectedHorse.stable._id, totalHorses: props.race.totalHorses });
+        setFullWidth(true)
+        console.log({ selectedHorse })
+      }
+    }, [selectedHorse, selectedHorse.status,])*/
 
   useEffect(() => {
     if (openRaceDetails) {
@@ -330,8 +342,8 @@ const raceTab = props => {
 
     const requestBody = {
       query: `
-        mutation UpdateRaceDetails($raceId: ID, $raceDetails: RaceDetailsInput, $retiredHorses: [ID]){
-          updateRaceDetails(raceId: $raceId, raceDetails: $raceDetails, retiredHorses: $retiredHorses){
+        mutation UpdateRaceDetails($raceId: ID, $raceDetails: RaceDetailsInput, $retiredHorses: [ID], $horseRaceDetailIds: [ID]){
+          updateRaceDetails(raceId: $raceId, raceDetails: $raceDetails, retiredHorses: $retiredHorses, horseRaceDetailIds: $horseRaceDetailIds){
             times{              
               quarterMile
               halfMile
@@ -345,7 +357,8 @@ const raceTab = props => {
       variables: {
         raceId: props.race._id,
         raceDetails: raceDetails,
-        retiredHorses: selectedRetiredHorses
+        retiredHorses: selectedRetiredHorses,
+        horseRaceDetailIds: horseRaceDetailsIds.map(val => val._id)
       }
     }
 
@@ -376,18 +389,17 @@ const raceTab = props => {
 
   function saveHorseRaceDetailsHandler() {
     props.loading(true)
-    if (horseRaceDetail.claimed && horseRaceDetail.claimedBy === selectedHorse.stable._id) {
-      horseRaceDetail.claimed = false
-      horseRaceDetail.claimedBy = ''
+    if (selectedHorse.claimed && selectedHorse.claimedBy === selectedHorse.stable._id) {
+      selectedHorse.claimed = false
+      selectedHorse.claimedBy = ''
     }
-    delete horseRaceDetail.name
-    delete horseRaceDetail._id
-    delete horseRaceDetail.racePositions
+    //delete selectedHorse.name
+    delete selectedHorse.racePositions
 
     const requestBody = {
       query: `
-        mutation UpdateHorseRaceDetail($selectedHorse: SelectedHorse, $raceDetails: HorseRaceDetailInput){
-          updateHorseRaceDetail(selectedHorse: $selectedHorse, raceDetails: $raceDetails){
+        mutation UpdateHorseRaceDetail($selectedHorse: SelectedHorse){
+          updateHorseRaceDetail(selectedHorse: $selectedHorse){
             times{              
               quarterMile
               halfMile
@@ -399,8 +411,7 @@ const raceTab = props => {
         }          
       `,
       variables: {
-        selectedHorse: selectedHorse,
-        raceDetails: horseRaceDetail
+        selectedHorse: selectedHorse
       }
     }
 
@@ -420,6 +431,7 @@ const raceTab = props => {
       .then(resData => {
         props.loading(false);
         setOpenHorseRaceDetails(false)
+        setSelectedHorse({ _id: "", status: "" })
         props.loadProgramRaces();
       })
       .catch(error => {
@@ -429,26 +441,26 @@ const raceTab = props => {
   }
 
   function onJockeyChange(e) {
-    setHorseRaceDetail({ ...horseRaceDetail, "jockey": e.value, jockeyChanged: selectedHorse.jockey._id !== e.target.value })
+    setSelectedHorse({ ...selectedHorse, "jockey": e.target.value, jockeyChanged: selectedHorse.jockey._id !== e.target.value });
   }
 
   const onEquipMedicationChange = (name, col) => event => {
-    var ar = horseRaceDetail[col];
+    var ar = selectedHorse[col];
     if (event.target.checked) {
       ar.push(name);
-      setHorseRaceDetail({ ...horseRaceDetail, [col]: ar })
+      setSelectedHorse({ ...selectedHorse, [col]: ar })
     }
     else {
-      ar.splice(horseRaceDetail[col].indexOf(name), 1)
-      setHorseRaceDetail({ ...horseRaceDetail, [col]: ar })
+      ar.splice(selectedHorse[col].indexOf(name), 1)
+      setSelectedHorse({ ...selectedHorse, [col]: ar })
     }
   }
   const onStableSelection = e => {
     if (e.target.value === selectedHorse.stable._id) {
-      setHorseRaceDetail({ ...horseRaceDetail, claimed: false, claimedBy: '' })
+      setSelectedHorse({ ...selectedHorse, claimed: false, claimedBy: '' })
     }
     else {
-      setHorseRaceDetail({ ...horseRaceDetail, claimedBy: e.target.value })
+      setSelectedHorse({ ...selectedHorse, claimedBy: e.target.value })
     }
   }
 
@@ -481,19 +493,19 @@ const raceTab = props => {
 
   const horseComponentList = props.race.horses.map(horse => {
     return (
-      <Horse key={horse._id} horse={horse} dateSelected={props.programDate} />
+      <Horse key={horse._id} distance={props.race.distance} horse={horse} dateSelected={props.programDate} />
     )
   });
 
   function checkBodyLength(part, val) {
-    return horseRaceDetail.lengths[part] === val
+    return selectedHorse.lengths[part] === val
   }
   function getLongBodyLength(item, val) {
-    return horseRaceDetail.lengths[item].indexOf(val) !== -1
+    return selectedHorse.lengths[item].indexOf(val) !== -1
   }
 
   function getLengthValue(item) {
-    let lengthArray = horseRaceDetail.lengths[item].match(/\d+/g);
+    let lengthArray = selectedHorse.lengths[item].match(/\d+/g);
 
     if (lengthArray) {
       return lengthArray[0]
@@ -502,7 +514,7 @@ const raceTab = props => {
   }
 
   function getShortLengthValue(item) {
-    const short = horseRaceDetail.lengths[item].match(/(NO|HD|NK)/g);
+    const short = selectedHorse.lengths[item].match(/(NO|HD|NK)/g);
     if (short) {
       return short[0];
     }
@@ -510,17 +522,64 @@ const raceTab = props => {
 
   const setLongBodyLength = (e, item, val) => {
     if (e.target.checked) {
-      setHorseRaceDetail({ ...horseRaceDetail, lengths: { ...horseRaceDetail.lengths, [item]: getLengthValue(item).concat(val) } })
+      setSelectedHorse({ ...selectedHorse, lengths: { ...selectedHorse.lengths, [item]: getLengthValue(item).concat(val) } })
     }
     else {
-      setHorseRaceDetail({ ...horseRaceDetail, lengths: { ...horseRaceDetail.lengths, [item]: horseRaceDetail.lengths[item].replace(val, "") } })
+      setSelectedHorse({ ...selectedHorse, lengths: { ...selectedHorse.lengths, [item]: selectedHorse.lengths[item].replace(val, "") } })
     }
   }
 
   const setLengthTextField = (e, item) => {
     let rep = getShortLengthValue(item)
-    setHorseRaceDetail({ ...horseRaceDetail, lengths: { ...horseRaceDetail.lengths, [item]: horseRaceDetail.lengths[item].replace(rep || getLengthValue(item), e.target.value > 0 ? e.target.value : "") } })
+    setSelectedHorse({ ...selectedHorse, lengths: { ...selectedHorse.lengths, [item]: selectedHorse.lengths[item].replace(rep || getLengthValue(item), e.target.value > 0 ? e.target.value : "") } })
   }
+
+  const onSpeechRec = () => {
+    window.SpeechRecognition =
+      window.SpeechRecognition ||
+      window.webkitSpeechRecognition;
+    // eslint-disable-next-line no-undef
+    window.SpeechGrammarList = window.SpeechGrammarList || webkitSpeechGrammarList
+    //window.SpeechGrammarList
+    var words = ['espuela', 'fuete', 'gringolas', 'gringolas especiales', 'lengua amarrada', 'lasix', 'buta'];
+    var grammar = '#JSGF V1.0; grammar words; public <word> = ' + words.join(' | ') + ' ;'
+
+    // eslint-disable-next-line no-undef
+    const recognition = new SpeechRecognition();
+    // eslint-disable-next-line no-undef
+    const speechRecognitionList = new SpeechGrammarList();
+    speechRecognitionList.addFromString(grammar, 1);
+    recognition.grammars = speechRecognitionList;
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+    recognition.lang = "es-DO";
+    recognition.continuous = false;
+
+    //let p = document.createElement("p");
+    //const words = document.querySelector(".words");
+    //words.appendChild(p);
+
+    recognition.addEventListener("result", (e) => {
+      const transcript = Array.from(e.results)
+        .map((result) => result[0])
+        .map((result) => result.transcript)
+        .join("");
+
+      //p.textContent = transcript;
+      if (e.results[0].isFinal) {
+        //p = document.createElement("p");
+        //words.appendChild(p);
+        console.log(transcript)
+      }
+    });
+
+    //recognition.addEventListener("end", recognition.start);
+    recognition.start();
+    recognition.onspeechend = function () {
+      recognition.stop();
+    }
+  }
+
 
   return (
 
@@ -531,8 +590,8 @@ const raceTab = props => {
 
 
       <div>
-        <Button disabled={completed} color="primary" onClick={handleClickListItem} >
-          Add Horse
+        <Button disabled={completed} color="primary" onClick={handleOpenAddHorseDialog} >
+          Add/Edit Horse
           <AddIcon />
         </Button>
         <Button disabled={completed} color="primary" onClick={handleCloseRace} >
@@ -545,6 +604,7 @@ const raceTab = props => {
         <Button disabled={!props.race.hasRaceDetails} color="primary" onClick={handleOpenHorseRaceDetails} >
           Add Horse Race Details
         </Button>
+        <Button onClick={onSpeechRec}>Speak</Button>
       </div>
 
 
@@ -783,6 +843,15 @@ const raceTab = props => {
                 </Select>
               </FormControl>
             </div>
+            <div>
+              <InputLabel htmlFor="component-simple">Race URL</InputLabel>
+              <Input value={raceDetails.raceUrl} onChange={e => setRaceDetails({ ...raceDetails, raceUrl: e.target.value })} />
+            </div>
+            <div>
+              <InputLabel htmlFor="component-simple">Final Straight URL</InputLabel>
+              <Input value={raceDetails.finalStraightUrl} onChange={e => setRaceDetails({ ...raceDetails, finalStraightUrl: e.target.value })} />
+            </div>
+
           </form>
 
         </DialogContent>
@@ -813,7 +882,7 @@ const raceTab = props => {
         <DialogTitle >Horse Race Details</DialogTitle>
         <DialogContent>
           <form style={{ display: "flex", flexDirection: "column" }}>
-            <FormControl style={{ marginTop: 2, minWidth: 120 }}>
+            <FormControl style={{ marginTop: 2, width: 250 }}>
               <InputLabel htmlFor="max-width">Select Horse</InputLabel>
               <Select
                 value={selectedHorse._id}
@@ -830,38 +899,57 @@ const raceTab = props => {
                   })
                 }
               </Select>
-
             </FormControl>
+
+            <FormControl disabled={!selectedHorse.name} style={{ width: 250, margin: 1 }}>
+              <label>Race Status</label>
+              <Select value={selectedHorse.status} onChange={e => setSelectedHorse({ ...selectedHorse, status: e.target.value })} >
+                <MenuItem value={"finished"}>
+                  Finished
+                </MenuItem>
+                <MenuItem value={"disqualified"}>
+                  Disqualified
+                </MenuItem>
+                <MenuItem value={"retired"}>
+                  Retired
+                </MenuItem>
+                <MenuItem value={"dns"}>
+                  Did not start
+                </MenuItem>
+                <MenuItem value={"dnf"}>
+                  Did not finish
+                </MenuItem>
+              </Select>
+            </FormControl>
+
             {
-              selectedHorse.name &&
+              selectedHorse.name && selectedHorse.status &&
               <React.Fragment>
-                <FormControlLabel
-                  control={<Checkbox checked={selectedHorse.retired} disabled={true} />}
-                  label="Retired"
-                />
 
                 <div style={{ display: 'flex' }}>
                   <div style={{ width: '50%' }} className="m-2 p-2">
                     <FormControl>
                       <label>Jockey</label>
-                      <Dropdown disabled={selectedHorse.retired} options={jockeys} filter={true} value={horseRaceDetail.jockey} onChange={onJockeyChange} />
+                      <Dropdown disabled={selectedHorse.status === "retired"} options={jockeys} filter={true} value={selectedHorse.jockey} onChange={onJockeyChange} />
                     </FormControl>
 
                     <div>
-                      <TextField id="jockeyweight" disabled={selectedHorse.retired}
-                        label="Jockey Weight" type="number" onChange={e => setHorseRaceDetail({ ...horseRaceDetail, "jockeyWeight": Number(e.target.value) })} keyfilter="pint" value={horseRaceDetail.jockeyWeight} margin="normal" variant="outlined" />
+                      <TextField id="jockeyweight" disabled={selectedHorse.status === "retired"}
+                        label="Jockey Weight" type="number" onChange={e => setSelectedHorse({ ...selectedHorse, "jockeyWeight": Number(e.target.value) })} keyfilter="pint" value={selectedHorse.jockeyWeight} margin="normal" variant="outlined" />
                     </div>
 
                     <div>
                       <FormControlLabel
-                        control={<Checkbox checked={horseRaceDetail.claimed} onChange={e => setHorseRaceDetail({ ...horseRaceDetail, claimed: e.target.checked })} value="true" />}
+                        control={<Checkbox checked={selectedHorse.claimed} onChange={e => setSelectedHorse({ ...selectedHorse, claimed: e.target.checked, claimedBy: "" })} value="true" />}
                         label="Claimed"
                         labelPlacement="start"
                       />
                     </div>
                     <div>
                       <label>Stable</label>
-                      <Dropdown disabled={!horseRaceDetail.claimed} options={stables} filter={true} value={horseRaceDetail.claimedBy} onChange={onStableSelection} />
+                      <Dropdown options={stables} filter={true} value={selectedHorse.stable} onChange={e => setSelectedHorse({ ...selectedHorse, stable: e.target.value })} />
+                      <label>New Stable</label>
+                      <Dropdown disabled={!selectedHorse.claimed} options={stables} filter={true} value={selectedHorse.claimedBy} onChange={onStableSelection} />
                     </div>
 
                     <div className="d-flex flex-column" >
@@ -889,10 +977,10 @@ const raceTab = props => {
                           </div>
                           <div>
                             <Select
-                              value={horseRaceDetail.positions.start || ''}
-                              onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, positions: { ...horseRaceDetail.positions, start: e.target.value } })}
+                              value={selectedHorse.positions.start || ''}
+                              onChange={(e) => setSelectedHorse({ ...selectedHorse, positions: { ...selectedHorse.positions, start: e.target.value } })}
                               input={<OutlinedInput name="start" id="outlined-start-simple" />}
-                              disabled={selectedHorse.retired}
+                              disabled={selectedHorse.status === "retired"}
                               style={{ minWidth: 70 }}
                             >
                               {
@@ -912,10 +1000,10 @@ const raceTab = props => {
                           </div>
                           <div>
                             <Select
-                              value={horseRaceDetail.positions.quarterMile || ''}
-                              onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, positions: { ...horseRaceDetail.positions, quarterMile: e.target.value } })}
+                              value={selectedHorse.positions.quarterMile || ''}
+                              onChange={(e) => setSelectedHorse({ ...selectedHorse, positions: { ...selectedHorse.positions, quarterMile: e.target.value } })}
                               input={<OutlinedInput name="quarterMile" />}
-                              disabled={selectedHorse.retired}
+                              disabled={selectedHorse.status === "retired"}
                               style={{ minWidth: 70 }}
                             >
                               {
@@ -926,23 +1014,23 @@ const raceTab = props => {
                             </Select>
                           </div>
                           <div className="d-flex flex-column">
-                            <FormControlLabel style={{ margin: 0 }} disabled={selectedHorse.retired}
+                            <FormControlLabel style={{ margin: 0 }} disabled={selectedHorse.status === "retired"}
                               control={
                                 <Checkbox checked={checkBodyLength("quarterMile", "HD")}
                                   icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
                                   checkedIcon={<CheckBoxIcon fontSize="small" />}
                                   value="HD"
-                                  onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, lengths: { ...horseRaceDetail.lengths, quarterMile: e.target.value } })}
+                                  onChange={(e) => setSelectedHorse({ ...selectedHorse, lengths: { ...selectedHorse.lengths, quarterMile: e.target.value } })}
                                 />
                               }
                               label="HD" />
-                            <FormControlLabel style={{ margin: 0 }} disabled={selectedHorse.retired}
+                            <FormControlLabel style={{ margin: 0 }} disabled={selectedHorse.status === "retired"}
                               control={
                                 <Checkbox checked={checkBodyLength("quarterMile", "NK")}
                                   icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
                                   checkedIcon={<CheckBoxIcon fontSize="small" />}
                                   value="NK"
-                                  onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, lengths: { ...horseRaceDetail.lengths, quarterMile: e.target.value } })}
+                                  onChange={(e) => setSelectedHorse({ ...selectedHorse, lengths: { ...selectedHorse.lengths, quarterMile: e.target.value } })}
                                 />
                               }
                               label="NK" />
@@ -979,10 +1067,10 @@ const raceTab = props => {
                           </div>
                           <div>
                             <Select
-                              value={horseRaceDetail.positions.halfMile || ''}
-                              onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, positions: { ...horseRaceDetail.positions, halfMile: e.target.value } })}
+                              value={selectedHorse.positions.halfMile || ''}
+                              onChange={(e) => setSelectedHorse({ ...selectedHorse, positions: { ...selectedHorse.positions, halfMile: e.target.value } })}
                               input={<OutlinedInput name="halfMile" />}
-                              disabled={selectedHorse.retired}
+                              disabled={selectedHorse.status === "retired"}
                               style={{ minWidth: 70 }}
                             >
                               {
@@ -993,23 +1081,23 @@ const raceTab = props => {
                             </Select>
                           </div>
                           <div className="d-flex flex-column">
-                            <FormControlLabel style={{ margin: 0 }} disabled={selectedHorse.retired}
+                            <FormControlLabel style={{ margin: 0 }} disabled={selectedHorse.status === "retired"}
                               control={
                                 <Checkbox checked={checkBodyLength("halfMile", "HD")}
                                   icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
                                   checkedIcon={<CheckBoxIcon fontSize="small" />}
                                   value="HD"
-                                  onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, lengths: { ...horseRaceDetail.lengths, halfMile: e.target.value } })}
+                                  onChange={(e) => setSelectedHorse({ ...selectedHorse, lengths: { ...selectedHorse.lengths, halfMile: e.target.value } })}
                                 />
                               }
                               label="HD" />
-                            <FormControlLabel style={{ margin: 0 }} disabled={selectedHorse.retired}
+                            <FormControlLabel style={{ margin: 0 }} disabled={selectedHorse.status === "retired"}
                               control={
                                 <Checkbox checked={checkBodyLength("halfMile", "NK")}
                                   icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
                                   checkedIcon={<CheckBoxIcon fontSize="small" />}
                                   value="NK"
-                                  onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, lengths: { ...horseRaceDetail.lengths, halfMile: e.target.value } })}
+                                  onChange={(e) => setSelectedHorse({ ...selectedHorse, lengths: { ...selectedHorse.lengths, halfMile: e.target.value } })}
                                 />
                               }
                               label="NK" />
@@ -1038,138 +1126,149 @@ const raceTab = props => {
                         </div>
                       </div>
 
-                      <div className="d-flex m-1" >
-                        <div className="d-flex p-2 align-items-center" style={{ width: '100%', justifyContent: 'space-between' }}>
-                          <div >
-                            <InputLabel>3/4</InputLabel>
-                          </div>
-                          <div>
-                            <Select
-                              value={horseRaceDetail.positions.thirdQuarter || 0}
-                              onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, positions: { ...horseRaceDetail.positions, thirdQuarter: e.target.value } })}
-                              input={<OutlinedInput name="thirdQuarter" />}
-                              disabled={selectedHorse.retired}
-                              style={{ minWidth: 70 }}
-                            >
-                              {
-                                positions.map(el => {
-                                  return <MenuItem value={el} key={el}>{el}</MenuItem>
-                                })
-                              }
-                            </Select>
-                          </div>
-                          <div className="d-flex flex-column">
-                            <FormControlLabel style={{ margin: 0 }} disabled={selectedHorse.retired}
-                              control={
-                                <Checkbox checked={checkBodyLength("thirdQuarter", "HD")}
-                                  icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
-                                  checkedIcon={<CheckBoxIcon fontSize="small" />}
-                                  value="HD"
-                                  onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, lengths: { ...horseRaceDetail.lengths, thirdQuarter: e.target.value } })}
-                                />
-                              }
-                              label="HD" />
-                            <FormControlLabel style={{ margin: 0 }} disabled={selectedHorse.retired}
-                              control={
-                                <Checkbox checked={checkBodyLength("thirdQuarter", "NK")}
-                                  icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
-                                  checkedIcon={<CheckBoxIcon fontSize="small" />}
-                                  value="NK"
-                                  onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, lengths: { ...horseRaceDetail.lengths, thirdQuarter: e.target.value } })}
-                                />
-                              }
-                              label="NK" />
-                          </div>
+                      {
+                        selectedHorse.distance > 1200 && (
+                          <div className="d-flex m-1" >
+                            <div className="d-flex p-2 align-items-center" style={{ width: '100%', justifyContent: 'space-between' }}>
+                              <div >
+                                <InputLabel>3/4</InputLabel>
+                              </div>
+                              <div>
+                                <Select
+                                  value={selectedHorse.positions.thirdQuarter || 0}
+                                  onChange={(e) => setSelectedHorse({ ...selectedHorse, positions: { ...selectedHorse.positions, thirdQuarter: e.target.value } })}
+                                  input={<OutlinedInput name="thirdQuarter" />}
+                                  disabled={selectedHorse.status === "retired"}
+                                  style={{ minWidth: 70 }}
+                                >
+                                  {
+                                    positions.map(el => {
+                                      return <MenuItem value={el} key={el}>{el}</MenuItem>
+                                    })
+                                  }
+                                </Select>
+                              </div>
 
-                          <div>
-                            <TextField size="small" label="Length" style={{ width: 80 }} onChange={(e) => setLengthTextField(e, "thirdQuarter")} disabled={false} type="number" value={getLengthValue("thirdQuarter")} margin="normal" variant="outlined" />
-                          </div>
-                          <div>
-                            <FormGroup>
-                              <FormControlLabel style={{ margin: '-10px -5px' }}
-                                control={<Checkbox checked={getLongBodyLength("thirdQuarter", "¼")} value="¼" onChange={(e) => setLongBodyLength(e, "thirdQuarter", "¼")} />}
-                                label="¼"
-                              />
-                              <FormControlLabel style={{ margin: '-10px -5px' }}
-                                control={<Checkbox checked={getLongBodyLength("thirdQuarter", "½")} value="½" onChange={(e) => setLongBodyLength(e, "thirdQuarter", "½")} />}
-                                label="½"
-                              />
-                              <FormControlLabel style={{ margin: '-10px -5px' }}
-                                control={<Checkbox checked={getLongBodyLength("thirdQuarter", "¾")} value="¾" onChange={(e) => setLongBodyLength(e, "thirdQuarter", "¾")} />}
-                                label="¾"
-                              />
-                            </FormGroup>
-                          </div>
 
-                        </div>
-                      </div>
+                              <div className="d-flex flex-column">
+                                <FormControlLabel style={{ margin: 0 }} disabled={selectedHorse.status === "retired"}
+                                  control={
+                                    <Checkbox checked={checkBodyLength("thirdQuarter", "HD")}
+                                      icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
+                                      checkedIcon={<CheckBoxIcon fontSize="small" />}
+                                      value="HD"
+                                      onChange={(e) => setSelectedHorse({ ...selectedHorse, lengths: { ...selectedHorse.lengths, thirdQuarter: e.target.value } })}
+                                    />
+                                  }
+                                  label="HD" />
+                                <FormControlLabel style={{ margin: 0 }} disabled={selectedHorse.status === "retired"}
+                                  control={
+                                    <Checkbox checked={checkBodyLength("thirdQuarter", "NK")}
+                                      icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
+                                      checkedIcon={<CheckBoxIcon fontSize="small" />}
+                                      value="NK"
+                                      onChange={(e) => setSelectedHorse({ ...selectedHorse, lengths: { ...selectedHorse.lengths, thirdQuarter: e.target.value } })}
+                                    />
+                                  }
+                                  label="NK" />
+                              </div>
 
-                      <div className="d-flex m-1" hidden="horseRaceDetail.distance < 1700" >
-                        <div className="d-flex p-2 align-items-center" style={{ width: '100%', justifyContent: 'space-between' }}>
-                          <div >
-                            <InputLabel>Mile</InputLabel>
-                          </div>
-                          <div>
-                            <Select
-                              value={horseRaceDetail.positions.thirdQuarter || 0}
-                              onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, positions: { ...horseRaceDetail.positions, thirdQuarter: e.target.value } })}
-                              input={<OutlinedInput name="thirdQuarter" />}
-                              disabled={selectedHorse.retired}
-                              style={{ minWidth: 70 }}
-                            >
-                              {
-                                positions.map(el => {
-                                  return <MenuItem value={el} key={el}>{el}</MenuItem>
-                                })
-                              }
-                            </Select>
-                          </div>
-                          
-                          <div className="d-flex flex-column">
-                            <FormControlLabel style={{ margin: 0 }} disabled={selectedHorse.retired}
-                              control={
-                                <Checkbox checked={checkBodyLength("thirdQuarter", "HD")}
-                                  icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
-                                  checkedIcon={<CheckBoxIcon fontSize="small" />}
-                                  value="HD"
-                                  onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, lengths: { ...horseRaceDetail.lengths, thirdQuarter: e.target.value } })}
-                                />
-                              }
-                              label="HD" />
-                            <FormControlLabel style={{ margin: 0 }} disabled={selectedHorse.retired}
-                              control={
-                                <Checkbox checked={checkBodyLength("thirdQuarter", "NK")}
-                                  icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
-                                  checkedIcon={<CheckBoxIcon fontSize="small" />}
-                                  value="NK"
-                                  onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, lengths: { ...horseRaceDetail.lengths, thirdQuarter: e.target.value } })}
-                                />
-                              }
-                              label="NK" />
-                          </div>
+                              <div>
+                                <TextField size="small" label="Length" style={{ width: 80 }} onChange={(e) => setLengthTextField(e, "thirdQuarter")} disabled={false} type="number" value={getLengthValue("thirdQuarter")} margin="normal" variant="outlined" />
+                              </div>
+                              <div>
+                                <FormGroup>
+                                  <FormControlLabel style={{ margin: '-10px -5px' }}
+                                    control={<Checkbox checked={getLongBodyLength("thirdQuarter", "¼")} value="¼" onChange={(e) => setLongBodyLength(e, "thirdQuarter", "¼")} />}
+                                    label="¼"
+                                  />
+                                  <FormControlLabel style={{ margin: '-10px -5px' }}
+                                    control={<Checkbox checked={getLongBodyLength("thirdQuarter", "½")} value="½" onChange={(e) => setLongBodyLength(e, "thirdQuarter", "½")} />}
+                                    label="½"
+                                  />
+                                  <FormControlLabel style={{ margin: '-10px -5px' }}
+                                    control={<Checkbox checked={getLongBodyLength("thirdQuarter", "¾")} value="¾" onChange={(e) => setLongBodyLength(e, "thirdQuarter", "¾")} />}
+                                    label="¾"
+                                  />
+                                </FormGroup>
+                              </div>
 
-                          <div>
-                            <TextField size="small" label="Length" style={{ width: 80 }} onChange={(e) => setLengthTextField(e, "thirdQuarter")} disabled={false} type="number" value={getLengthValue("thirdQuarter")} margin="normal" variant="outlined" />
+                            </div>
                           </div>
-                          <div>
-                            <FormGroup>
-                              <FormControlLabel style={{ margin: '-10px -5px' }}
-                                control={<Checkbox checked={getLongBodyLength("thirdQuarter", "¼")} value="¼" onChange={(e) => setLongBodyLength(e, "thirdQuarter", "¼")} />}
-                                label="¼"
-                              />
-                              <FormControlLabel style={{ margin: '-10px -5px' }}
-                                control={<Checkbox checked={getLongBodyLength("thirdQuarter", "½")} value="½" onChange={(e) => setLongBodyLength(e, "thirdQuarter", "½")} />}
-                                label="½"
-                              />
-                              <FormControlLabel style={{ margin: '-10px -5px' }}
-                                control={<Checkbox checked={getLongBodyLength("thirdQuarter", "¾")} value="¾" onChange={(e) => setLongBodyLength(e, "thirdQuarter", "¾")} />}
-                                label="¾"
-                              />
-                            </FormGroup>
-                          </div>
+                        )
+                      }
 
-                        </div>
-                      </div>
+
+                      {
+                        selectedHorse.distance > 1400 && (
+                          <div className="d-flex m-1" >
+                            <div className="d-flex p-2 align-items-center" style={{ width: '100%', justifyContent: 'space-between' }}>
+                              <div >
+                                <InputLabel>Mile</InputLabel>
+                              </div>
+                              <div>
+                                <Select
+                                  value={selectedHorse.positions.mile || 0}
+                                  onChange={(e) => setSelectedHorse({ ...selectedHorse, positions: { ...selectedHorse.positions, mile: e.target.value } })}
+                                  input={<OutlinedInput name="mile" />}
+                                  disabled={selectedHorse.status === "retired"}
+                                  style={{ minWidth: 70 }}
+                                >
+                                  {
+                                    positions.map(el => {
+                                      return <MenuItem value={el} key={el}>{el}</MenuItem>
+                                    })
+                                  }
+                                </Select>
+                              </div>
+
+                              <div className="d-flex flex-column">
+                                <FormControlLabel style={{ margin: 0 }} disabled={selectedHorse.status === "retired"}
+                                  control={
+                                    <Checkbox checked={checkBodyLength("mile", "HD")}
+                                      icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
+                                      checkedIcon={<CheckBoxIcon fontSize="small" />}
+                                      value="HD"
+                                      onChange={(e) => setSelectedHorse({ ...selectedHorse, lengths: { ...selectedHorse.lengths, mile: e.target.value } })}
+                                    />
+                                  }
+                                  label="HD" />
+                                <FormControlLabel style={{ margin: 0 }} disabled={selectedHorse.status === "retired"}
+                                  control={
+                                    <Checkbox checked={checkBodyLength("mile", "NK")}
+                                      icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
+                                      checkedIcon={<CheckBoxIcon fontSize="small" />}
+                                      value="NK"
+                                      onChange={(e) => setSelectedHorse({ ...selectedHorse, lengths: { ...selectedHorse.lengths, mile: e.target.value } })}
+                                    />
+                                  }
+                                  label="NK" />
+                              </div>
+
+                              <div>
+                                <TextField size="small" label="Length" style={{ width: 80 }} onChange={(e) => setLengthTextField(e, "mile")} disabled={false} type="number" value={getLengthValue("mile")} margin="normal" variant="outlined" />
+                              </div>
+                              <div>
+                                <FormGroup>
+                                  <FormControlLabel style={{ margin: '-10px -5px' }}
+                                    control={<Checkbox checked={getLongBodyLength("mile", "¼")} value="¼" onChange={(e) => setLongBodyLength(e, "mile", "¼")} />}
+                                    label="¼"
+                                  />
+                                  <FormControlLabel style={{ margin: '-10px -5px' }}
+                                    control={<Checkbox checked={getLongBodyLength("mile", "½")} value="½" onChange={(e) => setLongBodyLength(e, "mile", "½")} />}
+                                    label="½"
+                                  />
+                                  <FormControlLabel style={{ margin: '-10px -5px' }}
+                                    control={<Checkbox checked={getLongBodyLength("mile", "¾")} value="¾" onChange={(e) => setLongBodyLength(e, "mile", "¾")} />}
+                                    label="¾"
+                                  />
+                                </FormGroup>
+                              </div>
+
+                            </div>
+                          </div>
+                        )
+                      }
 
                       <div className="d-flex m-1" >
                         <div className="d-flex p-2 align-items-center" style={{ width: '100%', justifyContent: 'space-between' }}>
@@ -1178,10 +1277,10 @@ const raceTab = props => {
                           </div>
                           <div>
                             <Select
-                              value={horseRaceDetail.positions.finish || ''}
-                              onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, positions: { ...horseRaceDetail.positions, finish: e.target.value } })}
+                              value={selectedHorse.positions.finish || ''}
+                              onChange={(e) => setSelectedHorse({ ...selectedHorse, positions: { ...selectedHorse.positions, finish: e.target.value } })}
                               input={<OutlinedInput name="finish" />}
-                              disabled={selectedHorse.retired}
+                              disabled={selectedHorse.status === "retired"}
                               style={{ minWidth: 70 }}
                             >
                               {
@@ -1193,34 +1292,34 @@ const raceTab = props => {
                           </div>
                           <div className="d-flex flex-column">
 
-                            <FormControlLabel style={{ margin: 0 }} disabled={selectedHorse.retired}
+                            <FormControlLabel style={{ margin: 0 }} disabled={selectedHorse.status === "retired"}
                               control={
                                 <Checkbox checked={checkBodyLength("finish", "NO")}
                                   icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
                                   checkedIcon={<CheckBoxIcon fontSize="small" />}
                                   value="NO"
-                                  onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, lengths: { ...horseRaceDetail.lengths, finish: e.target.value } })}
+                                  onChange={(e) => setSelectedHorse({ ...selectedHorse, lengths: { ...selectedHorse.lengths, finish: e.target.value } })}
                                 />
                               }
                               label="NO"
                             />
-                            <FormControlLabel style={{ margin: 0 }} disabled={selectedHorse.retired}
+                            <FormControlLabel style={{ margin: 0 }} disabled={selectedHorse.status === "retired"}
                               control={
                                 <Checkbox checked={checkBodyLength("finish", "HD")}
                                   icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
                                   checkedIcon={<CheckBoxIcon fontSize="small" />}
                                   value="HD"
-                                  onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, lengths: { ...horseRaceDetail.lengths, finish: e.target.value } })}
+                                  onChange={(e) => setSelectedHorse({ ...selectedHorse, lengths: { ...selectedHorse.lengths, finish: e.target.value } })}
                                 />
                               }
                               label="HD" />
-                            <FormControlLabel style={{ margin: 0 }} disabled={selectedHorse.retired}
+                            <FormControlLabel style={{ margin: 0 }} disabled={selectedHorse.status === "retired"}
                               control={
                                 <Checkbox checked={checkBodyLength("finish", "NK")}
                                   icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
                                   checkedIcon={<CheckBoxIcon fontSize="small" />}
                                   value="NK"
-                                  onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, lengths: { ...horseRaceDetail.lengths, finish: e.target.value } })}
+                                  onChange={(e) => setSelectedHorse({ ...selectedHorse, lengths: { ...selectedHorse.lengths, finish: e.target.value } })}
                                 />
                               }
                               label="NK" />
@@ -1258,22 +1357,22 @@ const raceTab = props => {
                     <div style={{ marginBottom: '15px' }}>
                       <InputLabel htmlFor="formatted-text-mask-input">Finish Time</InputLabel>
                       <Input
-                        value={horseRaceDetail.finishTime}
+                        value={selectedHorse.finishTime}
                         onFocus={(e) => e.target.select()}
                         onBlur={e => {
-                          if (e.target.value.trim().length === 6 && e.target.value !== horseRaceDetail.finishTime) {
-                            setHorseRaceDetail({ ...horseRaceDetail, finishTime: e.target.value });
+                          if (e.target.value.trim().length === 6 && e.target.value !== selectedHorse.finishTime) {
+                            setSelectedHorse({ ...selectedHorse, finishTime: e.target.value });
                           }
                         }}
                         id="formatted-text-mask-input"
                         inputComponent={TextMaskCustom}
-                        disabled={selectedHorse.retired}
+                        disabled={selectedHorse.status === "retired"}
                       />
                     </div>
 
                     <div>
                       <label>Bet</label>
-                      <Dropdown disabled={selectedHorse.retired} options={bettingList.map(bet => { return { label: bet, value: bet } })} filter={true} value={horseRaceDetail.bet} onChange={e => setHorseRaceDetail({ ...horseRaceDetail, bet: e.target.value })} />
+                      <Dropdown disabled={selectedHorse.status === "retired"} options={bettingList.map(bet => { return { label: bet, value: bet } })} filter={true} value={selectedHorse.bet} onChange={e => setSelectedHorse({ ...selectedHorse, bet: e.target.value })} />
                     </div>
 
                     <div>
@@ -1282,8 +1381,8 @@ const raceTab = props => {
                         {
                           horseEquipments.map(eq => {
                             return (
-                              <FormControlLabel disabled={selectedHorse.retired} key={eq}
-                                control={<Checkbox checked={horseRaceDetail.horseEquipments.indexOf(eq) > -1} onChange={onEquipMedicationChange(eq, "horseEquipments")} value={eq} />}
+                              <FormControlLabel disabled={selectedHorse.status === "retired"} key={eq}
+                                control={<Checkbox checked={selectedHorse.horseEquipments.indexOf(eq) > -1} onChange={onEquipMedicationChange(eq, "horseEquipments")} value={eq} />}
                                 label={eq}
                               />
                             )
@@ -1295,12 +1394,12 @@ const raceTab = props => {
                     <div>
                       <FormLabel component="legend">Horse Medications</FormLabel>
                       <FormGroup style={{ flexDirection: "row" }}>
-                        <FormControlLabel disabled={selectedHorse.retired}
-                          control={<Checkbox checked={horseRaceDetail.horseMedications.indexOf("L") > -1} onChange={onEquipMedicationChange("L", "horseMedications")} value="L" />}
+                        <FormControlLabel disabled={selectedHorse.status === "retired"}
+                          control={<Checkbox checked={selectedHorse.horseMedications.indexOf("L") > -1} onChange={onEquipMedicationChange("L", "horseMedications")} value="L" />}
                           label="L"
                         />
-                        <FormControlLabel disabled={selectedHorse.retired}
-                          control={<Checkbox checked={horseRaceDetail.horseMedications.indexOf("B") > -1} onChange={onEquipMedicationChange("B", "horseMedications")} value="B" />}
+                        <FormControlLabel disabled={selectedHorse.status === "retired"}
+                          control={<Checkbox checked={selectedHorse.horseMedications.indexOf("B") > -1} onChange={onEquipMedicationChange("B", "horseMedications")} value="B" />}
                           label="B"
                         />
                       </FormGroup>
@@ -1308,12 +1407,12 @@ const raceTab = props => {
 
                     <div>
                       <h3>Comments</h3>
-                      <InputTextarea rows={5} cols={30} value={horseRaceDetail.comments || ""} onChange={(e) => setHorseRaceDetail({ ...horseRaceDetail, comments: e.target.value })} autoResize={true} />
+                      <InputTextarea rows={5} cols={30} value={selectedHorse.comments || ""} onChange={(e) => setSelectedHorse({ ...selectedHorse, comments: e.target.value })} autoResize={true} />
                     </div>
 
                     <div>
                       <FormControlLabel
-                        control={<Checkbox checked={horseRaceDetail.confirmed} onChange={e => setHorseRaceDetail({ ...horseRaceDetail, confirmed: e.target.checked })} value="true" />}
+                        control={<Checkbox checked={selectedHorse.confirmed} onChange={e => setSelectedHorse({ ...selectedHorse, confirmed: e.target.checked })} value="true" />}
                         label="Confirmed"
                       />
                     </div>
@@ -1326,6 +1425,7 @@ const raceTab = props => {
             }
           </form>
         </DialogContent>
+
         <DialogActions>
           <Button onClick={handleCloseHorseRaceDetails} >
             Close
@@ -1347,6 +1447,10 @@ const raceTab = props => {
           <Spinner />
         </React.Fragment>
       }
+
+      <MainDialog id="mainDialog">
+        {Object.values(state)}
+      </MainDialog>
 
     </TabPanel >
 

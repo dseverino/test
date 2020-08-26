@@ -31,7 +31,7 @@ module.exports = {
   },
   jockeys: async (args) => {
     try {
-      const jockeys = await Jockey.find()      
+      const jockeys = await Jockey.find().sort({ name: 1 });
       return jockeys.map(jockey => {
         return transformJockey(jockey)
       })

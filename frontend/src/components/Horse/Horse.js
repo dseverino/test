@@ -24,10 +24,14 @@ const horse = props => {
 
         <div style={{ width: "100%" }}>
           <div style={{ fontSize: "12px", display: "flex", width: "100%" }}>
-            <div style={{ width: "67%", display: "flex" }}>{horseRaceDetailsFiltered[0].stable.name} ({horseRaceDetailsFiltered[0].stable.stats ? horseRaceDetailsFiltered[0].stable.stats[props.dateSelected.getFullYear()].starts :0} 0-0-0)
+            <div style={{ width: "67%", display: "flex" }}>{horseRaceDetailsFiltered[0].stable.name} ({horseRaceDetailsFiltered[0].stable.stats ? horseRaceDetailsFiltered[0].stable.stats[props.dateSelected.getFullYear()].starts : 0} 0-0-0)
               {
                 horseRaceDetailsFiltered[0].discarded &&
                 <div style={{ fontSize: "16px", fontWeight: 500, color: "red", margin: 'auto' }}>Descartada</div>
+              }
+              {
+                horseRaceDetailsFiltered.length === 1 &&
+                <div style={{ fontSize: "16px", fontWeight: 500, color: "black", margin: 'auto', border: "1px solid black", borderRadius: "35px", width: "20%", justifyContent: "center", display: "flex" }}>Debuta</div>
               }
             </div>
             <div style={{ display: "flex", width: "33%", justifyContent: "space-between" }}>
@@ -41,7 +45,7 @@ const horse = props => {
 
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
-              <div style={{ display: "flex" }}>
+              <div style={{ display: "flex", position: "relative" }}>
                 <div style={{ fontSize: "19px", width: "33%" }}>
                   <strong>
                     <span style={{ marginRight: "25px" }}>{props.horse.name}
@@ -62,11 +66,15 @@ const horse = props => {
                     {horseRaceDetailsFiltered[0].horseEquipments.join("")}
                   </span>
                 </div>
+                <div style={{ position: "absolute", right: "20px" }}>
+                  Best Time: {props.horse.bestTimes[props.distance]}
+                </div>
               </div>
               <div style={{ display: "flex", fontSize: 11 }}>
                 {props.horse.age}-{props.horse.color}-{props.horse.sex} {props.horse.sire} - {props.horse.dam}
               </div>
             </div>
+
             <div style={{ display: "flex" }}>
               <div ><span>{horseRaceDetailsFiltered[0].jockey.name} </span>
                 <div>( {horseRaceDetailsFiltered[0].jockey.stats ? horseRaceDetailsFiltered[0].jockey.stats[props.dateSelected.getFullYear()].starts : 0} 0-0-0 ) 0.00%</div></div>
@@ -88,7 +96,7 @@ const horse = props => {
       </div>
 
       <div>
-        Trabajo(s): 
+        Trabajo(s):
         {
           props.horse.workouts.map((workout, index) => {
             return <div key={index}>{workout.date} {workout.distance} {workout.time} {workout.jockey.name} </div>

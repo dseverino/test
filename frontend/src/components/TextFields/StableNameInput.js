@@ -73,7 +73,7 @@ const StableInput = props => {
     <React.Fragment>
       <div style={{ margin: "20px 0px" }}>
         <InputLabel htmlFor="name">Name</InputLabel>
-        <Input id="name" onBlur={validateStable} value={props.name} onChange={onHandleChange} />
+        <Input   onBlur={validateStable} value={props.name} onChange={onHandleChange} />
       </div>
       {
         isLoading &&

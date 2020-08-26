@@ -24,14 +24,14 @@ const HorseNameInput = props => {
   }
 
   function validateHorse() {
-    if (!props.name) {
+    if (!props.nameValue) {
       return false;
     }
     setIsLoading(true)
     const requestBody = {
       query: `
-        query SingleHorse($name: String!) {
-          singleHorse(name: $name) {
+        query SearchHorse($name: String!) {
+          searchHorse(name: $name) {
             name
             weight
             age
@@ -43,7 +43,7 @@ const HorseNameInput = props => {
         }
       `,
       variables: {
-        name: props.name
+        name: props.nameValue
       }
     }
     fetch("http://localhost:3000/graphql", {
@@ -77,7 +77,7 @@ const HorseNameInput = props => {
   return (
     <React.Fragment>
       <div style={{ margin: "20px 0px" }}>        
-        <TextField style={{width: "100%"}} id="name" label="Name" variant="outlined" onBlur={validateHorse} value={props.name} onChange={onHandleChange} />
+        <TextField style={{width: "100%"}}   label="Name" variant="outlined" onBlur={validateHorse} value={props.nameValue} onChange={onHandleChange} />
       </div>
       {
         isLoading &&

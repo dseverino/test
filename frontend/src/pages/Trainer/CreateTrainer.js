@@ -113,7 +113,7 @@ class CreateTrainerPage extends Component {
           </h3>
         </div>
         <div>
-          <TrainerInput id="name" validateTrainer={this.onValidateTrainer} change={this.onHandleChange} name={this.state.trainer.name} />
+          <TrainerInput   validateTrainer={this.onValidateTrainer} change={this.onHandleChange} name={this.state.trainer.name} />
           <Button onClick={this.onCancelHandler}>
             Cancel
           </Button>

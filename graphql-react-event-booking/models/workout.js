@@ -8,9 +8,10 @@ const workoutSchema = new Schema(
     horse: mongoose.Schema.Types.ObjectId,    
     distance: String,
     jockey: mongoose.Schema.Types.ObjectId,
-    briddle: String,
+    type: String,
     time: String,
-    trackCondition: String    
+    trackCondition: String,
+    workoutUrl: String
   }
 )
 module.exports = mongoose.model("Workout", workoutSchema);

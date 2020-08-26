@@ -6,6 +6,19 @@ const { transformHorse } = require("./merge");
 module.exports = {
   singleHorse: async (args) => {
     try {
+      const horse = await Horse.findOne({ _id: args.id }).collation({ locale: "en", strength: 1 });
+
+      if (horse) {
+        return transformHorse(horse);
+      }
+    }
+    catch (err) {
+      throw err
+    }
+  },
+
+  searchHorse: async (args) => {
+    try {
       const horse = await Horse.findOne({ name: args.name }).collation({ locale: "en", strength: 1 });
 
       if (horse) {

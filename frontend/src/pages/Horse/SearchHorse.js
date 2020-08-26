@@ -1,24 +1,28 @@
 import React, { Component } from "react";
 
+import AuthContext from "../../context/auth-context";
+import HorseRaceDetail from "../../components/HorseRaceDetail/HorseRaceDetail";
 import Spinner from "../../components/Spinner/Spinner";
 
 import { Dropdown } from 'primereact/dropdown';
-import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
 
-import AuthContext from "../../context/auth-context";
+import { Paper } from "@material-ui/core";
+
+
+
 
 //import "../pages/Horses.css";
 
 class SearchHorsePage extends Component {
   static contextType = AuthContext
+  dateFormmater = new Intl.DateTimeFormat('en-GB', { year: '2-digit', month: 'short', day: '2-digit' });
 
   componentDidMount = () => {
     this.fetchHorses()
   }
 
   state = {
-    creating: false,    
+    creating: false,
     isLoading: false,
     selectedHorse: null,
     horses: [],
@@ -66,22 +70,103 @@ class SearchHorsePage extends Component {
 
   onHorseChangeHandler = (e) => {
     this.setState({ selectedHorse: e.target.value, horse: null });
-    
+
     this.setState({ isLoading: true })
     const requestBody = {
       query: `
-        query SingleHorse($name: String!) {
-          singleHorse(name: $name) {
+        query SingleHorse($id: ID!) {
+          singleHorse(id: $id) {
             _id
             name
-            stable {
-              name              
+            workouts {
+              date
+              distance
+              jockey {
+                name
+              }
+              type
+              time
+              trackCondition
+              workoutUrl
+            }
+            raceDetails {
+              _id                  
+              claiming
+              date
+              discarded
+              distance
+              times {                    
+                quarterMile
+                halfMile
+                thirdQuarter
+                mile
+                finish
+              }
+              finishTime
+              horseMedications
+              horseEquipments
+              jockey{
+                _id
+                name
+                stats
+                trainerStats
+              } 
+              jockeyWeight
+              jockeyChanged
+              stable {
+                name
+                _id
+                stats
+              }
+              trainer {
+                name
+                _id
+                stats
+              }                  
+              raceNumber
+              racePositions
+              trackCondition                  
+              startingPosition
+              positions{
+                start
+                quarterMile
+                halfMile
+                thirdQuarter
+                mile
+                finish
+              }
+              lengths{
+                quarterMile
+                halfMile
+                thirdQuarter
+                mile
+                finish
+              }
+              bet
+              trainingTimes{
+                date
+              }
+              horseWeight
+              claimed
+              claimedBy{
+                name
+              }
+              status
+              retiredDetails
+              totalHorses
+              horseAge
+              comments
+              confirmed
+              raceId
+              statsReady
+              raceUrl
+              finalStraightUrl
             }
           }
         }        
       `,
       variables: {
-        name: e.target.value.name
+        id: e.target.value
       }
     }
 
@@ -99,7 +184,9 @@ class SearchHorsePage extends Component {
         return result.json()
       })
       .then(resData => {
-        this.setState({ horse: [resData.data.singleHorse], isLoading: false });
+        var horse = resData.data.singleHorse
+        horse.raceDetails.sort((a, b) => (a.date < b.date) ? 1 : ((b.date < a.date) ? -1 : 0))
+        this.setState({ horse: horse, isLoading: false });
       })
       .catch(error => {
         console.log(error)
@@ -112,15 +199,34 @@ class SearchHorsePage extends Component {
       <React.Fragment>
         <div className="col-md-3 mb-3">
           <label htmlFor="horse">Select a Horse</label>
-          <Dropdown id="horse" optionLabel="name" filter={true} value={this.state.selectedHorse} options={this.state.horses} onChange={this.onHorseChangeHandler} placeholder="Select a Horse" />
+          <Dropdown id="horse" optionLabel="name" optionValue="_id" filter={true} value={this.state.selectedHorse} options={this.state.horses} onChange={this.onHorseChangeHandler} placeholder="Select a Horse" />
         </div>
         {
           this.state.horse &&
-          <DataTable value={this.state.horse} paginator={true} rows={15} first={this.state.first} onPage={(e) => this.setState({ first: e.first })}
-            totalRecords={10}>
-            <Column field="name" header="Name" />
-            <Column field="stable.name" header="Stable" />
-          </DataTable>
+          <Paper style={{ margin: "10px 0px" }} className="horse__card">
+            <div style={{ fontSize: "19px"}}>
+              <strong>
+                <span style={{ marginRight: "25px" }}>{this.state.horse.name}
+                </span>
+              </strong>
+            </div>
+            {
+              this.state.horse.raceDetails.map((detail, index) => {
+                const days = this.state.horse.raceDetails[index + 1] ? (new Date(detail.date) - new Date(this.state.horse.raceDetails[index + 1].date)) / (1000 * 3600 * 24) : 0
+                return <HorseRaceDetail key={index} details={detail} days={days} date={this.dateFormmater.format(new Date(detail.date))} />
+              })
+            }
+            <div>
+              <div>
+                Trabajo(s):
+                {
+                  this.state.horse.workouts.map((workout, index) => {
+                    return <div key={index}>{workout.date} {workout.distance} {workout.time} {workout.jockey.name} </div>
+                  })
+                }
+              </div>
+            </div>
+          </Paper>
         }
 
         {

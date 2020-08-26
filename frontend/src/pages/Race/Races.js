@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+
 import Spinner from "../../components/Spinner/Spinner";
 
 import AuthContext from "../../context/auth-context";
@@ -6,11 +7,16 @@ import AuthContext from "../../context/auth-context";
 import { Calendar } from 'primereact/calendar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-
 import Paper from '@material-ui/core/Paper';
+import Button from '@material-ui/core/Button';
 
 import RaceTabPanel from '../../components/Race/RaceTabPanel'
 import Backdrop from "../../components/Backdrop/Backdrop";
+import MainDialog from "../../components/Dialogs/MainDialog";
+import CreateHorseDialog from "../../components/Dialogs/CreateHorseDialog";
+import CreateStableDialog from "../../components/Dialogs/CreateStableDialog";
+import AddHorseDialog from "../../components/Dialogs/AddHorseDialog";
+//import DialogIndex from "../../components/Dialogs/DialogIndex";
 
 class Races extends Component {
   static contextType = AuthContext
@@ -22,8 +28,15 @@ class Races extends Component {
     races: [],
     jockeys: [],
     stables: [],
-    trainers: []
+    trainers: [],
+    openDialogTest: false,
+    showDialogOb: {},
+    horses: []
   }
+
+  showDialogOb = {};
+
+
 
   componentDidMount = () => {
     this.fetchJockeys();
@@ -37,6 +50,14 @@ class Races extends Component {
       "5ta Carrera",
       "6ta Carrera",
     ]
+
+    this.dialogMap = {
+      "horse": <CreateHorseDialog close={this.closeDialog} key={0} addDialog={this.addDialog} stables={this.state.stables} />,
+      "stable": <CreateStableDialog close={this.closeDialog} load={(bool) => this.setState({ isLoading: bool })} savedStable={(stable) => this.setState({ stables: [...this.state.stables, stable] })} key={1} addDialog={this.addDialog} />,
+      "addHorse": <AddHorseDialog close={this.closeDialog} key={0} addDialog={this.addDialog} stables={this.state.stables} />,
+    }
+
+    //this.setState({ races: [], programDate: "2020-01-11T04:00:00.000Z", isLoading: true, selectedRace: 0 }, () => this.loadProgramRaces());
   }
 
   handleChange = (event, newValue) => {
@@ -157,7 +178,7 @@ class Races extends Component {
   }
 
   loadProgramRaces = () => {
-    this.setState({ isLoading: true });    
+    this.setState({ isLoading: true });
     const requestBody = {
       query: `
         query SingleProgram($date: String!) {
@@ -203,9 +224,10 @@ class Races extends Component {
                   }
                   time
                   distance
-                  briddle
+                  type
                   trackCondition
                 }
+                bestTimes
                 raceDetails {
                   _id                  
                   claiming
@@ -268,7 +290,7 @@ class Races extends Component {
                   claimedBy{
                     name
                   }
-                  retired
+                  status
                   retiredDetails
                   totalHorses
                   horseAge
@@ -276,6 +298,8 @@ class Races extends Component {
                   confirmed
                   raceId
                   statsReady
+                  raceUrl
+                  finalStraightUrl
                 }
               }
             }
@@ -338,6 +362,7 @@ class Races extends Component {
               dam
               stats
               jockeyStats
+              bestTimes
               stable {         
                 _id
                 name
@@ -350,7 +375,7 @@ class Races extends Component {
                 }
                 time
                 distance
-                briddle
+                type
                 trackCondition
               }
               raceDetails {
@@ -407,7 +432,7 @@ class Races extends Component {
                 claimedBy{
                   name
                 }
-                retired
+                status
                 retiredDetails
                 totalHorses
                 horseAge
@@ -462,6 +487,22 @@ class Races extends Component {
     })
   }
 
+  testButton = () => {
+
+    this.setState({ showDialogOb: { ...this.state.showDialogOb, "horse": this.dialogMap["horse"] } })
+
+  }
+
+  closeDialog = (name) => {
+    this.setState({ showDialogOb: { ...this.state.showDialogOb, [name]: null } })
+  }
+
+  addDialog = (name) => {
+
+    this.setState({ showDialogOb: { ...this.state.showDialogOb, [name]: this.dialogMap[name] } })
+  }
+
+
   render() {
     const tabs = this.state.races.map(race => {
       return (
@@ -470,7 +511,17 @@ class Races extends Component {
     })
     const RaceTabs = this.state.races.map((race, index) => {
       return (
-        <RaceTabPanel loadProgramRaces={this.loadProgramRaces} hasRaceDetails={this.hasRaceDetails} loading={this.loading} programDate={this.state.programDate} horseaddedtorace={this.addHorseToRace} key={race._id} race={race} value={this.state.selectedRace} index={index} jockeys={this.state.jockeys} stables={this.state.stables} trainers={this.state.trainers} />
+        <RaceTabPanel
+          loadProgramRaces={this.loadProgramRaces}
+          hasRaceDetails={this.hasRaceDetails}
+          loading={this.loading}
+          horses={this.state.horses}
+          loadHorses={(horses) => this.setState({horses: horses})}
+          programDate={this.state.programDate}
+          horseaddedtorace={this.addHorseToRace}
+          key={race._id} race={race} value={this.state.selectedRace} index={index} jockeys={this.state.jockeys} stables={this.state.stables} trainers={this.state.trainers}
+          addHorseDialog={this.addDialog}
+        />
       )
     });
 
@@ -502,6 +553,11 @@ class Races extends Component {
             <Spinner />
           </React.Fragment>
         }
+        <Button onClick={this.testButton}>test</Button>
+        <MainDialog id="mainDialog">
+          {Object.values(this.state.showDialogOb)}
+        </MainDialog>
+
       </React.Fragment>
     );
   }

@@ -17,7 +17,7 @@ module.exports = {
   },
   trainers: async (args) => {
     try {
-      const trainers = await Trainer.find()      
+      const trainers = await Trainer.find().sort({ name: 1 });
       return trainers.map(trainer => {
         return transformTrainer(trainer)
       })

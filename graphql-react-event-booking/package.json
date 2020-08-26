@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "bcrypt": "^2.0.1",
+    "bcrypt": "^3.0.6",
     "body-parser": "^1.18.2",
     "core-util-is": "^1.0.2",
     "dataloader": "^1.4.0",
